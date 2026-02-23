@@ -1,0 +1,479 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../../images/diploma.jpeg" />
+<script src="../../../security.js" defer></script>
+<script src="../../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Circulation Respiration - Anatomie</h1><h2>Coupes du cœur</h2></div><span class="image main"><img src="../../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que le médiastin ?', answer: 'La zone située entre les deux poumons contenant le cœur, les gros vaisseaux et les conduits reliant les régions cervicale, thoracique et abdominale.' },
+{ question: 'Quelles structures trouve-t-on dans le médiastin ?', answer: 'Le cœur, les gros vaisseaux (aorte, artère pulmonaire, veines caves), l’œsophage, la trachée et des éléments nerveux.' },
+{ question: 'Où se situe le médiastin par rapport aux poumons ?', answer: 'Il est situé entre les deux poumons, dans la partie médiane du thorax.' },
+{ question: 'Quel repère vertébral traverse la 1ère coupe du cœur ?', answer: 'La 1ère coupe passe par la vertèbre T8.' },
+{ question: 'Quel plan de coupe est utilisé pour la 1ère coupe du cœur ?', answer: 'Un plan axial (transversal) passant par T8.' },
+{ question: 'Quelles structures cardiaques sont visibles sur la 1ère coupe passant par T8 ?', answer: 'Les quatre cavités cardiaques, le septum interventriculaire et les gros vaisseaux dans le médiastin.' },
+{ question: 'Quelle est l’orientation du cœur visible sur la 1ère coupe axiale ?', answer: 'Le cœur apparaît oblique, avec le ventricule droit en avant et le ventricule gauche en arrière et à gauche.' },
+{ question: 'Que montre la 2ème coupe du cœur ?', answer: 'Une coupe sagittale permettant d’observer l’anatomie cardiaque selon un plan vertical latéral.' },
+{ question: 'Quel est le plan de coupe de la 2ème coupe ?', answer: 'Un plan sagittal (vertical, parallèle au plan médian).' },
+{ question: 'Quelles cavités sont particulièrement bien visibles en coupe sagittale ?', answer: 'Les cavités droites (oreillette droite et ventricule droit) ou gauches selon le niveau de coupe.' },
+{ question: 'Quel est le plan de coupe de la 3ème coupe du cœur ?', answer: 'Une coupe passant par le petit axe du cœur (perpendiculaire au grand axe cardiaque).' },
+{ question: 'Que remarque-t-on sur les parois ventriculaires dans la 3ème coupe ?', answer: 'Les parois du ventricule gauche (VG) sont beaucoup plus épaisses que celles du ventricule droit (VD).' },
+{ question: 'Pourquoi la paroi du VG est-elle plus épaisse que celle du VD ?', answer: 'Parce que le VG doit générer une pression plus élevée pour propulser le sang dans la circulation systémique (grande circulation).' },
+{ question: 'Quelle est l’épaisseur approximative de la paroi du VG ?', answer: 'Environ 10 à 15 mm en diastole.' },
+{ question: 'Quelle est l’épaisseur approximative de la paroi du VD ?', answer: 'Environ 3 à 5 mm.' },
+{ question: 'Quel est le rapport d’épaisseur entre la paroi du VG et celle du VD ?', answer: 'La paroi du VG est environ 3 fois plus épaisse que celle du VD.' },
+{ question: 'Que permet d’observer la coupe petit axe du cœur ?', answer: 'La forme circulaire du VG, la forme en croissant du VD, et le septum interventriculaire.' },
+{ question: 'Quelle est la forme du VG en coupe petit axe ?', answer: 'Circulaire (ronde).' },
+{ question: 'Quelle est la forme du VD en coupe petit axe ?', answer: 'En croissant, enroulant le VG.' },
+{ question: 'Que montre la 4ème coupe du cœur ?', answer: 'Les deux phases du cycle cardiaque : systole (contraction) et diastole (remplissage), ainsi que le décalage entre les valves tricuspide et mitrale.' },
+{ question: 'Quel décalage observe-t-on entre les valves dans la 4ème coupe ?', answer: 'La valve tricuspide est située plus apicalement (plus près de la pointe du cœur) que la valve mitrale.' },
+{ question: 'Pourquoi le décalage entre valve tricuspide et valve mitrale est-il cliniquement important ?', answer: 'Il permet de différencier les ventricules droit et gauche en imagerie, car la tricuspide est toujours plus apicale que la mitrale.' },
+{ question: 'Qu’est-ce que la systole ?', answer: 'La phase de contraction du cœur durant laquelle le sang est éjecté des ventricules vers les artères.' },
+{ question: 'Qu’est-ce que la diastole ?', answer: 'La phase de relaxation et de remplissage du cœur durant laquelle les ventricules se remplissent de sang.' },
+{ question: 'Que se passe-t-il au niveau des valves auriculo-ventriculaires pendant la systole ?', answer: 'Les valves mitrale et tricuspide se ferment pour empêcher le reflux de sang vers les oreillettes.' },
+{ question: 'Que se passe-t-il au niveau des valves sigmoïdes pendant la systole ?', answer: 'Les valves aortique et pulmonaire s’ouvrent pour permettre l’éjection du sang.' },
+{ question: 'Que se passe-t-il au niveau des valves auriculo-ventriculaires pendant la diastole ?', answer: 'Les valves mitrale et tricuspide s’ouvrent pour permettre le remplissage ventriculaire.' },
+{ question: 'Que se passe-t-il au niveau des valves sigmoïdes pendant la diastole ?', answer: 'Les valves aortique et pulmonaire se ferment pour empêcher le reflux de sang vers les ventricules.' },
+{ question: 'Qu’illustrent les séquences d’IRM dynamique du cœur ?', answer: 'Le mouvement cardiaque en temps réel à différentes phases du cycle, notamment en coupes axiales (T8) et petit axe.' },
+{ question: 'Quel est l’avantage de l’IRM cardiaque dynamique par rapport à l’IRM statique ?', answer: 'Elle permet de visualiser le mouvement des parois, l’ouverture et la fermeture des valves, et d’évaluer la fonction cardiaque.' },
+{ question: 'Quels types de coupes sont classiquement réalisés en IRM cardiaque ?', answer: 'Coupe petit axe, coupe 4 cavités, coupe 2 cavités, et coupe 3 cavités (ou grand axe du VG).' },
+{ question: 'Quelles sont les quatre cavités cardiaques ?', answer: 'Oreillette droite (OD), ventricule droit (VD), oreillette gauche (OG) et ventricule gauche (VG).' },
+{ question: 'Quelles sont les cavités du cœur droit ?', answer: 'L’oreillette droite (OD) et le ventricule droit (VD).' },
+{ question: 'Quelles sont les cavités du cœur gauche ?', answer: 'L’oreillette gauche (OG) et le ventricule gauche (VG).' },
+{ question: 'Quel sang contiennent les cavités droites ?', answer: 'Du sang désoxygéné (veineux).' },
+{ question: 'Quel sang contiennent les cavités gauches ?', answer: 'Du sang oxygéné (artériel).' },
+{ question: 'Qu’est-ce que le septum interventriculaire ?', answer: 'La cloison musculaire séparant le ventricule droit du ventricule gauche.' },
+{ question: 'Qu’est-ce que le septum interatrial ?', answer: 'La cloison séparant l’oreillette droite de l’oreillette gauche.' },
+{ question: 'Quel est le rôle du septum interventriculaire ?', answer: 'Séparer les deux ventricules et empêcher le mélange des sangs oxygéné et désoxygéné.' },
+{ question: 'De quel côté bombe le septum interventriculaire normalement ?', answer: 'Il bombe vers le ventricule droit en raison de la pression plus élevée dans le VG.' },
+{ question: 'Quelle particularité a la partie membraneuse du septum interventriculaire ?', answer: 'Elle est mince et non musculaire, c’est un siège fréquent de communications interventriculaires (CIV) congénitales.' },
+{ question: 'Qu’est-ce que la fosse ovale au niveau du septum interatrial ?', answer: 'C’est le vestige du foramen ovale fœtal, zone mince du septum interatrial.' },
+{ question: 'Combien de valves possède le cœur ?', answer: 'Quatre valves : tricuspide, mitrale, pulmonaire et aortique.' },
+{ question: 'Quelles sont les deux valves auriculo-ventriculaires ?', answer: 'La valve tricuspide (à droite) et la valve mitrale (à gauche).' },
+{ question: 'Quelles sont les deux valves sigmoïdes ?', answer: 'La valve pulmonaire et la valve aortique.' },
+{ question: 'Combien de feuillets possède la valve tricuspide ?', answer: 'Trois feuillets (d’où le nom tricuspide).' },
+{ question: 'Combien de feuillets possède la valve mitrale ?', answer: 'Deux feuillets (valve bicuspide).' },
+{ question: 'Où se situe la valve tricuspide ?', answer: 'Entre l’oreillette droite et le ventricule droit.' },
+{ question: 'Où se situe la valve mitrale ?', answer: 'Entre l’oreillette gauche et le ventricule gauche.' },
+{ question: 'Où se situe la valve pulmonaire ?', answer: 'À la sortie du ventricule droit, à l’entrée du tronc pulmonaire.' },
+{ question: 'Où se situe la valve aortique ?', answer: 'À la sortie du ventricule gauche, à l’entrée de l’aorte.' },
+{ question: 'Combien de feuillets possède la valve aortique ?', answer: 'Trois feuillets (sigmoïdes) : coronaire droit, coronaire gauche et non coronaire.' },
+{ question: 'Combien de feuillets possède la valve pulmonaire ?', answer: 'Trois feuillets sigmoïdes.' },
+{ question: 'Quel est le trajet du sang dans le cœur droit ?', answer: 'Veines caves → oreillette droite → valve tricuspide → ventricule droit → valve pulmonaire → artère pulmonaire.' },
+{ question: 'Quel est le trajet du sang dans le cœur gauche ?', answer: 'Veines pulmonaires → oreillette gauche → valve mitrale → ventricule gauche → valve aortique → aorte.' },
+{ question: 'Par quels vaisseaux le sang désoxygéné arrive-t-il dans l’oreillette droite ?', answer: 'Par la veine cave supérieure (VCS) et la veine cave inférieure (VCI).' },
+{ question: 'Combien de veines pulmonaires se jettent dans l’oreillette gauche ?', answer: 'Quatre veines pulmonaires (deux droites et deux gauches).' },
+{ question: 'Où le sang est-il oxygéné ?', answer: 'Dans les poumons, au niveau des alvéoles pulmonaires.' },
+{ question: 'Qu’est-ce que la petite circulation (circulation pulmonaire) ?', answer: 'Le circuit VD → artère pulmonaire → poumons → veines pulmonaires → OG, servant aux échanges gazeux.' },
+{ question: 'Qu’est-ce que la grande circulation (circulation systémique) ?', answer: 'Le circuit VG → aorte → organes → veines caves → OD, assurant la perfusion de tous les organes.' },
+{ question: 'Quelle est la pression systolique dans le VD par rapport au VG ?', answer: 'La pression dans le VD est environ 25 mmHg, celle du VG environ 120 mmHg.' },
+{ question: 'Qu’est-ce que le volume télédiastolique (VTD) ?', answer: 'Le volume de sang présent dans un ventricule à la fin de la diastole (remplissage maximal), environ 120 mL.' },
+{ question: 'Qu’est-ce que le volume télésystolique (VTS) ?', answer: 'Le volume de sang restant dans un ventricule à la fin de la systole (éjection maximale), environ 50 mL.' },
+{ question: 'Comment calcule-t-on le volume d’éjection systolique (VES) ?', answer: 'VES = VTD − VTS, soit environ 120 − 50 = 70 mL.' },
+{ question: 'Quelle est la valeur normale approximative du VES ?', answer: 'Environ 70 mL (entre 60 et 80 mL).' },
+{ question: 'Qu’est-ce que la fraction d’éjection (FE) ?', answer: 'Le pourcentage du VTD éjecté à chaque systole : FE = (VES / VTD) × 100.' },
+{ question: 'Quelle est la valeur normale de la fraction d’éjection ?', answer: 'Entre 55 % et 70 %.' },
+{ question: 'Que signifie une FE inférieure à 55 % ?', answer: 'Une dysfonction systolique du ventricule gauche (insuffisance cardiaque à FE réduite).' },
+{ question: 'Comment calcule-t-on le débit cardiaque (Qc) ?', answer: 'Qc = VES × fréquence cardiaque (FC). Exemple : 70 mL × 70 bpm = 4900 mL/min soit environ 5 L/min.' },
+{ question: 'Quelle est la valeur normale approximative du débit cardiaque au repos ?', answer: 'Environ 5 L/min.' },
+{ question: 'Quels facteurs peuvent faire varier le débit cardiaque ?', answer: 'La fréquence cardiaque, le VES, la précharge, la postcharge et la contractilité myocardique.' },
+{ question: 'Qu’est-ce que l’index cardiaque ?', answer: 'Le débit cardiaque rapporté à la surface corporelle : IC = Qc / surface corporelle, normalement 2,5 à 4 L/min/m².' },
+{ question: 'Qu’est-ce que l’échocardiographie ?', answer: 'Un examen d’imagerie utilisant les ultrasons pour visualiser le cœur en temps réel.' },
+{ question: 'Quel est le principal avantage de l’échocardiographie ?', answer: 'C’est un examen non invasif, sans irradiation, réalisable au lit du patient et en temps réel.' },
+{ question: 'Quelles sont les principales incidences en échocardiographie transthoracique ?', answer: 'Parasternale grand axe, parasternale petit axe, apicale 4 cavités, apicale 2 cavités, sous-costale et suprasternale.' },
+{ question: 'Que permet de visualiser l’incidence parasternale grand axe ?', answer: 'Le VG, l’OG, la valve mitrale, la valve aortique, le septum interventriculaire et l’aorte ascendante.' },
+{ question: 'Que permet de visualiser l’incidence parasternale petit axe ?', answer: 'Le VG en coupe transversale (forme circulaire), les piliers mitraux, la valve aortique et ses trois sigmoïdes.' },
+{ question: 'Que permet de visualiser l’incidence apicale 4 cavités ?', answer: 'Les quatre cavités cardiaques, les deux septums (interatrial et interventriculaire), les valves mitrale et tricuspide.' },
+{ question: 'Où se place la sonde pour l’incidence apicale ?', answer: 'Au niveau de l’apex du cœur (choc de pointe), dans le 5ème espace intercostal gauche.' },
+{ question: 'Que permet de visualiser l’incidence sous-costale ?', answer: 'Le cœur dans son ensemble, les septums, le péricarde et la veine cave inférieure.' },
+{ question: 'Que permet de visualiser l’incidence suprasternale ?', answer: 'La crosse aortique et les branches supra-aortiques.' },
+{ question: 'Qu’est-ce que le mode TM (temps-mouvement) en échocardiographie ?', answer: 'Un mode permettant de visualiser le mouvement des structures cardiaques en fonction du temps sur une ligne de tir.' },
+{ question: 'Que peut-on mesurer en mode TM ?', answer: 'Les diamètres des cavités, l’épaisseur des parois, la cinétique des valves et le raccourcissement de fraction.' },
+{ question: 'Qu’est-ce que le Doppler en échocardiographie ?', answer: 'Une technique mesurant la vitesse et la direction du flux sanguin dans le cœur et les vaisseaux.' },
+{ question: 'Quels sont les différents types de Doppler utilisés ?', answer: 'Doppler pulsé, Doppler continu, Doppler couleur et Doppler tissulaire.' },
+{ question: 'Quelle est la différence entre Doppler pulsé et Doppler continu ?', answer: 'Le Doppler pulsé analyse les vitesses à un point précis (mais limité en vitesse max), le Doppler continu mesure les hautes vitesses sans localisation précise.' },
+{ question: 'À quoi sert le Doppler couleur ?', answer: 'Il superpose une cartographie en couleur des flux sanguins sur l’image 2D, permettant de détecter fuites et sténoses valvulaires.' },
+{ question: 'Comment le cycle cardiaque se décompose-t-il pour le VG ?', answer: 'Remplissage rapide, remplissage lent (diastasis), systole auriculaire, contraction isovolumétrique, éjection, relaxation isovolumétrique.' },
+{ question: 'Que se passe-t-il pendant la contraction isovolumétrique ?', answer: 'Toutes les valves sont fermées, le ventricule se contracte et la pression intraventriculaire augmente sans changement de volume.' },
+{ question: 'Que se passe-t-il pendant la relaxation isovolumétrique ?', answer: 'Toutes les valves sont fermées, le ventricule se relâche et la pression intraventriculaire diminue sans changement de volume.' },
+{ question: 'Quand la valve aortique s’ouvre-t-elle ?', answer: 'Lorsque la pression dans le VG dépasse la pression aortique diastolique (environ 80 mmHg).' },
+{ question: 'Quand la valve mitrale s’ouvre-t-elle ?', answer: 'Lorsque la pression dans le VG tombe en dessous de la pression dans l’OG, permettant le remplissage ventriculaire.' },
+{ question: 'Quelle est la durée approximative d’un cycle cardiaque au repos (FC = 75 bpm) ?', answer: 'Environ 0,8 seconde (800 ms).' },
+{ question: 'Quel est le rapport entre durée de systole et durée de diastole au repos ?', answer: 'La systole dure environ 1/3 du cycle et la diastole 2/3.' },
+{ question: 'Quels sont les deux bruits du cœur normaux ?', answer: 'B1 (fermeture des valves auriculo-ventriculaires) et B2 (fermeture des valves sigmoïdes).' },
+{ question: 'En IRM cardiaque, qu’est-ce que le ciné-IRM ?', answer: 'Une séquence d’IRM dynamique visualisant le mouvement cardiaque tout au long du cycle, image par image.' },
+{ question: 'Quelle coupe IRM est la référence pour calculer les volumes et la FE ?', answer: 'L’empilement de coupes petit axe couvrant les deux ventricules de la base à l’apex.' },
+{ question: 'Comment l’IRM calcule-t-elle le VTD et le VTS ?', answer: 'Par contourage des cavités ventriculaires sur chaque coupe petit axe en télédiastole et télésystole, puis sommation des volumes.' },
+{ question: 'Quel est le gold standard pour la mesure de la FE du VG ?', answer: 'L’IRM cardiaque.' },
+{ question: 'Sur une coupe 4 cavités, comment reconnaît-on le VD du VG ?', answer: 'Le VD est antérieur avec la valve tricuspide plus apicale ; le VG est postérieur avec des parois plus épaisses.' },
+{ question: 'Qu’est-ce que la précharge ?', answer: 'Le degré d’étirement des fibres myocardiques en fin de diastole, déterminé par le volume de remplissage (VTD).' },
+{ question: 'Qu’est-ce que la postcharge ?', answer: 'La résistance que le ventricule doit vaincre pour éjecter le sang (pression artérielle systémique pour le VG).' },
+{ question: 'Comment une augmentation de la précharge influence-t-elle le VES (loi de Frank-Starling) ?', answer: 'Une augmentation de la précharge augmente le VTD et donc le VES, jusqu’à un plateau.' },
+{ question: 'Quelle est la valeur normale du VTD du VG ?', answer: 'Environ 120 mL (70 à 150 mL selon la morphologie).' },
+{ question: 'Si le VTD est de 130 mL et le VTS de 55 mL, quel est le VES ?', answer: 'VES = 130 − 55 = 75 mL.' },
+{ question: 'Si le VES est de 75 mL et le VTD de 130 mL, quelle est la FE ?', answer: 'FE = (75 / 130) × 100 ≈ 57,7 %.' },
+{ question: 'Si la FC est de 80 bpm et le VES de 70 mL, quel est le débit cardiaque ?', answer: 'Qc = 70 × 80 = 5600 mL/min = 5,6 L/min.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../../index.html">Accueil</a></li>
+<li><a href="../../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../../assets/js/jquery.min.js"></script>
+<script src="../../../assets/js/browser.min.js"></script>
+<script src="../../../assets/js/breakpoints.min.js"></script>
+<script src="../../../assets/js/util.js"></script>
+<script src="../../../assets/js/main.js"></script>
+<script src="../../../assets/js/darkmode.js"></script>
+<script src="../../../assets/js/favorites.js"></script>
+
+</body>
+</html>

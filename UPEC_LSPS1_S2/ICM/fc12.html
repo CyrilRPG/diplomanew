@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Structure et régulation du médicament</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Pourquoi le médicament n\u2019est-il pas un produit comme les autres ?', answer: 'Parce qu\u2019il est strictement encadré juridiquement et administrativement à toutes les étapes de sa vie, de la R&D à la commercialisation.' },
+{ question: 'Qu\u2019est-ce que l\u2019AMM (Autorisation de Mise sur le Marché) ?', answer: 'L\u2019autorisation administrative délivrée après évaluation du rapport bénéfice/risque, attestant la qualité, l\u2019efficacité et la sécurité du médicament.' },
+{ question: 'Quelles études doivent être réalisées avant l\u2019obtention de l\u2019AMM ?', answer: 'Des études précliniques (in vitro et animales) et des études cliniques (phases I, II et III chez l\u2019homme).' },
+{ question: 'Quels sont les trois critères fondamentaux évalués pour l\u2019AMM ?', answer: 'La qualité, l\u2019efficacité et la sécurité du médicament.' },
+{ question: 'Auprès de quelle autorité l\u2019AMM est-elle demandée en procédure nationale ?', answer: 'L\u2019ANSM (Agence Nationale de Sécurité du Médicament et des produits de santé).' },
+{ question: 'Auprès de quelle autorité l\u2019AMM est-elle demandée en procédure européenne centralisée ?', answer: 'L\u2019EMA (European Medicines Agency / Agence Européenne des Médicaments).' },
+{ question: 'Que se passe-t-il après l\u2019obtention de l\u2019AMM (phase post-AMM) ?', answer: 'Extensions d\u2019indication, pharmacovigilance, renouvellement, restrictions d\u2019utilisation ou retrait du marché.' },
+{ question: 'Qu\u2019est-ce que la pharmacovigilance ?', answer: 'La surveillance continue de la sécurité d\u2019emploi d\u2019un médicament après sa commercialisation.' },
+{ question: 'Quelles sont les trois grandes étapes menant à la commercialisation d\u2019un médicament ?', answer: '1) Évaluation bénéfice/risque → AMM, 2) Évaluation du SMR → remboursement, 3) Évaluation de l\u2019ASMR → fixation du prix.' },
+{ question: 'Quelle institution évalue le SMR en France ?', answer: 'La Commission de la Transparence de la HAS (Haute Autorité de Santé).' },
+{ question: 'Quel est le rôle de la Commission de la Transparence ?', answer: 'Évaluer le SMR (remboursement) et l\u2019ASMR (fixation du prix) de chaque médicament.' },
+{ question: 'Quels produits ne nécessitent pas d\u2019AMM ?', answer: 'Les produits de parapharmacie, les préparations magistrales et les préparations hospitalières.' },
+{ question: 'Qu\u2019est-ce qu\u2019une préparation magistrale ?', answer: 'Une préparation réalisée en pharmacie selon une prescription destinée à un patient spécifique.' },
+{ question: 'Qu\u2019est-ce qu\u2019une préparation hospitalière ?', answer: 'Une préparation réalisée par une pharmacie hospitalière pour répondre à un besoin thérapeutique non couvert par les spécialités disponibles.' },
+{ question: 'Que contient le dossier de demande d\u2019AMM ?', answer: 'Des données pharmaceutiques/galéniques, pharmaco-toxicologiques, les populations à risque et les associations médicamenteuses.' },
+{ question: 'Que recouvre le critère « qualité » dans l\u2019AMM ?', answer: 'La composition, la fabrication, le conditionnement et les contrôles du médicament.' },
+{ question: 'Que recouvre le critère « sécurité » dans l\u2019AMM ?', answer: 'La toxicologie préclinique, la tolérance clinique et un éventuel plan de gestion des risques.' },
+{ question: 'Comment l\u2019efficacité est-elle démontrée pour l\u2019AMM ?', answer: 'Par des essais cliniques versus placebo (supériorité) ou versus comparateur (non-infériorité), avec significativité statistique ET clinique.' },
+{ question: 'Quelle est la différence entre significativité statistique et clinique ?', answer: 'La significativité statistique mesure la probabilité que le résultat ne soit pas dû au hasard ; la significativité clinique évalue si le bénéfice est pertinent pour le patient.' },
+{ question: 'Qu\u2019est-ce qu\u2019un essai de supériorité ?', answer: 'Un essai visant à démontrer que le médicament est significativement meilleur que le placebo.' },
+{ question: 'Qu\u2019est-ce qu\u2019un essai de non-infériorité ?', answer: 'Un essai visant à démontrer que le médicament n\u2019est pas significativement moins bon qu\u2019un comparateur actif.' },
+{ question: 'Quelles sont les quatre procédures d\u2019AMM possibles ?', answer: 'La procédure centralisée, la procédure nationale, la reconnaissance mutuelle et la procédure décentralisée.' },
+{ question: 'Pour quels médicaments la procédure centralisée est-elle obligatoire ?', answer: 'VIH/SIDA, cancer, diabète, maladies neurodégénératives, auto-immunes, virales, médicaments biotechnologiques, thérapies innovantes, médicaments orphelins.' },
+{ question: 'Qu\u2019est-ce que la procédure nationale d\u2019AMM ?', answer: 'Une procédure donnant une AMM valable uniquement dans un seul État membre.' },
+{ question: 'Qu\u2019est-ce que la procédure de reconnaissance mutuelle ?', answer: 'Une procédure permettant d\u2019étendre une AMM nationale déjà obtenue à d\u2019autres États membres.' },
+{ question: 'Qu\u2019est-ce que la procédure décentralisée ?', answer: 'Une procédure permettant d\u2019obtenir simultanément une AMM dans plusieurs États membres choisis, sans AMM nationale préalable.' },
+{ question: 'Qu\u2019est-ce que le RCP (Résumé des Caractéristiques du Produit) ?', answer: 'Le document officiel destiné aux professionnels de santé contenant toutes les informations sur le médicament (nom, composition, pharmacologie, clinique).' },
+{ question: 'À qui est destiné le RCP ?', answer: 'Aux professionnels de santé (médecins, pharmaciens).' },
+{ question: 'À qui est destinée la notice ?', answer: 'Au patient, pour l\u2019informer sur l\u2019utilisation, les effets indésirables et les conduites à tenir.' },
+{ question: 'Que contient la notice d\u2019un médicament ?', answer: 'Les informations sur l\u2019utilisation, les effets indésirables, les risques et les conduites à tenir.' },
+{ question: 'Qu\u2019est-ce que le SMR (Service Médical Rendu) ?', answer: 'L\u2019évaluation du bénéfice thérapeutique global d\u2019un médicament, déterminant son accès au remboursement.' },
+{ question: 'Le SMR est-il évalué globalement ou par indication ?', answer: 'Indication par indication, pour une durée de 5 ans renouvelable.' },
+{ question: 'Quels sont les critères pris en compte pour évaluer le SMR ?', answer: 'Le rapport bénéfice/risque, la gravité de la maladie, la nature du traitement (préventif/curatif/symptomatique), la place dans la stratégie thérapeutique, l\u2019intérêt de santé publique.' },
+{ question: 'Quels sont les niveaux de SMR possibles ?', answer: 'SMR majeur/important, modéré, faible ou insuffisant.' },
+{ question: 'Quel est le taux de remboursement pour un SMR majeur ou important ?', answer: '65%.' },
+{ question: 'Quel est le taux de remboursement pour un SMR modéré ?', answer: '30%.' },
+{ question: 'Quel est le taux de remboursement pour un SMR faible ?', answer: '15%.' },
+{ question: 'Que se passe-t-il si le SMR est jugé insuffisant ?', answer: 'Le médicament n\u2019est pas remboursé.' },
+{ question: 'Quels médicaments sont systématiquement remboursés à 100% ?', answer: 'Les médicaments contre le cancer, le SIDA et ceux des affections de longue durée (ALD).' },
+{ question: 'Qu\u2019est-ce que l\u2019ASMR (Amélioration du Service Médical Rendu) ?', answer: 'Le progrès thérapeutique apporté par un nouveau médicament par rapport aux traitements existants.' },
+{ question: 'Quels sont les cinq niveaux d\u2019ASMR ?', answer: 'ASMR I (majeur), ASMR II (important), ASMR III (modéré), ASMR IV (mineur), ASMR V (pas d\u2019amélioration).' },
+{ question: 'Quel est le rôle de l\u2019ASMR dans la fixation du prix ?', answer: 'L\u2019ASMR détermine le niveau de prix acceptable : plus l\u2019ASMR est élevée, plus le prix peut être élevé.' },
+{ question: 'Comment est fixé le prix pour un médicament avec ASMR I à III ?', answer: 'Le prix ne peut pas être inférieur au prix le plus bas pratiqué dans les 4 pays européens de référence.' },
+{ question: 'Comment est fixé le prix pour un médicament avec ASMR IV ?', answer: 'Le prix est négocié et doit être au moins égal à celui du comparateur.' },
+{ question: 'Comment est fixé le prix pour un médicament avec ASMR V ?', answer: 'Le prix doit être le plus bas possible (inférieur ou égal au comparateur).' },
+{ question: 'Quel organisme fixe le taux de remboursement ?', answer: 'L\u2019UNCAM (Union Nationale des Caisses d\u2019Assurance Maladie).' },
+{ question: 'Quel organisme fixe le prix du médicament ?', answer: 'Le CEPS (Comité Économique des Produits de Santé).' },
+{ question: 'Qu\u2019est-ce que l\u2019accès précoce ?', answer: 'Un dispositif permettant l\u2019accès à des médicaments innovants répondant à un besoin non couvert, avant l\u2019obtention de l\u2019AMM.' },
+{ question: 'Quelles sont les conditions de l\u2019accès précoce ?', answer: 'Le médicament doit être innovant, répondre à un besoin thérapeutique non couvert, et l\u2019AMM doit être en cours de demande.' },
+{ question: 'Qu\u2019est-ce que l\u2019accès compassionnel ?', answer: 'Un accès à des médicaments non innovants (pas destinés à obtenir une AMM) mais répondant à un besoin thérapeutique non couvert.' },
+{ question: 'Quelle est la différence entre accès précoce et accès compassionnel ?', answer: 'L\u2019accès précoce concerne des médicaments innovants en cours d\u2019AMM, l\u2019accès compassionnel des médicaments non innovants sans AMM prévue.' },
+{ question: 'À quel taux sont remboursés les médicaments en accès précoce ou compassionnel ?', answer: '100% dès l\u2019autorisation.' },
+{ question: 'Qui décide de l\u2019inscription sur la liste des médicaments remboursables ?', answer: 'Le Ministre de la Santé, sur avis de la Commission de la Transparence.' },
+{ question: 'Quelles autorités peuvent délivrer une AMM ?', answer: 'L\u2019ANSM (procédure nationale) et l\u2019EMA/Commission Européenne (procédure centralisée).' },
+{ question: 'Pourquoi la procédure centralisée est-elle obligatoire pour les médicaments biotechnologiques ?', answer: 'Pour garantir une évaluation harmonisée au niveau européen de ces produits complexes et innovants.' },
+{ question: 'Que sont les médicaments orphelins ?', answer: 'Des médicaments destinés au traitement de maladies rares (prévalence < 5/10 000 dans l\u2019UE).' },
+{ question: 'Pourquoi les médicaments orphelins suivent-ils la procédure centralisée ?', answer: 'Pour faciliter leur accès à l\u2019ensemble du marché européen malgré un nombre limité de patients.' },
+{ question: 'Qu\u2019est-ce qu\u2019une extension d\u2019indication ?', answer: 'L\u2019ajout d\u2019une nouvelle indication thérapeutique à un médicament déjà autorisé.' },
+{ question: 'Qu\u2019est-ce qu\u2019un plan de gestion des risques (PGR) ?', answer: 'Un document décrivant les risques connus et potentiels du médicament et les mesures de minimisation après la mise sur le marché.' },
+{ question: 'Quelles sont les informations figurant sur l\u2019étiquetage d\u2019un médicament ?', answer: 'Nom du médicament, substance active, dosage, forme galénique, nombre d\u2019unités, code-barres, date de péremption, pictogrammes.' },
+{ question: 'Quelle est la durée de validité initiale d\u2019une AMM ?', answer: '5 ans, renouvelable.' },
+{ question: 'Que peut-il se passer lors du renouvellement de l\u2019AMM ?', answer: 'L\u2019AMM peut être renouvelée, modifiée avec des restrictions, ou le médicament peut être retiré du marché.' },
+{ question: 'Qu\u2019est-ce qu\u2019un retrait du marché ?', answer: 'La suspension ou le retrait définitif de l\u2019AMM lorsque le rapport bénéfice/risque est devenu défavorable.' },
+{ question: 'Quels sont les quatre pays européens de référence pour la comparaison des prix ?', answer: 'L\u2019Allemagne, le Royaume-Uni, l\u2019Espagne et l\u2019Italie.' },
+{ question: 'Qu\u2019est-ce que le SMR « majeur » ?', answer: 'Le niveau le plus élevé de SMR, attribué aux médicaments dont le bénéfice thérapeutique est considéré comme très important.' },
+{ question: 'Pourquoi le SMR est-il réévalué tous les 5 ans ?', answer: 'Pour tenir compte de l\u2019évolution des connaissances scientifiques et de la stratégie thérapeutique.' },
+{ question: 'Qu\u2019est-ce que l\u2019ASMR I (majeur) ?', answer: 'Un progrès thérapeutique majeur, apportant un bénéfice considérable par rapport aux traitements existants.' },
+{ question: 'Qu\u2019est-ce que l\u2019ASMR V ?', answer: 'Pas d\u2019amélioration du service médical rendu par rapport aux traitements existants.' },
+{ question: 'Un médicament avec ASMR V peut-il être remboursé ?', answer: 'Oui, si son SMR est suffisant, mais son prix sera le plus bas possible.' },
+{ question: 'Quel est l\u2019objectif global du système de régulation du médicament ?', answer: 'Assurer la disponibilité de médicaments sûrs, efficaces et à un prix compatible avec les contraintes de l\u2019assurance maladie.' },
+{ question: 'Quelle est la différence entre SMR et ASMR ?', answer: 'Le SMR évalue le bénéfice absolu du médicament (pour le remboursement), l\u2019ASMR évalue le progrès relatif par rapport aux traitements existants (pour le prix).' },
+{ question: 'Quel est le rôle du CEPS dans la régulation ?', answer: 'Fixer le prix des médicaments remboursables en tenant compte de l\u2019ASMR et des comparateurs.' },
+{ question: 'Quel est le rôle de l\u2019UNCAM dans la régulation ?', answer: 'Fixer le taux de remboursement en fonction du niveau de SMR.' },
+{ question: 'Pourquoi la significativité clinique est-elle aussi importante que la significativité statistique ?', answer: 'Car un résultat statistiquement significatif peut ne pas avoir de pertinence clinique réelle pour le patient.' },
+{ question: 'Qu\u2019est-ce que les bonnes pratiques cliniques (BPC) ?', answer: 'Un ensemble de normes éthiques et scientifiques garantissant la qualité et l\u2019intégrité des essais cliniques.' },
+{ question: 'Pourquoi certains médicaments contre le cancer sont-ils remboursés à 100% ?', answer: 'Car ils traitent des affections de longue durée (ALD) reconnues et que l\u2019accès au traitement est une priorité de santé publique.' },
+{ question: 'Qu\u2019est-ce qu\u2019un traitement préventif dans le cadre du SMR ?', answer: 'Un traitement destiné à prévenir la survenue d\u2019une maladie, pris en compte dans l\u2019évaluation du SMR.' },
+{ question: 'Qu\u2019est-ce qu\u2019un traitement curatif dans le cadre du SMR ?', answer: 'Un traitement visant à guérir une maladie, généralement associé à un SMR plus élevé.' },
+{ question: 'Qu\u2019est-ce qu\u2019un traitement symptomatique dans le cadre du SMR ?', answer: 'Un traitement qui soulage les symptômes sans traiter la cause de la maladie.' },
+{ question: 'Comment la gravité de la maladie influence-t-elle le SMR ?', answer: 'Plus la maladie est grave, plus le SMR du médicament est susceptible d\u2019être élevé.' },
+{ question: 'Qu\u2019est-ce que l\u2019intérêt de santé publique dans l\u2019évaluation du SMR ?', answer: 'L\u2019impact du médicament sur la mortalité, la morbidité et la qualité de vie à l\u2019échelle de la population.' },
+{ question: 'Qu\u2019est-ce qu\u2019une thérapie innovante soumise à la procédure centralisée ?', answer: 'Une thérapie génique, cellulaire ou tissulaire qui doit obligatoirement suivre la procédure centralisée européenne.' },
+{ question: 'Que signifie ALD dans le contexte du remboursement ?', answer: 'Affection de Longue Durée, une pathologie chronique grave donnant droit à une prise en charge à 100%.' },
+{ question: 'Qu\u2019est-ce qu\u2019un pictogramme sur l\u2019emballage d\u2019un médicament ?', answer: 'Un symbole visuel alertant sur un risque particulier (conduite automobile, grossesse, etc.).' },
+{ question: 'Qu\u2019est-ce que la procédure de réévaluation du SMR ?', answer: 'Un processus obligatoire tous les 5 ans où la Commission de la Transparence réexamine le bénéfice du médicament à la lumière des nouvelles données.' },
+{ question: 'Que se passe-t-il si le SMR est réévalué comme insuffisant ?', answer: 'Le médicament peut être déremboursé (radié de la liste des médicaments remboursables).' },
+{ question: 'Quelle est la différence entre procédure nationale et procédure centralisée ?', answer: 'La nationale donne une AMM dans un seul pays (évaluée par l\u2019ANSM), la centralisée donne une AMM valable dans toute l\u2019UE (évaluée par l\u2019EMA).' },
+{ question: 'Pourquoi les médicaments anti-VIH suivent-ils la procédure centralisée ?', answer: 'Car la procédure centralisée est obligatoire pour les pathologies graves comme le VIH afin d\u2019harmoniser l\u2019accès au niveau européen.' },
+{ question: 'Qu\u2019est-ce que la phase IV des essais cliniques ?', answer: 'La phase post-commercialisation correspondant à la pharmacovigilance et aux études complémentaires après l\u2019AMM.' },
+{ question: 'Qu\u2019est-ce que le conditionnement primaire d\u2019un médicament ?', answer: 'L\u2019emballage directement en contact avec le médicament (blister, flacon, ampoule).' },
+{ question: 'Qu\u2019est-ce que le conditionnement secondaire d\u2019un médicament ?', answer: 'L\u2019emballage extérieur (boîte en carton) portant l\u2019étiquetage et contenant la notice.' },
+{ question: 'Quel est le rôle du code-barres (code CIP) sur l\u2019emballage ?', answer: 'Identifier de manière unique chaque présentation du médicament pour la traçabilité et le remboursement.' },
+{ question: 'Qu\u2019est-ce qu\u2019un plan de gestion des risques ?', answer: 'Un document décrivant les risques identifiés, potentiels et les informations manquantes, avec des mesures pour les minimiser après la mise sur le marché.' },
+{ question: 'Quelle est la place de la stratégie thérapeutique dans l\u2019évaluation du SMR ?', answer: 'Le SMR tient compte de la place du médicament par rapport aux alternatives existantes dans la stratégie de traitement.' },
+{ question: 'Qu\u2019est-ce que la Commission Européenne dans le contexte de l\u2019AMM centralisée ?', answer: 'L\u2019organe qui délivre formellement l\u2019AMM européenne sur avis du CHMP de l\u2019EMA.' },
+{ question: 'Qu\u2019est-ce que le CHMP ?', answer: 'Le Comité des Médicaments à Usage Humain de l\u2019EMA, qui évalue les dossiers d\u2019AMM centralisée et rend un avis scientifique.' },
+{ question: 'Comment un médicament à ASMR V peut-il justifier son remboursement ?', answer: 'S\u2019il apporte un avantage en termes de commodité d\u2019emploi, de tolérance ou de coût, malgré l\u2019absence de progrès thérapeutique.' },
+{ question: 'Pourquoi les données sur les populations à risque sont-elles exigées dans le dossier d\u2019AMM ?', answer: 'Pour évaluer la sécurité et l\u2019efficacité chez les personnes âgées, enfants, insuffisants rénaux ou hépatiques, femmes enceintes.' },
+{ question: 'Pourquoi les associations médicamenteuses sont-elles étudiées dans le dossier d\u2019AMM ?', answer: 'Pour identifier les interactions médicamenteuses pouvant modifier l\u2019efficacité ou la sécurité du médicament.' },
+{ question: 'Quelle est la différence entre un médicament remboursé à 65% et à 100% ?', answer: 'À 65%, le patient paie 35% du prix (ticket modérateur) ; à 100%, la totalité est prise en charge par l\u2019assurance maladie.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

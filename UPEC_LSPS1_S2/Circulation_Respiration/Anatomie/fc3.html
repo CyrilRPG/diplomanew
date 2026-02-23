@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../../images/diploma.jpeg" />
+<script src="../../../security.js" defer></script>
+<script src="../../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Circulation Respiration - Anatomie</h1><h2>Cœur droit et cœur gauche</h2></div><span class="image main"><img src="../../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Quelles sont les parois de l\u2019atrium droit ?', answer: 'Paroi interne (septale), paroi externe, paroi supérieure, paroi inférieure, paroi antérieure et paroi postérieure.' },
+{ question: 'Quelle structure constitue la paroi interne de l\u2019atrium droit ?', answer: 'Le septum inter-atrial.' },
+{ question: 'Qu\u2019est-ce que la fosse ovale dans l\u2019atrium droit ?', answer: 'Une dépression du septum inter-atrial, vestige du foramen ovale fœtal, surmontée du limbe de la fosse ovale.' },
+{ question: 'Quel était le rôle du foramen ovale avant la naissance ?', answer: 'Permettre au sang oxygéné de la veine cave inférieure de passer directement dans l\u2019atrium gauche, court-circuitant la circulation pulmonaire.' },
+{ question: 'Qu\u2019est-ce que le triangle de Koch ?', answer: 'Un espace anatomique de la paroi interne de l\u2019atrium droit contenant le nœud atrio-ventriculaire.' },
+{ question: 'Quelles structures délimitent le triangle de Koch ?', answer: 'En avant la valvule de la VCI, au-dessus le sinus coronaire (orifice), et en arrière la valve tricuspide (anneau).' },
+{ question: 'Quelle structure essentielle est contenue dans le triangle de Koch ?', answer: 'Le nœud atrio-ventriculaire (nœud AV), élément clé du système de conduction cardiaque.' },
+{ question: 'Quelle structure musculaire tapisse la paroi externe de l\u2019atrium droit ?', answer: 'Les muscles pectinés.' },
+{ question: 'Quel est le rôle des muscles pectinés ?', answer: 'Participer à l\u2019expulsion du sang de l\u2019atrium vers le ventricule lors de la contraction atriale.' },
+{ question: 'Quels orifices se trouvent sur la paroi supérieure de l\u2019atrium droit ?', answer: 'L\u2019orifice de la veine cave supérieure (VCS) et l\u2019orifice de l\u2019auricule droite.' },
+{ question: 'La veine cave supérieure possède-t-elle une valvule à son abouchement ?', answer: 'Non, contrairement à la veine cave inférieure.' },
+{ question: 'Quels orifices se trouvent sur la paroi inférieure de l\u2019atrium droit ?', answer: 'L\u2019orifice de la veine cave inférieure (environ 3 cm, avec valvule) et l\u2019orifice du sinus coronaire (environ 12 mm).' },
+{ question: 'Quel est le diamètre approximatif de l\u2019orifice de la VCI ?', answer: 'Environ 3 cm.' },
+{ question: 'Quel est le diamètre approximatif de l\u2019orifice du sinus coronaire ?', answer: 'Environ 12 mm.' },
+{ question: 'Qu\u2019est-ce que le sinus coronaire ?', answer: 'La principale veine de drainage du cœur, collectant le sang veineux coronaire et se drainant dans l\u2019atrium droit.' },
+{ question: 'Quel orifice se trouve sur la paroi antérieure de l\u2019atrium droit ?', answer: 'L\u2019orifice atrio-ventriculaire droit (orifice de la valve tricuspide).' },
+{ question: 'Qu\u2019est-ce que la crête terminale ?', answer: 'Un relief musculaire de la paroi postérieure de l\u2019atrium droit séparant le sinus des veines caves (lisse) des muscles pectinés (antérieur).' },
+{ question: 'Que sépare la crête terminale dans l\u2019atrium droit ?', answer: 'La partie postérieure lisse (sinus venarum/sinus des veines caves) de la partie antérieure rugueuse (muscles pectinés).' },
+{ question: 'Quel tendon est retrouvé dans la paroi postérieure de l\u2019atrium droit ?', answer: 'Le tendon de Todaro, qui participe à la délimitation du triangle de Koch.' },
+{ question: 'Combien de parois possède le ventricule droit ?', answer: 'Trois parois : antérieure, inférieure et septale.' },
+{ question: 'Comment est délimitée la paroi antérieure du ventricule droit ?', answer: 'Elle forme le bord droit et la face antérieure du cœur, située entre le sillon interventriculaire antérieur (IVA) et le sillon AV droit.' },
+{ question: 'Qu\u2019est-ce que la crête supraventriculaire (éperon de Wolf) ?', answer: 'Un relief musculaire de la paroi septale du ventricule droit séparant le cône artériel (infundibulum pulmonaire) du reste de la cavité.' },
+{ question: 'Que sépare l\u2019éperon de Wolf ?', answer: 'Le cône artériel (chambre de chasse vers le tronc pulmonaire) du reste du ventricule droit (chambre de remplissage).' },
+{ question: 'Quelles sont les deux portions de la paroi septale du ventricule droit ?', answer: 'Une portion musculaire antérieure épaisse et une portion membraneuse postérieure plus fine.' },
+{ question: 'Pourquoi la portion membraneuse du septum est-elle cliniquement importante ?', answer: 'Car c\u2019est le siège le plus fréquent des communications interventriculaires (CIV) congénitales.' },
+{ question: 'Qu\u2019est-ce que le septum interventriculaire ?', answer: 'La cloison musculaire et membraneuse séparant les deux ventricules.' },
+{ question: 'Qu\u2019est-ce que le septum inter-atrio-ventriculaire ?', answer: 'La zone du septum située entre l\u2019atrium droit et le ventricule gauche, correspondant à la portion membraneuse.' },
+{ question: 'Quels sont les trois types de colonnes charnues (saillies musculaires) du ventricule droit ?', answer: 'Les colonnes de 1er ordre (piliers/muscles papillaires), de 2e ordre (ponts musculaires), et de 3e ordre (simples saillies).' },
+{ question: 'Que sont les colonnes charnues de 1er ordre ?', answer: 'Les piliers (muscles papillaires) qui donnent naissance aux cordages tendineux s\u2019insérant sur le bord libre des cuspides.' },
+{ question: 'Que sont les colonnes charnues de 2e ordre ?', answer: 'Des ponts musculaires fixés aux deux extrémités à la paroi ventriculaire, comme la trabécule septo-marginale.' },
+{ question: 'Qu\u2019est-ce que la trabécule septo-marginale ?', answer: 'Une colonne charnue de 2e ordre reliant le septum à la paroi libre du ventricule droit, contenant le faisceau droit du système de conduction.' },
+{ question: 'Que sont les colonnes charnues de 3e ordre ?', answer: 'De simples saillies musculaires adhérentes à la paroi sur toute leur longueur.' },
+{ question: 'Sur quoi s\u2019insèrent les cordages tendineux du ventricule droit ?', answer: 'Sur le bord libre des cuspides de la valve tricuspide.' },
+{ question: 'Combien de cuspides possède la valve tricuspide ?', answer: 'Trois cuspides : antérieure, postérieure et septale.' },
+{ question: 'Quel est le rôle des cordages tendineux ?', answer: 'Empêcher le prolapsus (retournement) des cuspides dans l\u2019atrium lors de la systole ventriculaire.' },
+{ question: 'Quelle est la forme générale de l\u2019atrium gauche ?', answer: 'Une forme ovoïde.' },
+{ question: 'Combien de veines pulmonaires se drainent dans l\u2019atrium gauche ?', answer: 'Quatre veines pulmonaires (2 droites et 2 gauches).' },
+{ question: 'Qu\u2019est-ce que l\u2019auricule gauche ?', answer: 'Une expansion en forme de doigt de gant de l\u2019atrium gauche, entourant le tronc pulmonaire.' },
+{ question: 'Pourquoi l\u2019auricule gauche est-elle cliniquement importante ?', answer: 'Car c\u2019est un site fréquent de formation de thrombus en cas de fibrillation atriale.' },
+{ question: 'Que trouve-t-on sur la paroi postérieure de l\u2019atrium gauche ?', answer: 'Les 4 orifices des veines pulmonaires et le sinus oblique du péricarde en arrière.' },
+{ question: 'Qu\u2019est-ce que le sinus oblique du péricarde ?', answer: 'Un cul-de-sac du péricarde séreux situé en arrière de l\u2019atrium gauche, entre les veines pulmonaires.' },
+{ question: 'Quelle valvule est présente dans la paroi septale de l\u2019atrium gauche ?', answer: 'La valvule du foramen ovale (versant gauche de la fosse ovale).' },
+{ question: 'Quel orifice se trouve dans la paroi antérieure de l\u2019atrium gauche ?', answer: 'L\u2019orifice atrio-ventriculaire gauche (orifice mitral).' },
+{ question: 'Quels sont les rapports anatomiques de l\u2019atrium gauche ?', answer: 'Le sinus oblique du péricarde en arrière, le sinus transverse en haut, l\u2019artère pulmonaire droite et la bronche gauche.' },
+{ question: 'Qu\u2019est-ce que le sinus transverse du péricarde ?', answer: 'Un passage du péricarde séreux situé entre l\u2019aorte/tronc pulmonaire en avant et les atriums en arrière.' },
+{ question: 'Quelle est la forme générale du ventricule gauche ?', answer: 'Un cône dont la pointe est l\u2019apex du cœur.' },
+{ question: 'Quels sont les deux bords du ventricule gauche ?', answer: 'Deux bords mousses : antéro-postérieur (gauche) et postéro-inférieur (droit).' },
+{ question: 'Qu\u2019est-ce que l\u2019apex du cœur ?', answer: 'Le sommet du ventricule gauche, correspondant à la pointe du cœur dirigée vers le bas, l\u2019avant et la gauche.' },
+{ question: 'Que comprend la base du ventricule gauche ?', answer: 'La valve mitrale et l\u2019ostium aortique.' },
+{ question: 'Comment est l\u2019épaisseur de la paroi du ventricule gauche par rapport au ventricule droit ?', answer: 'Beaucoup plus épaisse (environ 3 fois), car le VG doit propulser le sang dans la grande circulation à haute pression.' },
+{ question: 'Pourquoi la paroi du ventricule gauche est-elle plus épaisse ?', answer: 'Car le VG génère une pression systolique beaucoup plus élevée que le VD pour perfuser la circulation systémique.' },
+{ question: 'Combien de cuspides possède la valve mitrale ?', answer: 'Deux cuspides : antérieure (grande) et postérieure (petite).' },
+{ question: 'Quels sont les deux muscles papillaires du ventricule gauche ?', answer: 'Le pilier antéro-latéral et le pilier postéro-médial (ou postéro-inférieur).' },
+{ question: 'Où s\u2019insèrent les cordages tendineux du ventricule gauche ?', answer: 'Sur la face ventriculaire et le bord libre des cuspides mitrales.' },
+{ question: 'Qu\u2019est-ce que la chambre de remplissage du ventricule gauche ?', answer: 'L\u2019espace situé entre la paroi gauche de la cuspide mitrale antérieure et la paroi libre du VG, où le sang arrive de l\u2019atrium.' },
+{ question: 'Qu\u2019est-ce que la chambre de chasse (canal aortique) du ventricule gauche ?', answer: 'L\u2019espace situé entre la cuspide antérieure de la mitrale et le septum interventriculaire, orientant le sang vers l\u2019aorte.' },
+{ question: 'Quelle cuspide mitrale sépare la chambre de remplissage de la chambre de chasse ?', answer: 'La cuspide antérieure (grande cuspide mitrale), qui forme une cloison fonctionnelle.' },
+{ question: 'Par où le sang entre-t-il dans le ventricule gauche ?', answer: 'Par l\u2019orifice mitral (valve mitrale), depuis l\u2019atrium gauche.' },
+{ question: 'Par où le sang sort-il du ventricule gauche ?', answer: 'Par l\u2019ostium aortique (valve aortique), vers l\u2019aorte ascendante.' },
+{ question: 'Quelle est la différence entre la valve mitrale et la valve tricuspide ?', answer: 'La mitrale possède 2 cuspides et est à gauche, la tricuspide possède 3 cuspides et est à droite.' },
+{ question: 'Quelle est la paroi du ventricule droit qui est convexe vers le VD ?', answer: 'La paroi septale, car le septum bombe vers le VD en raison de la pression plus élevée dans le VG.' },
+{ question: 'Pourquoi le septum interventriculaire bombe-t-il vers le ventricule droit ?', answer: 'En raison de la pression plus élevée dans le ventricule gauche par rapport au ventricule droit.' },
+{ question: 'Qu\u2019est-ce que le cône artériel (infundibulum) du ventricule droit ?', answer: 'La chambre de chasse du VD, en forme d\u2019entonnoir, conduisant le sang vers le tronc pulmonaire.' },
+{ question: 'Quel sang circule dans le cœur droit ?', answer: 'Du sang désoxygéné (veineux), provenant de la circulation systémique.' },
+{ question: 'Quel sang circule dans le cœur gauche ?', answer: 'Du sang oxygéné (artériel), provenant des poumons via les veines pulmonaires.' },
+{ question: 'Quel est le trajet du sang dans le cœur droit ?', answer: 'VCS/VCI → atrium droit → valve tricuspide → ventricule droit → valve pulmonaire → tronc pulmonaire → poumons.' },
+{ question: 'Quel est le trajet du sang dans le cœur gauche ?', answer: 'Veines pulmonaires → atrium gauche → valve mitrale → ventricule gauche → valve aortique → aorte → circulation systémique.' },
+{ question: 'Qu\u2019est-ce que la valvule de la VCI ?', answer: 'Une valvule (valvule d\u2019Eustache) présente à l\u2019abouchement de la veine cave inférieure dans l\u2019atrium droit.' },
+{ question: 'Quel rôle jouait la valvule de la VCI chez le fœtus ?', answer: 'Elle orientait le sang oxygéné de la VCI vers le foramen ovale pour passer dans l\u2019atrium gauche.' },
+{ question: 'Combien de valves le cœur possède-t-il au total et lesquelles ?', answer: 'Quatre valves : tricuspide, pulmonaire, mitrale et aortique.' },
+{ question: 'Quelles sont les deux valves atrio-ventriculaires ?', answer: 'La valve tricuspide (droite) et la valve mitrale (gauche).' },
+{ question: 'Quelles sont les deux valves sigmoïdes (semi-lunaires) ?', answer: 'La valve pulmonaire et la valve aortique.' },
+{ question: 'Qu\u2019est-ce que la paroi du VD comprise entre les sillons IVA et AV droit ?', answer: 'La paroi antérieure du ventricule droit, formant le bord droit et la face antérieure du cœur.' },
+{ question: 'De quoi est composée la valve mitrale ?', answer: 'D\u2019un anneau fibreux et de deux cuspides (antérieure et postérieure) reliées aux piliers par des cordages.' },
+{ question: 'Comment le sang veineux coronaire rejoint-il l\u2019atrium droit ?', answer: 'Par le sinus coronaire qui se draine dans la paroi inférieure de l\u2019atrium droit.' },
+{ question: 'Où se projette l\u2019apex du cœur à la surface thoracique ?', answer: 'Au niveau du 5e espace intercostal gauche, sur la ligne médioclaviculaire.' },
+{ question: 'Quelle est l\u2019épaisseur approximative de la paroi du ventricule gauche ?', answer: 'Environ 12 à 15 mm (contre 3 à 5 mm pour le VD).' },
+{ question: 'Quelle est l\u2019épaisseur approximative de la paroi du ventricule droit ?', answer: 'Environ 3 à 5 mm.' },
+{ question: 'Quelle valve est située entre l\u2019atrium droit et le ventricule droit ?', answer: 'La valve tricuspide.' },
+{ question: 'Quelle valve est située entre l\u2019atrium gauche et le ventricule gauche ?', answer: 'La valve mitrale (bicuspide).' },
+{ question: 'Pourquoi dit-on que le sang fait un trajet en U dans le ventricule gauche ?', answer: 'Car il entre par la chambre de remplissage (postéro-latéral) et sort par la chambre de chasse (antéro-médial), contournant la cuspide antérieure mitrale.' },
+{ question: 'En quoi la paroi de l\u2019atrium gauche est-elle différente de celle de l\u2019atrium droit ?', answer: 'L\u2019atrium gauche est plus lisse, ne possède pas de muscles pectinés importants sauf dans l\u2019auricule.' },
+{ question: 'Quel est le nombre de cuspides de chaque valve sigmoïde ?', answer: 'Trois cuspides semi-lunaires (aussi bien pour la valve aortique que pour la valve pulmonaire).' },
+{ question: 'Qu\u2019est-ce que l\u2019auricule droite ?', answer: 'Une expansion triangulaire de l\u2019atrium droit, tapissée de muscles pectinés, située en avant de la VCS.' },
+{ question: 'Pourquoi la VCI possède-t-elle une valvule et pas la VCS ?', answer: 'La valvule de la VCI est un vestige embryologique qui orientait le sang fœtal vers le foramen ovale ; la VCS n\u2019avait pas ce rôle.' },
+{ question: 'Qu\u2019est-ce que la valvule de Thébésius ?', answer: 'La valvule qui recouvre partiellement l\u2019orifice du sinus coronaire dans l\u2019atrium droit.' },
+{ question: 'Qu\u2019est-ce que le sinus venarum (sinus des veines caves) ?', answer: 'La partie postérieure lisse de l\u2019atrium droit, dérivée du sinus veineux embryonnaire, recevant les veines caves.' },
+{ question: 'Quelle est la pression systolique normale dans le ventricule droit ?', answer: 'Environ 25 mmHg (basse pression, circulation pulmonaire).' },
+{ question: 'Quelle est la pression systolique normale dans le ventricule gauche ?', answer: 'Environ 120 mmHg (haute pression, circulation systémique).' },
+{ question: 'Pourquoi le rapport d\u2019épaisseur VG/VD est-il d\u2019environ 3:1 ?', answer: 'Car le VG doit générer une pression 4 à 5 fois supérieure à celle du VD pour propulser le sang dans la circulation systémique.' },
+{ question: 'Qu\u2019est-ce que le faisceau de His et où passe-t-il dans le septum ?', answer: 'Le faisceau de conduction cardiaque qui traverse la portion membraneuse du septum IV puis se divise en branches droite et gauche.' },
+{ question: 'Qu\u2019est-ce que l\u2019infundibulum pulmonaire ?', answer: 'La chambre de chasse du ventricule droit, en forme d\u2019entonnoir, entre la crête supraventriculaire et la valve pulmonaire.' },
+{ question: 'Quels sont les rapports du sinus transverse du péricarde ?', answer: 'En avant : aorte ascendante et tronc pulmonaire ; en arrière : face antérieure des atriums et VCS.' },
+{ question: 'Quel est le rôle physiologique des veines pulmonaires ?', answer: 'Ramener le sang oxygéné des poumons vers l\u2019atrium gauche (ce sont les seules veines transportant du sang artériel).' },
+{ question: 'Qu\u2019est-ce que la grande cuspide mitrale ?', answer: 'La cuspide antérieure de la valve mitrale, plus large, qui sépare fonctionnellement la chambre de remplissage de la chambre de chasse.' },
+{ question: 'Qu\u2019est-ce que la petite cuspide mitrale ?', answer: 'La cuspide postérieure de la valve mitrale, plus petite, qui participe à l\u2019étanchéité de la valve.' },
+{ question: 'Comment les muscles papillaires préviennent-ils le prolapsus valvulaire ?', answer: 'En se contractant simultanément avec le myocarde ventriculaire, ils maintiennent la tension des cordages et empêchent les cuspides de s\u2019inverser.' },
+{ question: 'Qu\u2019est-ce que la fosse ovale perméable (foramen ovale perméable) ?', answer: 'Une persistance du foramen ovale après la naissance, présente chez environ 25% de la population, pouvant permettre un shunt droite-gauche.' },
+{ question: 'Quelle est la particularité de la paroi septale de l\u2019atrium gauche ?', answer: 'Elle présente la valvule du foramen ovale qui, après la naissance, fusionne habituellement avec le septum pour fermer le foramen ovale.' },
+{ question: 'Qu\u2019est-ce que la communication interventriculaire (CIV) ?', answer: 'Une cardiopathie congénitale fréquente consistant en un défaut de fermeture du septum interventriculaire, le plus souvent au niveau de la portion membraneuse.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../../index.html">Accueil</a></li>
+<li><a href="../../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../../assets/js/jquery.min.js"></script>
+<script src="../../../assets/js/browser.min.js"></script>
+<script src="../../../assets/js/breakpoints.min.js"></script>
+<script src="../../../assets/js/util.js"></script>
+<script src="../../../assets/js/main.js"></script>
+<script src="../../../assets/js/darkmode.js"></script>
+<script src="../../../assets/js/favorites.js"></script>
+
+</body>
+</html>

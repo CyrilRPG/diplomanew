@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Pharmacométrie</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que la pharmacométrie ?', answer: 'C’est la quantification de l’action des médicaments sur l’organisme.' },
+{ question: 'Quel est l’objectif principal de la pharmacométrie ?', answer: 'Mesurer et comparer quantitativement les effets des médicaments.' },
+{ question: 'Quels sont les deux grands axes étudiés en pharmacométrie ?', answer: 'L’affinité ligand-récepteur et la quantification de l’effet pharmacologique.' },
+{ question: 'Qu’est-ce que l’affinité en pharmacologie ?', answer: 'L’intensité de la liaison entre un ligand et son récepteur.' },
+{ question: 'Quelle est la formule de la constante de dissociation KD ?', answer: 'KD = ([L] × [R]) / [LR], où [L] = ligand libre, [R] = récepteur libre, [LR] = complexe ligand-récepteur.' },
+{ question: 'Que représente [L] dans la formule du KD ?', answer: 'La concentration en ligand libre.' },
+{ question: 'Que représente [R] dans la formule du KD ?', answer: 'La concentration en récepteur libre.' },
+{ question: 'Que représente [LR] dans la formule du KD ?', answer: 'La concentration du complexe ligand-récepteur formé.' },
+{ question: 'Que signifie un KD faible ?', answer: 'Une affinité forte du ligand pour le récepteur (liaison très stable).' },
+{ question: 'Que signifie un KD élevé ?', answer: 'Une affinité faible du ligand pour le récepteur (liaison peu stable).' },
+{ question: 'Quel type de liaison caractérise l’interaction ligand-récepteur mesurée par le KD ?', answer: 'Une liaison réversible.' },
+{ question: 'Si le KD du médicament A est 10 nM et celui de B est 100 nM, lequel a la plus forte affinité ?', answer: 'Le médicament A, car son KD est plus faible.' },
+{ question: 'Comment varie le KD quand l’affinité augmente ?', answer: 'Le KD diminue.' },
+{ question: 'Quand la concentration du ligand est égale au KD, quel pourcentage de récepteurs est occupé ?', answer: '50 % des récepteurs sont occupés.' },
+{ question: 'Que se passe-t-il quand [L] est très supérieur au KD ?', answer: 'La quasi-totalité des récepteurs est occupée, l’effet est proche de l’Emax.' },
+{ question: 'Que se passe-t-il quand [L] est très inférieur au KD ?', answer: 'Très peu de récepteurs sont occupés, l’effet est faible.' },
+{ question: 'Quelle relation étudie-t-on in vitro pour quantifier l’effet d’un médicament ?', answer: 'La relation concentration-effet.' },
+{ question: 'Quelle relation étudie-t-on sur un organisme entier pour quantifier l’effet ?', answer: 'La relation dose-effet.' },
+{ question: 'Quelle est la différence entre relation concentration-effet et dose-effet ?', answer: 'La concentration-effet est étudiée in vitro, la dose-effet est étudiée sur l’organisme entier.' },
+{ question: 'Sur quoi repose la quantification de l’effet d’un médicament ?', answer: 'Sur la relation entre l’effet observé et la quantité de médicament utilisée.' },
+{ question: 'Qu’énonce la théorie d’occupation des récepteurs ?', answer: 'Plus le nombre de récepteurs occupés augmente, plus l’effet augmente, jusqu’à un plateau (Emax).' },
+{ question: 'Que représente le plateau dans la théorie d’occupation des récepteurs ?', answer: 'L’effet maximal (Emax), atteint quand tous les récepteurs disponibles sont occupés.' },
+{ question: 'Comment évolue l’effet quand on augmente la concentration d’un agoniste ?', answer: 'L’effet augmente progressivement puis plafonne à l’Emax.' },
+{ question: 'Pourquoi l’effet plafonne-t-il à l’Emax ?', answer: 'Car le nombre de récepteurs est fini : une fois tous occupés, l’effet ne peut plus augmenter.' },
+{ question: 'Qu’est-ce que l’Emax ?', answer: 'L’effet maximal qu’un médicament peut produire.' },
+{ question: 'L’Emax dépend-il de la dose administrée ?', answer: 'Non, c’est une caractéristique intrinsèque du médicament.' },
+{ question: 'Qu’est-ce que la DE50 ?', answer: 'La dose provoquant 50 % de l’effet maximal.' },
+{ question: 'Qu’est-ce que la CE50 ?', answer: 'La concentration provoquant 50 % de l’effet maximal.' },
+{ question: 'Quelle est la différence entre DE50 et CE50 ?', answer: 'La DE50 s’applique in vivo (dose), la CE50 s’applique in vitro (concentration).' },
+{ question: 'Qu’indique une CE50 faible ?', answer: 'Que le médicament est puissant : il faut peu de substance pour atteindre 50 % de l’Emax.' },
+{ question: 'Qu’indique une DE50 élevée ?', answer: 'Que le médicament est peu puissant : il faut une forte dose pour atteindre 50 % de l’Emax.' },
+{ question: 'Comment déterminer graphiquement la DE50 sur une courbe dose-effet ?', answer: 'On repère 50 % de l’Emax en ordonnée et on lit la dose correspondante en abscisse.' },
+{ question: 'Quelle transformation applique-t-on en coordonnées semi-logarithmiques ?', answer: 'On applique le log10 à l’axe des abscisses (doses ou concentrations).' },
+{ question: 'Quelle forme prend la courbe dose-effet en coordonnées semi-logarithmiques ?', answer: 'Une courbe sigmoïde (en S).' },
+{ question: 'Quels sont les avantages de la représentation semi-logarithmique ?', answer: 'Linéarisation de la partie centrale et détermination facile de DE50/CE50 et Emax.' },
+{ question: 'Pourquoi la linéarisation de la partie centrale est-elle utile ?', answer: 'Elle permet de comparer facilement les courbes de différents médicaments.' },
+{ question: 'Quel axe est transformé en log en coordonnées semi-logarithmiques ?', answer: 'L’axe des abscisses (concentrations ou doses).' },
+{ question: 'L’axe des ordonnées est-il transformé en semi-log ?', answer: 'Non, l’effet reste en échelle linéaire.' },
+{ question: 'Quelle est la forme de la courbe dose-effet en coordonnées linéaires (non transformées) ?', answer: 'Une hyperbole.' },
+{ question: 'Pourquoi préfère-t-on la représentation semi-log à la représentation linéaire ?', answer: 'Elle permet de visualiser l’ensemble de la courbe et facilite les comparaisons entre médicaments.' },
+{ question: 'Comment peut-on lire directement l’Emax sur une courbe semi-log ?', answer: 'C’est la valeur du plateau atteint par la courbe.' },
+{ question: 'Quels sont les deux critères permettant de comparer des médicaments ?', answer: 'L’efficacité (basée sur l’Emax) et la puissance (basée sur la DE50/CE50).' },
+{ question: 'Comment définit-on l’efficacité d’un médicament ?', answer: 'Par la valeur de son Emax : plus l’Emax est élevé, plus le médicament est efficace.' },
+{ question: 'L’efficacité dépend-elle de la dose ?', answer: 'Non, elle est indépendante de la dose.' },
+{ question: 'Comment définit-on la puissance d’un médicament ?', answer: 'Par la dose nécessaire pour produire un effet donné : plus la dose est faible, plus le médicament est puissant.' },
+{ question: 'La puissance dépend-elle de l’Emax ?', answer: 'Non, elle est indépendante de l’Emax.' },
+{ question: 'Un médicament peut-il être puissant mais peu efficace ?', answer: 'Oui, s’il agit à faible dose (DE50 basse) mais possède un Emax faible.' },
+{ question: 'Un médicament peut-il être efficace mais peu puissant ?', answer: 'Oui, s’il possède un Emax élevé mais nécessite de fortes doses (DE50 élevée).' },
+{ question: 'Comment compare-t-on la puissance de deux médicaments sur une courbe semi-log ?', answer: 'Le médicament dont la courbe est le plus à gauche est le plus puissant.' },
+{ question: 'Comment compare-t-on l’efficacité de deux médicaments sur une courbe semi-log ?', answer: 'Le médicament dont le plateau (Emax) est le plus haut est le plus efficace.' },
+{ question: 'Deux médicaments ont le même Emax mais des DE50 différentes : que peut-on dire ?', answer: 'Ils ont la même efficacité mais une puissance différente.' },
+{ question: 'Deux médicaments ont la même DE50 mais des Emax différents : que peut-on dire ?', answer: 'Ils ont la même puissance mais une efficacité différente.' },
+{ question: 'Qu’est-ce qu’un antagoniste en pharmacologie ?', answer: 'Un ligand qui se fixe sur un récepteur sans produire d’effet propre et bloque l’action d’un agoniste.' },
+{ question: 'Qu’est-ce qu’un antagoniste neutre ?', answer: 'Un ligand qui se fixe sur un récepteur sans induire d’effet pharmacologique propre.' },
+{ question: 'Que fait un antagoniste neutre quand il se lie au récepteur ?', answer: 'Il empêche la liaison d’un agoniste sans modifier l’activité basale du récepteur.' },
+{ question: 'Quels sont les deux types d’antagonistes ?', answer: 'Les antagonistes compétitifs (réversibles) et les antagonistes non compétitifs (irréversibles).' },
+{ question: 'Comment agit un antagoniste compétitif ?', answer: 'Il entre en compétition avec l’agoniste pour le même site de fixation sur le récepteur.' },
+{ question: 'L’antagonisme compétitif est-il réversible ?', answer: 'Oui, il est réversible ou surmontable.' },
+{ question: 'Pourquoi dit-on que l’antagonisme compétitif est surmontable ?', answer: 'Car en augmentant la concentration d’agoniste, on peut déplacer l’antagoniste et retrouver l’Emax.' },
+{ question: 'Que se passe-t-il sur la courbe dose-effet en présence d’un antagoniste compétitif ?', answer: 'La courbe se déplace vers la droite (augmentation de la DE50).' },
+{ question: 'L’Emax est-il modifié par un antagoniste compétitif ?', answer: 'Non, l’Emax est préservé.' },
+{ question: 'La pente de la courbe dose-effet est-elle modifiée par un antagoniste compétitif ?', answer: 'Non, la pente est conservée en représentation semi-logarithmique.' },
+{ question: 'Quels sont les trois signes caractéristiques d’un antagonisme compétitif sur une courbe ?', answer: 'Déplacement vers la droite, Emax inchangé, pente conservée.' },
+{ question: 'Que signifie le déplacement vers la droite en antagonisme compétitif ?', answer: 'Il faut une dose plus élevée d’agoniste pour obtenir le même effet.' },
+{ question: 'Si on augmente la concentration d’antagoniste compétitif, que devient la courbe ?', answer: 'Elle se déplace davantage vers la droite mais l’Emax reste identique.' },
+{ question: 'Un antagoniste compétitif modifie-t-il la DE50 de l’agoniste ?', answer: 'Oui, il l’augmente (la courbe se décale vers la droite).' },
+{ question: 'Pourquoi la pente est-elle conservée en antagonisme compétitif ?', answer: 'Car le mécanisme d’action reste le même, seule la concentration nécessaire d’agoniste change.' },
+{ question: 'Comment agit un antagoniste non compétitif ?', answer: 'Il se fixe de manière irréversible sur le récepteur.' },
+{ question: 'L’antagonisme non compétitif est-il surmontable ?', answer: 'Non, l’augmentation d’agoniste ne permet pas de retrouver l’Emax.' },
+{ question: 'Que devient l’Emax en présence d’un antagoniste non compétitif ?', answer: 'L’Emax est diminué et ne peut pas être retrouvé.' },
+{ question: 'Que devient la pente de la courbe en présence d’un antagoniste non compétitif ?', answer: 'La pente n’est pas conservée.' },
+{ question: 'Quels sont les signes caractéristiques d’un antagonisme non compétitif sur une courbe ?', answer: 'Diminution de l’Emax, pente non conservée, effet non surmontable.' },
+{ question: 'Pourquoi l’Emax n’est-il pas retrouvé en antagonisme non compétitif ?', answer: 'Car les récepteurs sont bloqués irréversiblement et ne sont plus disponibles.' },
+{ question: 'Comment différencier graphiquement un antagonisme compétitif d’un non compétitif ?', answer: 'Compétitif : déplacement parallèle à droite, Emax conservé. Non compétitif : Emax diminué, pente modifiée.' },
+{ question: 'Un antagoniste non compétitif modifie-t-il le nombre de récepteurs fonctionnels ?', answer: 'Oui, il réduit le nombre de récepteurs disponibles de façon irréversible.' },
+{ question: 'Quelle est la conséquence clinique d’un antagonisme compétitif ?', answer: 'On peut surmonter le blocage en augmentant la dose d’agoniste.' },
+{ question: 'Quelle est la conséquence clinique d’un antagonisme non compétitif ?', answer: 'L’effet maximal ne peut pas être récupéré, ce qui limite les options thérapeutiques.' },
+{ question: 'Un antagoniste compétitif se fixe-t-il sur le même site que l’agoniste ?', answer: 'Oui, ils sont en compétition pour le même site de fixation.' },
+{ question: 'Un antagoniste non compétitif se fixe-t-il toujours sur le même site que l’agoniste ?', answer: 'Pas nécessairement, il peut se fixer sur un site allostérique.' },
+{ question: 'Qu’est-ce que la sélectivité d’un médicament ?', answer: 'La capacité d’un ligand à se fixer préférentiellement sur certaines cibles plutôt que d’autres.' },
+{ question: 'De quoi dépend la sélectivité d’un ligand ?', answer: 'Du différentiel d’affinité entre les différentes cibles (récepteurs).' },
+{ question: 'Qu’est-ce qu’une sélectivité importante (forte) ?', answer: 'Un grand différentiel d’affinité entre la cible principale et les cibles secondaires.' },
+{ question: 'Qu’est-ce qu’une sélectivité faible (peu importante) ?', answer: 'Un petit différentiel d’affinité entre la cible principale et les cibles secondaires.' },
+{ question: 'Quelles conséquences a une forte sélectivité quand la dose augmente ?', answer: 'L’effet principal augmente avec peu d’effets secondaires, même à forte dose.' },
+{ question: 'Quelles conséquences a une faible sélectivité quand la dose augmente ?', answer: 'Perte de sélectivité dose-dépendante avec apparition d’effets liés aux autres cibles.' },
+{ question: 'Pourquoi un ligand très sélectif provoque-t-il peu d’effets secondaires ?', answer: 'Car son affinité pour la cible principale est très supérieure à celle pour les autres cibles.' },
+{ question: 'Comment évolue la sélectivité en fonction de la dose pour un ligand peu sélectif ?', answer: 'Elle diminue quand la dose augmente car les cibles secondaires sont progressivement activées.' },
+{ question: 'La sélectivité est-elle une propriété absolue ou relative ?', answer: 'Relative : elle dépend de la dose et du différentiel d’affinité.' },
+{ question: 'Quel est le lien entre sélectivité et effets secondaires ?', answer: 'Plus la sélectivité est grande, moins il y a d’effets secondaires liés à d’autres cibles.' },
+{ question: 'Quel est le rôle fondamental de la dose dans la sélectivité ?', answer: 'Plus la dose augmente, plus les effets (désirés ou non) augmentent.' },
+{ question: 'Quelle est la différence entre un agoniste et un antagoniste ?', answer: 'L’agoniste active le récepteur et produit un effet, l’antagoniste bloque sans effet propre.' },
+{ question: 'Qu’est-ce qu’un agoniste complet ?', answer: 'Un ligand capable d’atteindre l’Emax du système.' },
+{ question: 'Peut-on avoir une forte affinité sans effet pharmacologique ?', answer: 'Oui, c’est le cas des antagonistes neutres qui se lient fortement sans produire d’effet.' },
+{ question: 'Comment la pharmacométrie aide-t-elle au choix thérapeutique ?', answer: 'En permettant de comparer objectivement efficacité, puissance et sélectivité des médicaments.' },
+{ question: 'Qu’observe-t-on sur deux courbes d’agonistes complets ayant le même Emax mais des puissances différentes ?', answer: 'Deux courbes parallèles au même plateau, décalées horizontalement.' },
+{ question: 'Le KD mesure-t-il l’efficacité ou l’affinité ?', answer: 'L’affinité.' },
+{ question: 'Quelle est l’unité typique du KD ?', answer: 'Une concentration, par exemple en nM (nanomolaire) ou µM (micromolaire).' },
+{ question: 'Un ligand très sélectif peut-il perdre sa sélectivité à très forte dose ?', answer: 'Difficilement, car le différentiel d’affinité est trop important pour que les cibles secondaires soient atteintes.' },
+{ question: 'Si on augmente la dose d’un agoniste face à un antagoniste compétitif, comment évolue l’effet ?', answer: 'L’effet augmente et peut retrouver l’Emax initial.' },
+{ question: 'En quoi consiste la comparaison de médicaments en pharmacométrie ?', answer: 'On compare leur efficacité (Emax), leur puissance (DE50/CE50) et leur sélectivité.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

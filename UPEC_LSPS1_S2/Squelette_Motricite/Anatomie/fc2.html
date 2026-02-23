@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../../images/diploma.jpeg" />
+<script src="../../../security.js" defer></script>
+<script src="../../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Squelette et Motricité - Anatomie</h1><h2>Os de la face</h2></div><span class="image main"><img src="../../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Quel nerf assure l’innervation sensitive de la face ?', answer: 'Le nerf trijumeau (V) avec ses trois branches V1, V2 et V3.' },
+{ question: 'Quelles sont les trois branches du nerf trijumeau ?', answer: 'V1 (ophtalmique), V2 (maxillaire) et V3 (mandibulaire).' },
+{ question: 'Par où sort la branche V1 (ophtalmique) du crâne ?', answer: 'Par la fissure orbitaire supérieure.' },
+{ question: 'Quelle zone de la face innerve la branche V1 ?', answer: 'La partie supérieure de la face.' },
+{ question: 'Quelle branche du trijumeau est le V2 ?', answer: 'La branche maxillaire.' },
+{ question: 'Quelle branche du trijumeau est le V3 ?', answer: 'La branche mandibulaire.' },
+{ question: 'L’os frontal est-il pair ou impair ?', answer: 'Impair.' },
+{ question: 'Quel rôle joue l’os frontal dans la cavité orbitaire ?', answer: 'Il forme le toit de la cavité orbitaire.' },
+{ question: 'Quelle structure osseuse est présente sur l’os frontal au niveau de l’orbite ?', answer: 'L’échancrure sus-orbitaire.' },
+{ question: 'Quel nerf passe dans l’échancrure sus-orbitaire ?', answer: 'Le nerf frontal, branche du V1 (ophtalmique).' },
+{ question: 'L’os sphénoïde est-il pair ou impair ?', answer: 'Impair.' },
+{ question: 'Quelle partie du sphénoïde constitue le toit de l’orbite ?', answer: 'La petite aile du sphénoïde.' },
+{ question: 'Quelle partie du sphénoïde participe à la face médiale de l’orbite ?', answer: 'La face latérale du corps du sphénoïde.' },
+{ question: 'Quelle partie du sphénoïde forme la face latérale de l’orbite ?', answer: 'La grande aile du sphénoïde.' },
+{ question: 'L’os ethmoïde est-il pair ou impair ?', answer: 'Impair.' },
+{ question: 'L’os zygomatique est-il pair ou impair ?', answer: 'Pair.' },
+{ question: 'L’os lacrymal est-il pair ou impair ?', answer: 'Pair.' },
+{ question: 'Quelle structure traverse l’os lacrymal ?', answer: 'Le canal lacrymo-nasal.' },
+{ question: 'Quel est le rôle du canal lacrymo-nasal ?', answer: 'Il permet le passage des larmes de l’orbite vers les fosses nasales.' },
+{ question: 'L’os nasal est-il pair ou impair ?', answer: 'Pair.' },
+{ question: 'L’os nasal participe-t-il à la cavité orbitaire ?', answer: 'Non, il n’y participe pas.' },
+{ question: 'Le vomer est-il pair ou impair ?', answer: 'Impair.' },
+{ question: 'Quelle structure le vomer contribue-t-il à former ?', answer: 'Le septum nasal (cloison nasale).' },
+{ question: 'Le cornet nasal inférieur est-il pair ou impair ?', answer: 'Pair.' },
+{ question: 'Le cornet nasal inférieur fait-il partie de l’os ethmoïde ?', answer: 'Non, c’est un os indépendant, contrairement aux cornets supérieur et moyen.' },
+{ question: 'Quels cornets nasaux font partie de l’os ethmoïde ?', answer: 'Les cornets nasaux supérieur et moyen.' },
+{ question: 'L’os palatin est-il pair ou impair ?', answer: 'Pair.' },
+{ question: 'L’os maxillaire est-il pair ou impair ?', answer: 'Pair.' },
+{ question: 'Quelle est la particularité volumétrique de l’os maxillaire ?', answer: 'Il est volumineux mais pneumatisé (contient le sinus maxillaire).' },
+{ question: 'Qu’est-ce que le sinus maxillaire ?', answer: 'Une cavité aérienne creusée dans l’os maxillaire.' },
+{ question: 'Avec quoi le sinus maxillaire communique-t-il ?', answer: 'Avec les fosses nasales par les méats.' },
+{ question: 'Quel foramen se trouve sur l’os maxillaire ?', answer: 'Le foramen sous-orbitaire (infraorbitaire).' },
+{ question: 'Quel nerf passe par le foramen sous-orbitaire ?', answer: 'Le nerf sous-orbitaire, branche du V2 (maxillaire).' },
+{ question: 'L’os mandibulaire est-il pair ou impair ?', answer: 'Impair.' },
+{ question: 'Combien de branches montantes possède l’os mandibulaire ?', answer: 'Deux branches montantes.' },
+{ question: 'Combien d’hémi-mandibules composent la mandibule ?', answer: 'Deux hémi-mandibules.' },
+{ question: 'Quelle arcade dentaire porte la mandibule ?', answer: 'L’arcade dentaire inférieure.' },
+{ question: 'Qu’est-ce que le prognathisme ?', answer: 'Une projection excessive de la mandibule vers l’avant.' },
+{ question: 'Qu’est-ce que le rétrognathisme ?', answer: 'Un recul de la mandibule vers l’arrière.' },
+{ question: 'Qu’est-ce que la ligne oblique externe de la mandibule ?', answer: 'Un relief osseux sur la face exocrânienne du corps de la mandibule.' },
+{ question: 'Où se situe le trou mentonnier ?', answer: 'Sur la face exocrânienne du corps de la mandibule.' },
+{ question: 'Quel nerf émerge du trou mentonnier ?', answer: 'Le nerf mentonnier, branche du V3 (mandibulaire).' },
+{ question: 'Qu’est-ce que le bord alvéolaire de la mandibule ?', answer: 'Le rebord supérieur du corps mandibulaire où s’insèrent les dents.' },
+{ question: 'Où se situe l’encoche de l’artère faciale sur la mandibule ?', answer: 'Sur le bord inférieur du corps mandibulaire.' },
+{ question: 'Où s’insère le muscle masséter sur la mandibule ?', answer: 'À la jonction du corps et de la branche montante, au niveau de l’angle mandibulaire.' },
+{ question: 'Qu’est-ce que la ligne oblique interne de la mandibule ?', answer: 'Un relief osseux sur la face endocrânienne du corps mandibulaire.' },
+{ question: 'Que sépare la ligne oblique interne ?', answer: 'La fossette de la glande sublinguale (en haut) et la fossette de la glande sous-maxillaire (en bas).' },
+{ question: 'Où se situe la fossette de la glande sublinguale ?', answer: 'Au-dessus de la ligne oblique interne, sur la face endocrânienne de la mandibule.' },
+{ question: 'Où se situe la fossette de la glande sous-maxillaire ?', answer: 'En dessous de la ligne oblique interne, sur la face endocrânienne de la mandibule.' },
+{ question: 'Quel muscle s’insère sur la face endocrânienne de la mandibule ?', answer: 'Le muscle ptérygoïdien médial.' },
+{ question: 'Que sont les apophyses géni ?', answer: 'Des saillies osseuses sur la face endocrânienne de la mandibule, près de la symphyse.' },
+{ question: 'Quels muscles s’insèrent sur les apophyses géni ?', answer: 'Le muscle génio-hyoïdien et le muscle génio-glosse.' },
+{ question: 'Qu’est-ce que l’épine de Spix ?', answer: 'Un relief osseux sur la face endocrânienne de la branche montante, au-dessus de l’orifice du canal mandibulaire.' },
+{ question: 'Quels sont les deux processus de la branche montante de la mandibule ?', answer: 'Le processus temporal ou coronoïde (antérieur) et le condyle (postérieur).' },
+{ question: 'Lequel est antérieur : le processus temporal ou le condyle ?', answer: 'Le processus temporal (coronoïde) est antérieur.' },
+{ question: 'Lequel est postérieur : le processus temporal ou le condyle ?', answer: 'Le condyle est postérieur.' },
+{ question: 'Où se situe l’orifice du canal mandibulaire ?', answer: 'Sur la face endocrânienne de la branche montante de la mandibule.' },
+{ question: 'Quel nerf pénètre dans le canal mandibulaire ?', answer: 'Le nerf alvéolaire inférieur, branche du V3.' },
+{ question: 'Quel type d’articulation est l’ATM ?', answer: 'Une articulation bicondylienne à ménisque (disque articulaire).' },
+{ question: 'L’ATM est-elle paire ou impaire ?', answer: 'Paire (une de chaque côté).' },
+{ question: 'Quel est le rôle du disque articulaire de l’ATM ?', answer: 'Il divise l’articulation en deux compartiments et permet la rotation et la translation.' },
+{ question: 'Quel mouvement de l’ATM correspond à l’ouverture de la bouche ?', answer: 'La rotation du condyle.' },
+{ question: 'Quel mouvement de l’ATM correspond à la latéralisation de la mâchoire ?', answer: 'La translation du condyle.' },
+{ question: 'Pourquoi l’ATM est-elle considérée comme fragile ?', answer: 'Car elle est sujette aux luxations en raison de sa grande mobilité.' },
+{ question: 'Par quel nerf l’ATM est-elle innervée ?', answer: 'Par le nerf V3 (mandibulaire).' },
+{ question: 'Quel muscle est principalement impliqué dans les mouvements de l’ATM ?', answer: 'Le muscle ptérygoïdien latéral.' },
+{ question: 'Quels éléments constituent l’ATM ?', answer: 'La capsule articulaire, la membrane synoviale, les ligaments et le disque articulaire.' },
+{ question: 'Combien de dents comporte une dentition adulte complète ?', answer: '32 dents.' },
+{ question: 'Combien d’hémi-arcades dentaires y a-t-il ?', answer: '4 hémi-arcades.' },
+{ question: 'Combien de dents comporte une hémi-arcade ?', answer: '8 dents.' },
+{ question: 'Quelle est la formule dentaire d’une hémi-arcade ?', answer: '2 incisives + 1 canine + 2 prémolaires + 3 molaires = 8 dents.' },
+{ question: 'Combien d’incisives par hémi-arcade ?', answer: '2 incisives.' },
+{ question: 'Combien de canines par hémi-arcade ?', answer: '1 canine.' },
+{ question: 'Combien de prémolaires par hémi-arcade ?', answer: '2 prémolaires.' },
+{ question: 'Combien de molaires par hémi-arcade ?', answer: '3 molaires (dont la dent de sagesse).' },
+{ question: 'Combien de dents au total sur une arcade complète (supérieure ou inférieure) ?', answer: '16 dents.' },
+{ question: 'L’os hyoïde est-il rattaché à la face ?', answer: 'Oui, il est rattaché au massif facial.' },
+{ question: 'Où se situe l’os hyoïde ?', answer: 'À la jonction entre le cou et le plancher buccal, en avant et au-dessus du larynx.' },
+{ question: 'L’os hyoïde s’articule-t-il avec un autre os ?', answer: 'Non, c’est le seul os du corps humain qui ne s’articule avec aucun autre os.' },
+{ question: 'Pourquoi l’os hyoïde est-il unique parmi les os du corps ?', answer: 'C’est le seul os non articulé et le seul os mobile de la face.' },
+{ question: 'Au-dessus de quel cartilage se trouve l’os hyoïde ?', answer: 'Au-dessus du cartilage thyroïde.' },
+{ question: 'À quelle vertèbre se projette l’os hyoïde ?', answer: 'Au niveau de C4.' },
+{ question: 'Combien de parties composent l’os hyoïde ?', answer: '5 parties : 1 corps, 2 grandes cornes et 2 petites cornes.' },
+{ question: 'Quelles sont les fonctions de l’os hyoïde ?', answer: 'La déglutition, la parole et la respiration.' },
+{ question: 'L’os hyoïde est-il pair ou impair ?', answer: 'Impair.' },
+{ question: 'Citez les six os impairs de la face.', answer: 'Frontal, sphénoïde, ethmoïde, vomer, mandibulaire et hyoïde.' },
+{ question: 'Citez les six os pairs de la face.', answer: 'Zygomatique, lacrymal, nasal, cornet nasal inférieur, palatin et maxillaire.' },
+{ question: 'Combien d’os impairs composent la face ?', answer: 'Six : frontal, sphénoïde, ethmoïde, vomer, mandibulaire et hyoïde.' },
+{ question: 'Combien d’os pairs composent la face ?', answer: 'Six : zygomatique, lacrymal, nasal, cornet nasal inférieur, palatin et maxillaire.' },
+{ question: 'Quel os forme la pommette ?', answer: 'L’os zygomatique.' },
+{ question: 'Quel os de la face contient un sinus pneumatique majeur ?', answer: 'L’os maxillaire (sinus maxillaire).' },
+{ question: 'Quels os participent à la formation de la cavité orbitaire ?', answer: 'Frontal, sphénoïde, ethmoïde, zygomatique, lacrymal, maxillaire et palatin.' },
+{ question: 'Quel os de la face ne participe PAS à la cavité orbitaire ?', answer: 'L’os nasal.' },
+{ question: 'Quel os forme la partie inférieure du septum nasal ?', answer: 'Le vomer.' },
+{ question: 'Les larmes s’écoulent depuis l’orbite vers où ?', answer: 'Vers les fosses nasales, par le canal lacrymo-nasal de l’os lacrymal.' },
+{ question: 'Quel est le rôle du muscle génio-glosse ?', answer: 'Il participe aux mouvements de la langue (protrusion).' },
+{ question: 'Quel est le rôle du muscle génio-hyoïdien ?', answer: 'Il participe à l’abaissement de la mandibule et à l’élévation de l’os hyoïde.' },
+{ question: 'Qu’est-ce qu’un os pneumatisé ?', answer: 'Un os contenant des cavités aériennes (sinus) qui allègent la structure.' },
+{ question: 'Pourquoi l’os maxillaire est-il qualifié de « volumineux mais pneumatisé » ?', answer: 'Car il est de grande taille mais contient le sinus maxillaire qui le rend plus léger.' },
+{ question: 'Quel est le rapport entre le condyle mandibulaire et l’ATM ?', answer: 'Le condyle est la partie de la mandibule qui s’articule avec l’os temporal pour former l’ATM.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../../index.html">Accueil</a></li>
+<li><a href="../../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../../assets/js/jquery.min.js"></script>
+<script src="../../../assets/js/browser.min.js"></script>
+<script src="../../../assets/js/breakpoints.min.js"></script>
+<script src="../../../assets/js/util.js"></script>
+<script src="../../../assets/js/main.js"></script>
+<script src="../../../assets/js/darkmode.js"></script>
+<script src="../../../assets/js/favorites.js"></script>
+
+</body>
+</html>

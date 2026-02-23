@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Générique et biosimilaire</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce qu’un médicament générique ?', answer: 'C’est une copie d’un médicament princeps dont le brevet de 20 ans est expiré.' },
+{ question: 'Qu’est-ce qu’un médicament princeps ?', answer: 'Le médicament original, le premier commercialisé, protégé par un brevet.' },
+{ question: 'Quelle est la durée de protection d’un brevet pharmaceutique ?', answer: '20 ans.' },
+{ question: 'Quand un générique peut-il être commercialisé ?', answer: 'Après l’expiration du brevet de 20 ans du princeps.' },
+{ question: 'Comment sont nommés les médicaments génériques ?', answer: 'Soit DCI + nom du laboratoire, soit nom fantaisie suivi de « GE ».' },
+{ question: 'Que signifie DCI ?', answer: 'Dénomination Commune Internationale : le nom scientifique du principe actif.' },
+{ question: 'Que signifie le suffixe « GE » dans le nom d’un générique ?', answer: 'Il indique qu’il s’agit d’un médicament générique.' },
+{ question: 'Quels éléments doivent être identiques entre le princeps et le générique ?', answer: 'La composition qualitative et quantitative en principe actif et la forme galénique.' },
+{ question: 'Quelles différences peuvent exister entre un générique et son princeps ?', answer: 'Les procédés de fabrication et les excipients peuvent être différents.' },
+{ question: 'Pourquoi les excipients d’un générique peuvent-ils poser problème ?', answer: 'Ils peuvent modifier l’absorption ou le comportement du principe actif dans l’organisme.' },
+{ question: 'Qu’est-ce qu’un excipient à effet notoire ?', answer: 'Un excipient pouvant provoquer des effets indésirables chez certains patients sensibles.' },
+{ question: 'Qu’est-ce que la bioéquivalence ?', answer: 'La démonstration que le générique et le princeps ont des paramètres pharmacocinétiques comparables.' },
+{ question: 'Quels sont les trois paramètres PK évalués pour la bioéquivalence ?', answer: 'L’AUC (quantité absorbée), la Cmax (vitesse d’absorption) et le Tmax.' },
+{ question: 'Que mesure l’AUC dans l’étude de bioéquivalence ?', answer: 'La quantité totale de principe actif absorbée (aire sous la courbe des concentrations plasmatiques).' },
+{ question: 'Que mesure la Cmax dans l’étude de bioéquivalence ?', answer: 'La concentration plasmatique maximale atteinte, reflétant la vitesse d’absorption.' },
+{ question: 'Que mesure le Tmax ?', answer: 'Le temps nécessaire pour atteindre la concentration plasmatique maximale.' },
+{ question: 'Quelle est la fourchette d’acceptation de bioéquivalence standard ?', answer: 'L’intervalle de confiance à 90 % doit être compris entre 80 et 125 %.' },
+{ question: 'Quelle est la fourchette de bioéquivalence pour les médicaments à marge thérapeutique étroite ?', answer: 'Entre 90 et 111 %.' },
+{ question: 'Qui délivre l’AMM d’un médicament générique en France ?', answer: 'L’ANSM (Agence Nationale de Sécurité du Médicament).' },
+{ question: 'Qu’est-ce qu’un médicament à marge thérapeutique étroite ?', answer: 'Un médicament dont les concentrations toxiques ou inefficaces sont très proches des concentrations efficaces.' },
+{ question: 'Pourquoi les médicaments à marge thérapeutique étroite nécessitent-ils une fourchette plus stricte ?', answer: 'Car un faible écart de concentration peut entraîner une toxicité ou une inefficacité.' },
+{ question: 'Depuis quand le pharmacien peut-il substituer un générique en France ?', answer: 'Depuis 1999.' },
+{ question: 'Le pharmacien peut-il toujours substituer un générique ?', answer: 'Non, il doit tenir compte des excipients notoires et la substitution est impossible si le prescripteur ou le patient s’y oppose.' },
+{ question: 'Dans quels cas la substitution par un générique est-elle interdite ?', answer: 'Si le prescripteur mentionne « Non substituable » ou si le patient s’y oppose.' },
+{ question: 'De combien le prix d’un générique est-il inférieur au princeps ?', answer: 'De 35 à 50 % moins cher.' },
+{ question: 'Sur quelle liste l’ANSM inscrit-elle les génériques validés ?', answer: 'Sur la liste des groupes génériques.' },
+{ question: 'Quelles précautions prendre lors d’un changement de générique pour un médicament à marge étroite ?', answer: 'Adapter avec prudence la posologie et surveiller étroitement le patient.' },
+{ question: 'Qu’est-ce qu’un médicament biosimilaire ?', answer: 'C’est une copie d’un médicament biologique (biotechnologique) dont le brevet est expiré.' },
+{ question: 'Qu’est-ce qu’un médicament biologique ?', answer: 'Un médicament dont la substance active est issue du vivant (produite par des cellules ou des organismes).' },
+{ question: 'Pourquoi un biosimilaire n’est-il jamais strictement identique à son médicament de référence ?', answer: 'Car la production biologique implique des cellules vivantes et une variabilité biologique inévitable.' },
+{ question: 'Pourquoi la reproduction exacte d’un biomédicament est-elle impossible ?', answer: 'En raison de la complexité des molécules biologiques et de la variabilité inhérente au vivant.' },
+{ question: 'Qui délivre l’AMM d’un biosimilaire ?', answer: 'La Commission Européenne, sur avis de l’EMA (Agence Européenne des Médicaments).' },
+{ question: 'Que signifie EMA ?', answer: 'European Medicines Agency (Agence Européenne des Médicaments).' },
+{ question: 'Quelles études sont obligatoires pour obtenir l’AMM d’un biosimilaire ?', answer: 'Des études précliniques et cliniques démontrant la comparabilité en qualité, sécurité et efficacité.' },
+{ question: 'Le pharmacien peut-il substituer un biosimilaire ?', answer: 'Non, la substitution d’un biosimilaire relève exclusivement de la responsabilité du médecin.' },
+{ question: 'Pourquoi les biosimilaires ne sont-ils pas substituables par le pharmacien ?', answer: 'Car ils ne sont pas strictement identiques au biomédicament de référence et la décision relève du médecin.' },
+{ question: 'Quel type de surveillance est requis après l’AMM d’un biosimilaire ?', answer: 'Une surveillance renforcée avec un plan de gestion des risques obligatoire.' },
+{ question: 'Qu’est-ce qu’un plan de gestion des risques ?', answer: 'Un programme de surveillance post-commercialisation pour identifier et gérer les risques liés au médicament.' },
+{ question: 'Quelles sont les principales indications thérapeutiques des biomédicaments ?', answer: 'Infectiologie, cancérologie, hématologie, rhumatologie, diabétologie, endocrinologie, hémostase.' },
+{ question: 'Citez trois exemples de biosimilaires d’anticorps monoclonaux.', answer: 'Infliximab, étanercept, adalimumab.' },
+{ question: 'Citez trois autres exemples de biosimilaires.', answer: 'Rituximab, trastuzumab, bévacizumab.' },
+{ question: 'Quel pourcentage des dépenses de médicaments en France représentent les biomédicaments ?', answer: 'Environ 25 %.' },
+{ question: 'Pourquoi les biosimilaires sont-ils un enjeu économique majeur ?', answer: 'Car les biomédicaments sont très coûteux et représentent 25 % des dépenses pharmaceutiques en France.' },
+{ question: 'Quelle est la différence fondamentale entre un générique et un biosimilaire ?', answer: 'Le générique est identique au princeps (petite molécule chimique), le biosimilaire est similaire mais jamais identique (grande molécule biologique).' },
+{ question: 'Quelle est la nature chimique d’un médicament générique ?', answer: 'C’est une petite molécule chimique de synthèse.' },
+{ question: 'Quelle est la nature d’un médicament biosimilaire ?', answer: 'C’est une grande molécule biologique produite par des cellules vivantes.' },
+{ question: 'Pourquoi les génériques sont-ils plus simples à produire que les biosimilaires ?', answer: 'Car ils sont composés de petites molécules chimiques identiques, sans variabilité biologique.' },
+{ question: 'Pourquoi la commercialisation d’un biosimilaire coûte-t-elle plus cher qu’un générique ?', answer: 'À cause de la complexité de fabrication et des études précliniques/cliniques supplémentaires.' },
+{ question: 'L’AMM d’un biosimilaire est-elle nationale ou européenne ?', answer: 'Européenne, délivrée par la Commission Européenne.' },
+{ question: 'L’AMM d’un générique est-elle nationale ou européenne ?', answer: 'Nationale, délivrée par l’ANSM en France.' },
+{ question: 'Que doit démontrer un dossier d’AMM de générique ?', answer: 'La bioéquivalence avec le princeps (paramètres PK comparables).' },
+{ question: 'Que doit démontrer un dossier d’AMM de biosimilaire ?', answer: 'La comparabilité en qualité, sécurité et efficacité avec le biologique de référence.' },
+{ question: 'La forme galénique d’un générique doit-elle être identique au princeps ?', answer: 'Oui, elle doit être la même.' },
+{ question: 'Les procédés de fabrication d’un générique doivent-ils être identiques au princeps ?', answer: 'Non, ils peuvent être différents.' },
+{ question: 'Quelle est la conséquence d’excipients différents dans un générique ?', answer: 'Ils peuvent modifier le comportement du principe actif et nécessitent une attention particulière.' },
+{ question: 'Qu’est-ce qu’un groupe générique ?', answer: 'L’ensemble constitué du princeps et de ses génériques reconnus bioéquivalents.' },
+{ question: 'Pourquoi la fourchette de bioéquivalence est-elle de 80-125 % et non exactement 100 % ?', answer: 'Car une variabilité interindividuelle est acceptée et cette fourchette garantit une équivalence clinique.' },
+{ question: 'Quel est l’intervalle de confiance utilisé pour la bioéquivalence ?', answer: 'L’intervalle de confiance à 90 %.' },
+{ question: 'Si l’IC à 90 % de l’AUC est de 85-110 %, le générique est-il bioéquivalent ?', answer: 'Oui, car l’intervalle est compris dans la fourchette 80-125 %.' },
+{ question: 'Si l’IC à 90 % de la Cmax est de 78-115 %, le générique est-il bioéquivalent ?', answer: 'Non, car la borne inférieure (78 %) est en dehors de la fourchette 80-125 %.' },
+{ question: 'Quels domaines thérapeutiques utilisent des biosimilaires d’anticorps monoclonaux ?', answer: 'Rhumatologie, gastroentérologie, dermatologie et cancérologie.' },
+{ question: 'L’infliximab est utilisé dans quelles pathologies ?', answer: 'Les maladies inflammatoires chroniques : polyarthrite rhumatoïde, maladie de Crohn, rectocolite hémorragique.' },
+{ question: 'Le trastuzumab est utilisé dans quel type de cancer ?', answer: 'Le cancer du sein HER2 positif.' },
+{ question: 'Le bévacizumab est utilisé dans quel contexte thérapeutique ?', answer: 'En cancérologie, comme anti-angiogénique.' },
+{ question: 'Le rituximab cible quelles cellules ?', answer: 'Les lymphocytes B (utilisé en hématologie et rhumatologie).' },
+{ question: 'L’étanercept agit sur quelle cible moléculaire ?', answer: 'Le TNF-alpha (facteur de nécrose tumorale), utilisé en rhumatologie.' },
+{ question: 'L’adalimumab agit sur quelle cible moléculaire ?', answer: 'Le TNF-alpha, utilisé dans les maladies inflammatoires chroniques.' },
+{ question: 'Qu’est-ce que la variabilité biologique dans la production de biosimilaires ?', answer: 'Les différences naturelles liées à l’utilisation de cellules vivantes dans le processus de production.' },
+{ question: 'Les biosimilaires ont-ils la même séquence d’acides aminés que le biomédicament de référence ?', answer: 'Oui, la séquence primaire est identique, mais les modifications post-traductionnelles peuvent varier.' },
+{ question: 'Que sont les modifications post-traductionnelles ?', answer: 'Des modifications chimiques des protéines après leur synthèse (glycosylation, phosphorylation, etc.).' },
+{ question: 'Pourquoi les modifications post-traductionnelles sont-elles importantes pour les biosimilaires ?', answer: 'Elles peuvent affecter l’activité, la stabilité et l’immunogénicité du médicament.' },
+{ question: 'Qu’est-ce que l’immunogénicité d’un biosimilaire ?', answer: 'La capacité du biosimilaire à induire une réponse immunitaire (anticorps) chez le patient.' },
+{ question: 'Pourquoi surveille-t-on l’immunogénicité des biosimilaires ?', answer: 'Car des anticorps anti-médicament peuvent réduire l’efficacité ou provoquer des effets indésirables.' },
+{ question: 'Quel est l’intérêt principal des biosimilaires pour le système de santé ?', answer: 'Réduire le coût des traitements biologiques très onéreux.' },
+{ question: 'Un biosimilaire est-il moins efficace que le biomédicament de référence ?', answer: 'Non, il doit démontrer une efficacité comparable dans les études cliniques.' },
+{ question: 'Quelle est la différence de taille moléculaire entre un générique et un biosimilaire ?', answer: 'Le générique est une petite molécule (centaines de daltons), le biosimilaire est une grande molécule (milliers à millions de daltons).' },
+{ question: 'Les génériques nécessitent-ils des études cliniques pour l’AMM ?', answer: 'Non, seule la démonstration de bioéquivalence PK est requise.' },
+{ question: 'Les biosimilaires nécessitent-ils des études cliniques pour l’AMM ?', answer: 'Oui, des études précliniques et cliniques comparatives sont obligatoires.' },
+{ question: 'Qu’est-ce que l’extrapolation des indications pour un biosimilaire ?', answer: 'Si la comparabilité est démontrée pour une indication, elle peut être étendue aux autres indications du médicament de référence.' },
+{ question: 'Peut-on changer de biosimilaire en cours de traitement ?', answer: 'Oui, mais sous responsabilité du médecin et avec une surveillance appropriée.' },
+{ question: 'Combien coûte environ un biosimilaire par rapport au biomédicament de référence ?', answer: 'Environ 20 à 30 % moins cher.' },
+{ question: 'Pourquoi la réduction de prix est-elle moindre pour les biosimilaires que pour les génériques ?', answer: 'Car les coûts de développement et de production des biosimilaires sont beaucoup plus élevés.' },
+{ question: 'Quels sont les avantages des génériques pour le patient ?', answer: 'Même efficacité à moindre coût, contribuant à l’accessibilité des traitements.' },
+{ question: 'Quels sont les avantages des biosimilaires pour le système de santé ?', answer: 'Réduction des dépenses pharmaceutiques et amélioration de l’accès aux traitements biologiques.' },
+{ question: 'Qu’est-ce que la pharmacovigilance renforcée des biosimilaires ?', answer: 'Un suivi post-commercialisation plus strict pour détecter tout signal de sécurité.' },
+{ question: 'Le pharmacien doit-il informer le patient lors d’une substitution par un générique ?', answer: 'Oui, il doit l’informer et s’assurer de son acceptation.' },
+{ question: 'Quelle est la composition qualitative identique entre générique et princeps ?', answer: 'Les mêmes principes actifs.' },
+{ question: 'Quelle est la composition quantitative identique entre générique et princeps ?', answer: 'La même quantité (dose) de principe actif.' },
+{ question: 'Un générique peut-il avoir un aspect différent du princeps ?', answer: 'Oui, la couleur, la taille et la forme peuvent différer.' },
+{ question: 'Pourquoi le médecin est-il seul responsable du choix d’un biosimilaire ?', answer: 'Car la responsabilité de la décision thérapeutique et du suivi lui incombe exclusivement.' },
+{ question: 'Qu’est-ce que le répertoire des groupes génériques ?', answer: 'La liste officielle publiée par l’ANSM regroupant les princeps et leurs génériques.' },
+{ question: 'Peut-on prescrire directement un biosimilaire en première intention ?', answer: 'Oui, le médecin peut choisir un biosimilaire dès l’initiation du traitement.' },
+{ question: 'Que signifie « domaine public » pour un médicament ?', answer: 'Que le brevet est expiré et que d’autres fabricants peuvent produire des copies.' },
+{ question: 'La bioéquivalence garantit-elle une efficacité clinique identique ?', answer: 'Oui, car des paramètres PK comparables impliquent une efficacité clinique équivalente.' },
+{ question: 'Quelle est la principale raison du développement des génériques ?', answer: 'Réduire le coût des traitements tout en maintenant la même qualité thérapeutique.' },
+{ question: 'Quelle est la principale raison du développement des biosimilaires ?', answer: 'Réduire le coût des traitements biologiques très onéreux et améliorer l’accès aux soins.' },
+{ question: 'Qu’est-ce que le triangle noir inversé sur la notice d’un biosimilaire ?', answer: 'Un symbole indiquant que le médicament fait l’objet d’une surveillance renforcée.' },
+{ question: 'La substitution d’un biosimilaire est-elle autorisée dans tous les pays européens ?', answer: 'Non, les réglementations varient selon les pays ; en France elle relève exclusivement du médecin.' },
+{ question: 'Quels critères de qualité sont évalués pour un biosimilaire avant l’AMM ?', answer: 'La composition, la pureté, l’activité biologique et la stabilité de la molécule.' },
+{ question: 'Pourquoi l’approbation réglementaire d’un biosimilaire nécessite-t-elle plus d’études qu’un générique ?', answer: 'Pour prouver la similarité malgré la variabilité biologique inhérente à la production par le vivant.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

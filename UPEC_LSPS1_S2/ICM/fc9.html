@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Conception et identification du médicament</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Quelles sont les deux grandes considérations motivant le développement d’un nouveau médicament ?', answer: 'Une considération médicale (progrès thérapeutique) et une considération économique (rentabilité, marché).' },
+{ question: 'Que recouvre la considération médicale dans le développement d’un médicament ?', answer: 'Le progrès thérapeutique : absence de stratégie pharmacologique, traitements insuffisamment efficaces, amélioration des traitements existants.' },
+{ question: 'Que recouvre la considération économique dans le développement d’un médicament ?', answer: 'La rentabilité pour l’industrie pharmaceutique, l’importance du marché et la concurrence.' },
+{ question: 'Quels motifs médicaux justifient la création d’un nouveau médicament ?', answer: 'L’absence de stratégie pharmacologique, les traitements insuffisamment efficaces et l’amélioration des traitements existants.' },
+{ question: 'Quels objectifs d’amélioration peut-on viser lors du développement d’un médicament ?', answer: 'Augmenter l’efficacité, réduire les effets indésirables, éviter certaines interactions médicamenteuses, améliorer la biodisponibilité.' },
+{ question: 'Qu’est-ce qu’un analogue de médicament connu ou « me-too drug » ?', answer: 'Un médicament inspiré d’une classe thérapeutique existante, modifié chimiquement pour être brevetable.' },
+{ question: 'Quel est l’objectif principal des analogues de médicaments (me-too drugs) ?', answer: 'Améliorer la sélectivité, réduire les effets secondaires, augmenter la biodisponibilité ou éviter les interactions.' },
+{ question: 'Sur quel principe repose la conception d’un analogue ?', answer: 'Sur la relation structure-activité d’une classe de médicaments déjà connue.' },
+{ question: 'Qu’est-ce que la relation structure-activité ?', answer: 'Le lien entre la structure chimique d’une molécule et son activité pharmacologique, permettant d’optimiser de nouveaux composés.' },
+{ question: 'Pourquoi un analogue doit-il être brevetable ?', answer: 'Pour garantir la propriété intellectuelle et la rentabilité de l’investissement en recherche et développement.' },
+{ question: 'Pourquoi les industriels développent-ils de nombreux me-too drugs ?', answer: 'Pour obtenir des parts de marché importantes, surtout pour les traitements chroniques à forte consommation.' },
+{ question: 'Donnez un exemple de classe de médicaments ayant généré de nombreux analogues.', answer: 'Les statines, inhibiteurs de l’HMG-CoA réductase.' },
+{ question: 'Quelle est la cible pharmacologique des statines ?', answer: 'L’enzyme HMG-CoA réductase, clé de la synthèse du cholestérol.' },
+{ question: 'Donnez un exemple d’analogue parmi les antagonistes des récepteurs AT1 de l’angiotensine II.', answer: 'Le telmisartan, analogue du losartan.' },
+{ question: 'Quel est le chef de file des antagonistes des récepteurs AT1 ?', answer: 'Le losartan.' },
+{ question: 'Quelle est la cible des antagonistes AT1 (sartans) ?', answer: 'Les récepteurs AT1 de l’angiotensine II, impliqués dans la vasoconstriction.' },
+{ question: 'Comment la pénicilline a-t-elle été découverte ?', answer: 'Par hasard, en 1928, par Alexander Fleming qui a observé qu’un champignon inhibait la croissance bactérienne.' },
+{ question: 'Qui a découvert la pénicilline et en quelle année ?', answer: 'Alexander Fleming en 1928.' },
+{ question: 'Quel champignon est à l’origine de la pénicilline ?', answer: 'Penicillium notatum.' },
+{ question: 'Quelle bactérie était cultivée sur la boîte de Pétri de Fleming lors de la découverte de la pénicilline ?', answer: 'Staphylococcus aureus.' },
+{ question: 'Qu’a observé Fleming sur sa boîte de Pétri contaminée ?', answer: 'Une zone d’inhibition de la croissance de S. aureus autour de la colonie de Penicillium notatum.' },
+{ question: 'Quel est le principe général de la découverte fortuite de médicaments ?', answer: 'Un événement ou une observation inattendue déclenche la recherche d’une nouvelle molécule active.' },
+{ question: 'Qu’est-ce que l’exploitation des effets indésirables d’un médicament ?', answer: 'Utiliser un effet secondaire observé comme nouvelle indication thérapeutique.' },
+{ question: 'Quelle était l’indication initiale du minoxidil ?', answer: 'Antihypertenseur.' },
+{ question: 'Quel effet indésirable du minoxidil a été exploité ?', answer: 'L’hypertrichose (pousse excessive des poils).' },
+{ question: 'Quelle nouvelle indication thérapeutique a été développée à partir de l’hypertrichose du minoxidil ?', answer: 'Le traitement de la calvitie (alopécie).' },
+{ question: 'Décrivez le parcours du minoxidil de l’indication initiale à la nouvelle indication.', answer: 'Antihypertenseur → effet indésirable d’hypertrichose → exploitation pour traiter la calvitie.' },
+{ question: 'Qui a découvert les propriétés hypoglycémiantes des sulfamides ?', answer: 'Marcel Jambon en 1942.' },
+{ question: 'En quelle année Marcel Jambon a-t-il observé les effets hypoglycémiants des sulfamides ?', answer: 'En 1942.' },
+{ question: 'Quelle était l’indication initiale des sulfamides avant la découverte de leur effet hypoglycémiant ?', answer: 'Antibactériens (sulfamides antibactériens).' },
+{ question: 'Quel effet indésirable des sulfamides antibactériens a été exploité ?', answer: 'L’hypoglycémie.' },
+{ question: 'Quelle classe de médicaments est née de l’exploitation des effets hypoglycémiants des sulfamides ?', answer: 'Les antidiabétiques de type sulfamides hypoglycémiants (sulfonylurées).' },
+{ question: 'Décrivez le parcours des sulfamides de l’indication initiale à la nouvelle.', answer: 'Sulfamides antibactériens → observation d’hypoglycémies → développement d’antidiabétiques sulfamides.' },
+{ question: 'Qu’est-ce que la découverte d’une nouvelle propriété d’un médicament existant ?', answer: 'Après la commercialisation, on découvre une propriété pharmacologique inédite exploitable dans une autre pathologie.' },
+{ question: 'Quelle était l’indication initiale de la ciclosporine ?', answer: 'Immunosuppresseur utilisé en prévention du rejet de greffe d’organe.' },
+{ question: 'Quelle nouvelle propriété de la ciclosporine a été découverte après sa commercialisation ?', answer: 'Sa capacité à moduler la mort cellulaire, réduisant les lésions tissulaires.' },
+{ question: 'Dans quelles situations la propriété de modulation de la mort cellulaire de la ciclosporine est-elle intéressante ?', answer: 'Dans l’infarctus du myocarde et l’arrêt cardiaque, pour limiter les lésions tissulaires.' },
+{ question: 'Décrivez le parcours de la ciclosporine de l’indication initiale aux nouvelles propriétés.', answer: 'Immunosuppresseur pour greffe → découverte de la modulation de la mort cellulaire → potentiel dans l’infarctus et l’arrêt cardiaque.' },
+{ question: 'Pourquoi continue-t-on la recherche après l’AMM d’un médicament ?', answer: 'Pour surveiller la pharmacovigilance, découvrir de nouvelles propriétés, de nouvelles indications ou de nouvelles cibles.' },
+{ question: 'Qu’est-ce que l’exploitation de la non-sélectivité d’un médicament ?', answer: 'Utiliser une propriété pharmacologique d’un médicament dans une pathologie différente de l’indication initiale.' },
+{ question: 'Quelle était l’indication initiale des IEC ?', answer: 'Le traitement de l’hypertension artérielle (HTA).' },
+{ question: 'Quelle nouvelle indication a été découverte pour les IEC grâce à la non-sélectivité ?', answer: 'Le traitement de l’insuffisance cardiaque.' },
+{ question: 'Donnez l’exemple de parcours des IEC de l’HTA à l’insuffisance cardiaque.', answer: 'IEC initialement pour l’HTA → propriétés bénéfiques découvertes dans l’insuffisance cardiaque → nouvelle indication.' },
+{ question: 'Quelle était l’indication initiale des inhibiteurs de la PDE5 (sildénafil) ?', answer: 'Le traitement de l’insuffisance érectile.' },
+{ question: 'Quelle nouvelle indication a été découverte pour les inhibiteurs de la PDE5 ?', answer: 'Le traitement de l’hypertension artérielle pulmonaire (HTAP).' },
+{ question: 'Quelle autre application potentielle des inhibiteurs de la PDE5 est à l’étude ?', answer: 'La myopathie de Duchenne.' },
+{ question: 'Décrivez le parcours du sildénafil (inhibiteur PDE5) à travers ses différentes indications.', answer: 'Insuffisance érectile → HTAP → potentiel dans la myopathie de Duchenne.' },
+{ question: 'Pourquoi l’inhibition d’une même enzyme peut-elle être utile dans différentes pathologies ?', answer: 'Parce que certaines cibles enzymatiques sont ubiquitaires et impliquées dans plusieurs processus physiologiques.' },
+{ question: 'Qu’est-ce que la conception fondée sur la connaissance de processus biologiques ?', answer: 'Identifier un processus biologique impliqué dans une pathologie, puis concevoir une molécule ciblant une étape clé de ce processus.' },
+{ question: 'Quel est le principe de la conception rationnelle d’un médicament ?', answer: 'Connaître la cible pharmacologique et les mécanismes biologiques pour concevoir une molécule adaptée.' },
+{ question: 'Quel processus biologique a été ciblé pour développer les premiers IEC ?', answer: 'Le système rénine-angiotensine, plus précisément la conversion de l’angiotensine I en angiotensine II.' },
+{ question: 'Quel est le rôle de l’angiotensine II dans la régulation vasculaire ?', answer: 'C’est un puissant vasoconstricteur qui augmente la pression artérielle.' },
+{ question: 'Quel était l’objectif du développement des premiers IEC ?', answer: 'Réduire l’action vasoconstrictrice de l’angiotensine II pour traiter l’hypertension artérielle.' },
+{ question: 'Quelles sont les deux stratégies possibles pour empêcher la vasoconstriction liée à l’angiotensine II ?', answer: 'Inhiber la synthèse de l’angiotensine II (IEC) ou antagoniser ses récepteurs (sartans/ARA II).' },
+{ question: 'Qu’est-ce qu’un IEC ?', answer: 'Un inhibiteur de l’enzyme de conversion de l’angiotensine, qui bloque la transformation de l’angiotensine I en angiotensine II.' },
+{ question: 'Qu’est-ce qu’un ARA II (sartan) ?', answer: 'Un antagoniste des récepteurs AT1 de l’angiotensine II, qui bloque l’action de l’angiotensine II sur ses récepteurs.' },
+{ question: 'Quelle découverte a permis de développer les premiers IEC ?', answer: 'L’observation qu’un venin de serpent inhibait l’enzyme de conversion de l’angiotensine.' },
+{ question: 'De quel animal provient le venin ayant inspiré les IEC ?', answer: 'Du serpent (Bothrops jararaca, vipère brésilienne).' },
+{ question: 'Comment le venin de serpent a-t-il conduit au développement des IEC ?', answer: 'Le venin contenait un peptide inhibant l’enzyme de conversion, ce qui a inspiré la synthèse de molécules analogues.' },
+{ question: 'Quelle est la différence entre la stratégie IEC et la stratégie sartan ?', answer: 'L’IEC inhibe l’enzyme qui produit l’angiotensine II, le sartan bloque le récepteur AT1 sur lequel l’angiotensine II agit.' },
+{ question: 'Quelles sont les principales méthodes d’identification d’un médicament ?', answer: 'Les analogues (me-too drugs), le hasard, l’exploitation des effets indésirables, la découverte de nouvelles propriétés, la non-sélectivité, et la conception rationnelle.' },
+{ question: 'Citez les six grandes approches de conception et d’identification d’un médicament.', answer: '1) Analogues, 2) Hasard, 3) Exploitation des effets indésirables, 4) Nouvelle propriété d’un médicament existant, 5) Non-sélectivité, 6) Conception fondée sur un processus biologique.' },
+{ question: 'Qu’est-ce que le criblage pharmacologique (screening) ?', answer: 'La méthode systématique de test d’un grand nombre de molécules sur une cible biologique pour identifier des candidats médicaments.' },
+{ question: 'Quelle différence y a-t-il entre une découverte par hasard et une conception rationnelle ?', answer: 'Le hasard repose sur une observation imprévue, la conception rationnelle part d’une connaissance préalable du mécanisme physiopathologique.' },
+{ question: 'Qu’est-ce qu’un chef de file pharmacologique ?', answer: 'La première molécule d’une classe thérapeutique servant de référence pour le développement d’analogues.' },
+{ question: 'Pourquoi développe-t-on des analogues plutôt que de rester sur le chef de file ?', answer: 'Pour améliorer la sélectivité, réduire les effets secondaires, optimiser la pharmacocinétique et contourner les brevets.' },
+{ question: 'Qu’est-ce que la biodisponibilité d’un médicament ?', answer: 'La fraction de la dose administrée qui atteint la circulation systémique sous forme inchangée.' },
+{ question: 'Pourquoi cherche-t-on à améliorer la biodisponibilité d’un analogue ?', answer: 'Pour augmenter la quantité de principe actif atteignant la cible et réduire les doses nécessaires.' },
+{ question: 'Quel est le lien entre les statines et l’HMG-CoA réductase ?', answer: 'Les statines sont des inhibiteurs compétitifs de l’HMG-CoA réductase, enzyme limitante de la synthèse du cholestérol.' },
+{ question: 'Pourquoi le marché des statines est-il si important pour l’industrie ?', answer: 'L’hypercholestérolémie est une pathologie chronique fréquente nécessitant un traitement au long cours, représentant un marché considérable.' },
+{ question: 'Quelle est la différence entre un IEC et un antagoniste des récepteurs AT1 en termes de mécanisme ?', answer: 'L’IEC empêche la formation de l’angiotensine II ; l’antagoniste AT1 bloque l’action de l’angiotensine II déjà formée.' },
+{ question: 'Pourquoi le telmisartan a-t-il été développé comme analogue du losartan ?', answer: 'Pour améliorer la sélectivité pour le récepteur AT1, la durée d’action et le profil pharmacocinétique.' },
+{ question: 'Qu’est-ce que la pharmacovigilance ?', answer: 'La surveillance des effets indésirables des médicaments après leur mise sur le marché.' },
+{ question: 'Quel lien existe entre la pharmacovigilance et la découverte de nouvelles indications ?', answer: 'La pharmacovigilance peut révéler des effets inattendus exploitables comme nouvelles indications thérapeutiques.' },
+{ question: 'Qu’est-ce qu’une AMM ?', answer: 'L’Autorisation de Mise sur le Marché, nécessaire à la commercialisation d’un médicament.' },
+{ question: 'Pourquoi la recherche continue-t-elle après l’obtention de l’AMM ?', answer: 'Pour découvrir de nouvelles propriétés, étendre les indications, surveiller les effets indésirables rares et identifier de nouvelles cibles.' },
+{ question: 'Qu’est-ce qu’un repositionnement de médicament (drug repurposing) ?', answer: 'L’utilisation d’un médicament déjà approuvé pour une indication différente de celle initialement prévue.' },
+{ question: 'Donnez un exemple de repositionnement de médicament.', answer: 'Le sildénafil (Viagra), initialement étudié pour l’angor, repositionné dans l’insuffisance érectile puis l’HTAP.' },
+{ question: 'Qu’est-ce que l’enzyme de conversion de l’angiotensine (ECA) ?', answer: 'Une enzyme qui convertit l’angiotensine I inactive en angiotensine II vasoconstrictrice active.' },
+{ question: 'Quel est le substrat de l’enzyme de conversion ?', answer: 'L’angiotensine I.' },
+{ question: 'Quel est le produit de l’enzyme de conversion ?', answer: 'L’angiotensine II, un puissant vasoconstricteur.' },
+{ question: 'Que se passe-t-il lorsqu’on inhibe l’enzyme de conversion ?', answer: 'La production d’angiotensine II diminue, entraînant une vasodilatation et une baisse de la pression artérielle.' },
+{ question: 'Qu’est-ce que le système rénine-angiotensine-aldostérone (SRAA) ?', answer: 'Un système hormonal régulant la pression artérielle et l’équilibre hydrosodé, impliquant rénine, angiotensine et aldostérone.' },
+{ question: 'Pourquoi la découverte de la pénicilline est-elle un exemple majeur de découverte par hasard ?', answer: 'Car Fleming ne cherchait pas un antibiotique ; il a remarqué par accident l’inhibition bactérienne par un champignon contaminant.' },
+{ question: 'Quelle est l’importance clinique de la pénicilline ?', answer: 'C’est le premier antibiotique découvert, révolutionnant le traitement des infections bactériennes.' },
+{ question: 'Quel est le mécanisme d’action de la ciclosporine comme immunosuppresseur ?', answer: 'Elle inhibe la calcineurine, bloquant l’activation des lymphocytes T et la production d’interleukine-2.' },
+{ question: 'Dans quel type de greffe la ciclosporine est-elle principalement utilisée ?', answer: 'Dans la greffe d’organe solide (rein, foie, cœur) pour prévenir le rejet.' },
+{ question: 'Qu’est-ce que la sélectivité d’un médicament ?', answer: 'La capacité d’un médicament à agir préférentiellement sur une cible pharmacologique donnée, limitant les effets sur d’autres cibles.' },
+{ question: 'Pourquoi la non-sélectivité peut-elle être bénéfique ?', answer: 'Car elle permet de découvrir des applications dans d’autres pathologies où la même cible est impliquée.' },
+{ question: 'Qu’est-ce que la PDE5 ?', answer: 'La phosphodiestérase de type 5, une enzyme qui dégrade le GMPc, impliquée dans la relaxation des muscles lisses vasculaires.' },
+{ question: 'Comment le sildénafil agit-il sur la PDE5 ?', answer: 'Il inhibe la PDE5, empêchant la dégradation du GMPc, ce qui favorise la vasodilatation.' },
+{ question: 'Pourquoi l’inhibition de la PDE5 est-elle utile dans l’HTAP ?', answer: 'Car la vasodilatation pulmonaire réduit la résistance vasculaire pulmonaire et améliore la fonction cardiaque droite.' },
+{ question: 'Pourquoi l’inhibition de la PDE5 est-elle étudiée dans la myopathie de Duchenne ?', answer: 'Car elle pourrait améliorer la perfusion musculaire et réduire la fibrose dans les muscles dystrophiques.' },
+{ question: 'Quel est l’avantage économique d’un repositionnement de médicament ?', answer: 'Le médicament a déjà passé les étapes de sécurité, réduisant le coût et la durée du développement pour la nouvelle indication.' },
+{ question: 'Quelle est la différence entre un effet indésirable et un effet secondaire ?', answer: 'L’effet indésirable est tout effet non souhaité ; l’effet secondaire est un effet pharmacologique accessoire, pas forcément négatif.' },
+{ question: 'Comment l’hypertrichose du minoxidil est-elle passée d’effet indésirable à indication ?', answer: 'L’observation systématique de repousse capillaire chez les patients hypertendus traités a conduit à son développement topique contre la calvitie.' },
+{ question: 'Qu’est-ce qu’une cible thérapeutique ?', answer: 'Une molécule biologique (enzyme, récepteur, canal ionique, transporteur) sur laquelle un médicament agit pour produire son effet.' },
+{ question: 'Quel type de cible est l’HMG-CoA réductase ?', answer: 'C’est une enzyme.' },
+{ question: 'Quel type de cible est le récepteur AT1 ?', answer: 'C’est un récepteur membranaire couplé aux protéines G.' },
+{ question: 'Quel est l’intérêt de connaître le mécanisme physiopathologique pour concevoir un médicament ?', answer: 'Il permet d’identifier des cibles précises et de concevoir des molécules spécifiques, augmentant l’efficacité et réduisant les effets secondaires.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>
