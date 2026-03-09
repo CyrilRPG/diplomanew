@@ -1,0 +1,497 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS3 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Santé publique - Géographie de la santé</h1><h2>Accès aux soins des personnes vulnérables</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce qu’une personne vulnérable en santé ?', answer: 'Une personne dont la situation sociale, économique ou médicale limite l’accès ou la qualité des soins.', },
+{ question: 'Cite deux exemples de personnes vulnérables.', answer: 'Personnes sans domicile fixe, personnes en situation de handicap.', },
+{ question: 'Définis l’accès aux soins.', answer: 'Possibilité pour une personne d’obtenir les services de santé nécessaires en temps utile.', },
+{ question: 'Quel est le rôle de la CMU-C ?', answer: 'Permettre une couverture santé gratuite pour les personnes à faibles ressources.', },
+{ question: 'Qu’est-ce que l’AME ?', answer: 'Aide Médicale d’État, permettant l’accès aux soins pour les étrangers en situation irrégulière.', },
+{ question: 'Cite un obstacle financier à l’accès aux soins.', answer: 'Le reste à charge après remboursement.', },
+{ question: 'Quel est le seuil de pauvreté en France (ordre de grandeur) ?', answer: 'Environ 1 120 euros par mois pour une personne seule (2023).', },
+{ question: 'Qu’est-ce qu’un refus de soins ?', answer: 'Lorsqu’un professionnel de santé refuse de soigner une personne, souvent pour des motifs discriminatoires.', },
+{ question: 'Donne un exemple de discrimination dans l’accès aux soins.', answer: 'Refus de soins à une personne bénéficiaire de la CMU-C.', },
+{ question: 'Quel est le rôle des PASS ?', answer: 'Fournir un accès aux soins aux personnes en situation de précarité à l’hôpital.', },
+{ question: 'Que signifie PASS ?', answer: 'Permanence d’Accès aux Soins de Santé.', },
+{ question: 'Quel public cible les PASS ?', answer: 'Personnes en situation de précarité ou sans couverture sociale.', },
+{ question: 'Qu’est-ce que la précarité ?', answer: 'Situation d’instabilité ou d’insécurité sociale, économique ou médicale.', },
+{ question: 'Cite un facteur social limitant l’accès aux soins.', answer: 'L’illettrisme.', },
+{ question: 'Qu’est-ce que l’illettrisme en santé ?', answer: 'Difficulté à comprendre les informations médicales écrites.', },
+{ question: 'Quel impact a la barrière linguistique sur l’accès aux soins ?', answer: 'Elle limite la compréhension et l’accès aux services de santé.', },
+{ question: 'Qu’est-ce qu’un médiateur en santé ?', answer: 'Personne qui facilite l’accès aux soins pour des publics vulnérables.', },
+{ question: 'Donne un exemple d’action de médiation en santé.', answer: 'Accompagnement d’un patient migrant lors d’une consultation.', },
+{ question: 'Qu’est-ce que la fracture numérique en santé ?', answer: 'Inégal accès aux outils numériques nécessaires pour certaines démarches de santé.', },
+{ question: 'Quel est le taux de renoncement aux soins pour raisons financières en France (ordre de grandeur) ?', answer: 'Environ 25% des personnes en situation de précarité.', },
+{ question: 'Qu’est-ce que le renoncement aux soins ?', answer: 'Le fait de ne pas consulter ou de retarder des soins nécessaires.', },
+{ question: 'Cite une cause de renoncement aux soins autre que financière.', answer: 'La peur du jugement ou de la stigmatisation.', },
+{ question: 'Qu’est-ce que la stigmatisation en santé ?', answer: 'Processus de discrimination ou de rejet basé sur une caractéristique de la personne.', },
+{ question: 'Quel est le rôle des associations dans l’accès aux soins ?', answer: 'Elles accompagnent, informent et orientent les personnes vulnérables.', },
+{ question: 'Cite une association majeure impliquée dans l’accès aux soins.', answer: 'Médecins du Monde.', },
+{ question: 'Qu’est-ce que l’égalité d’accès aux soins ?', answer: 'Principe selon lequel chacun doit pouvoir accéder aux soins sans discrimination.', },
+{ question: 'Qu’est-ce que l’équité en santé ?', answer: 'Adapter les moyens pour garantir à chacun l’accès aux soins selon ses besoins.', },
+{ question: 'Quel est le rôle de la loi du 29 juillet 1998 ?', answer: 'Création des PASS pour lutter contre l’exclusion en santé.', },
+{ question: 'Qu’est-ce que la santé communautaire ?', answer: 'Approche impliquant la participation active des populations à leur santé.', },
+{ question: 'Quel est le rôle des travailleurs sociaux dans l’accès aux soins ?', answer: 'Ils orientent et accompagnent les personnes vers les dispositifs de soins.', },
+{ question: 'Qu’est-ce que le parcours de soins coordonné ?', answer: 'Organisation des soins autour du médecin traitant pour optimiser la prise en charge.', },
+{ question: 'Qu’est-ce qu’un refus de soins illégal ?', answer: 'Refus non justifié par un motif médical ou organisationnel, souvent discriminatoire.', },
+{ question: 'Quelle est la part des médecins généralistes ayant déjà refusé un patient en CMU-C (ordre de grandeur) ?', answer: 'Environ 15% selon les enquêtes.', },
+{ question: 'Qu’est-ce que le tiers payant ?', answer: 'Dispositif permettant au patient de ne pas avancer les frais de santé.', },
+{ question: 'Qu’est-ce que la couverture maladie universelle (CMU) ?', answer: 'Ancien dispositif remplacé par la PUMA, garantissant l’accès à l’assurance maladie.', },
+{ question: 'Qu’est-ce que la PUMA ?', answer: 'Protection Universelle Maladie, accès à l’assurance maladie pour tous résidents stables.', },
+{ question: 'Qu’est-ce que la précarité énergétique et son impact sur la santé ?', answer: 'Difficulté à chauffer son logement, favorisant maladies respiratoires ou aggravation de pathologies.', },
+{ question: 'Quel est le rôle des centres de santé ?', answer: 'Offrir des soins accessibles, souvent avec tiers payant et tarifs opposables.', },
+{ question: 'Qu’est-ce qu’un refus de soins pour motif organisationnel ?', answer: 'Refus lié à une impossibilité réelle de prise en charge (surcharge, absence de compétence).', },
+{ question: 'Qu’est-ce que la discrimination indirecte en santé ?', answer: 'Pratique apparemment neutre qui désavantage un groupe vulnérable.', },
+{ question: 'Cite un exemple de discrimination indirecte.', answer: 'Exiger une prise de rendez-vous uniquement en ligne.', },
+{ question: 'Qu’est-ce que la santé mentale ?', answer: 'État de bien-être psychique permettant de faire face aux difficultés de la vie.', },
+{ question: 'Quel est le taux de troubles psychiques chez les personnes sans-abri (ordre de grandeur) ?', answer: 'Environ 40%.', },
+{ question: 'Qu’est-ce qu’un dispositif d’aller-vers ?', answer: 'Actions visant à aller au-devant des personnes exclues pour leur proposer des soins.', },
+{ question: 'Donne un exemple de dispositif d’aller-vers.', answer: 'Bus santé mobile dans les quartiers défavorisés.', },
+{ question: 'Qu’est-ce que la médiation interculturelle en santé ?', answer: 'Facilitation de la communication entre soignants et patients de cultures différentes.', },
+{ question: 'Qu’est-ce que la santé des migrants ?', answer: 'Prise en compte des besoins spécifiques des personnes migrantes en matière de santé.', },
+{ question: 'Qu’est-ce qu’un déterminant social de la santé ?', answer: 'Facteur social influençant l’état de santé (revenu, éducation, logement, etc.).', },
+{ question: 'Cite deux déterminants sociaux de la santé.', answer: 'Niveau d’éducation, conditions de logement.', },
+{ question: 'Qu’est-ce que la vulnérabilité cumulative ?', answer: 'Accumulation de facteurs de vulnérabilité augmentant le risque d’exclusion.', },
+{ question: 'Qu’est-ce que l’accessibilité géographique aux soins ?', answer: 'Proximité physique des structures de soins.', },
+{ question: 'Qu’est-ce qu’un désert médical ?', answer: 'Zone avec une offre de soins insuffisante.', },
+{ question: 'Qu’est-ce que l’accessibilité financière aux soins ?', answer: 'Capacité à payer les soins sans difficulté.', },
+{ question: 'Qu’est-ce que l’accessibilité culturelle aux soins ?', answer: 'Adéquation des soins avec les valeurs et croyances des patients.', },
+{ question: 'Qu’est-ce que l’accessibilité organisationnelle aux soins ?', answer: 'Facilité d’obtenir un rendez-vous ou de naviguer dans le système de santé.', },
+{ question: 'Qu’est-ce que le dispositif \'zéro reste à charge\' ?', answer: 'Prise en charge intégrale de certains soins (optique, dentaire, audiologie) pour les assurés.', },
+{ question: 'Qu’est-ce que l’éducation thérapeutique du patient ?', answer: 'Processus visant à aider les patients à gérer leur maladie au quotidien.', },
+{ question: 'Quel est l’impact du logement sur la santé ?', answer: 'Un logement insalubre favorise maladies et difficultés d’accès aux soins.', },
+{ question: 'Qu’est-ce que le non-recours aux droits ?', answer: 'Situation où une personne ne bénéficie pas d’aides auxquelles elle a droit.', },
+{ question: 'Quel est le taux de non-recours à la CMU-C (ordre de grandeur) ?', answer: 'Environ 30% des personnes éligibles.', },
+{ question: 'Qu’est-ce que la précarité alimentaire et son impact sur la santé ?', answer: 'Difficulté à accéder à une alimentation suffisante et équilibrée, augmentant le risque de maladies.', },
+{ question: 'Qu’est-ce que la santé sexuelle ?', answer: 'État de bien-être physique, émotionnel et social lié à la sexualité.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de handicap ?', answer: 'Prise en compte des besoins spécifiques liés au handicap pour garantir l’accès aux soins.', },
+{ question: 'Qu’est-ce que la barrière architecturale en santé ?', answer: 'Obstacle physique empêchant l’accès à un lieu de soins pour une personne à mobilité réduite.', },
+{ question: 'Qu’est-ce que l’accessibilité universelle ?', answer: 'Conception de lieux et services accessibles à tous, quel que soit le handicap.', },
+{ question: 'Qu’est-ce que la précarité administrative ?', answer: 'Difficulté à accéder ou à conserver des droits sociaux par manque de documents ou démarches complexes.', },
+{ question: 'Qu’est-ce que la précarité relationnelle ?', answer: 'Isolement social limitant l’accès à l’information ou à l’aide pour accéder aux soins.', },
+{ question: 'Qu’est-ce qu’un parcours de santé complexe ?', answer: 'Ensemble de soins nécessitant la coordination de plusieurs professionnels et structures.', },
+{ question: 'Qu’est-ce que le droit à la santé ?', answer: 'Droit fondamental à bénéficier d’un niveau de santé le plus élevé possible.', },
+{ question: 'Qu’est-ce qu’une consultation avancée ?', answer: 'Déplacement d’un professionnel de santé au plus près des populations vulnérables.', },
+{ question: 'Qu’est-ce que la santé des personnes âgées vulnérables ?', answer: 'Prise en compte de la fragilité et des besoins spécifiques des personnes âgées pour l’accès aux soins.', },
+{ question: 'Qu’est-ce qu’un accompagnement social en santé ?', answer: 'Aide personnalisée pour surmonter les obstacles à l’accès aux soins.', },
+{ question: 'Qu’est-ce que la précarité psychique ?', answer: 'Vulnérabilité liée à des troubles mentaux ou à une détresse psychologique.', },
+{ question: 'Qu’est-ce que la santé des détenus ?', answer: 'Organisation spécifique pour garantir l’accès aux soins en milieu carcéral.', },
+{ question: 'Qu’est-ce que la santé des mineurs non accompagnés ?', answer: 'Prise en charge adaptée des enfants étrangers isolés pour leur santé physique et mentale.', },
+{ question: 'Qu’est-ce que la santé des femmes en situation de précarité ?', answer: 'Prise en compte des besoins spécifiques des femmes précaires, notamment pour la santé sexuelle et reproductive.', },
+{ question: 'Qu’est-ce que la santé des personnes LGBTQ+ vulnérables ?', answer: 'Prise en compte des discriminations et des besoins spécifiques de santé de ces personnes.', },
+{ question: 'Qu’est-ce que la santé des personnes migrantes sans papiers ?', answer: 'Accès aux soins via l’AME et dispositifs associatifs malgré l’absence de droits sociaux classiques.', },
+{ question: 'Qu’est-ce que la précarité des jeunes ?', answer: 'Vulnérabilité spécifique des jeunes liée à l’emploi, au logement et à l’accès aux soins.', },
+{ question: 'Qu’est-ce qu’un refus de soins pour motif médical légitime ?', answer: 'Refus basé sur une impossibilité médicale objective de prise en charge.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de prostitution ?', answer: 'Prise en compte des risques spécifiques (IST, violences) et accès à la prévention et aux soins.', },
+{ question: 'Qu’est-ce que la santé des personnes victimes de violences ?', answer: 'Prise en charge globale des conséquences physiques, psychiques et sociales des violences.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation d’addiction ?', answer: 'Prise en charge des troubles liés à la consommation de substances ou comportements addictifs.', },
+{ question: 'Qu’est-ce que la santé des personnes vivant en bidonville ?', answer: 'Prise en compte des conditions de vie précaires et des obstacles spécifiques à l’accès aux soins.', },
+{ question: 'Qu’est-ce que la santé des personnes analphabètes ?', answer: 'Adaptation de l’information et de l’accompagnement pour garantir l’accès aux soins.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de migration forcée ?', answer: 'Prise en charge des traumatismes et besoins spécifiques des réfugiés et demandeurs d’asile.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité énergétique ?', answer: 'Prise en compte des conséquences sanitaires du manque de chauffage ou d’électricité.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité alimentaire ?', answer: 'Prise en compte des risques de carences et de maladies liées à une alimentation insuffisante.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité administrative ?', answer: 'Aide à l’accès aux droits et à la régularisation pour garantir l’accès aux soins.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité relationnelle ?', answer: 'Lutte contre l’isolement pour faciliter l’accès à l’information et aux soins.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité psychique ?', answer: 'Prise en charge adaptée des troubles mentaux et de la détresse psychologique.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité sociale ?', answer: 'Prise en compte de l’ensemble des difficultés sociales impactant la santé.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité économique ?', answer: 'Aide à l’accès aux soins malgré des ressources financières limitées.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité structurelle ?', answer: 'Prise en compte des obstacles liés à l’organisation du système de santé.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité institutionnelle ?', answer: 'Prise en compte des difficultés liées aux politiques et aux institutions de santé.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité multifactorielle ?', answer: 'Prise en compte de la combinaison de plusieurs facteurs de vulnérabilité.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité chronique ?', answer: 'Prise en charge adaptée des personnes vivant durablement dans la précarité.', },
+{ question: 'Qu’est-ce que la santé des personnes en situation de précarité aiguë ?', answer: 'Réponse rapide à des besoins de santé urgents liés à une précarité soudaine.', }
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">Bases moléculaires en oncologie</span><ul>
+<li><a href="../Bases_moleculaire_Oncologie/fc1.html">Cours 1</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc2.html">Cours 2</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc3.html">Cours 3</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc4.html">Cours 4</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc5.html">Cours 5</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc6.html">Cours 6</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc7.html">Cours 7</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc8.html">Cours 8</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc9.html">Cours 9</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc10.html">Cours 10</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc11.html">Cours 11</a></li>
+</ul></li>
+<li><span class="opener">Human nutrition</span><ul>
+<li><a href="../Human_Nutrition/fc1.html">Métabolisme bioénergétique (révision)</a></li>
+<li><a href="../Human_Nutrition/fc2.html">Anthropométrie, bilan énergétique, valeurs de référence en diététique</a></li>
+<li><a href="../Human_Nutrition/fc3.html">Macronutriments : protéines, glucides et acides gras</a></li>
+<li><a href="../Human_Nutrition/fc4.html">Les micronutriments : minéraux</a></li>
+<li><a href="../Human_Nutrition/fc5.html">Les vitamines liposolubles</a></li>
+<li><a href="../Human_Nutrition/fc5_2.html">Les vitamines hydrosolubles</a></li>
+<li><a href="../Human_Nutrition/fc6.html">Maladies cardiovasculaires</a></li>
+<li><a href="../Human_Nutrition/fc7.html">Alimentation et cancer</a></li>
+<li><a href="../Human_Nutrition/fc8.html">Consommation d'alcool et effets sur la santé</a></li>
+<li><a href="../Human_Nutrition/fc9.html">Interaction régime-maladie : obésité, syndrome métabolique et diabète</a></li>
+<li><a href="../Human_Nutrition/fc10.html">Interventions diététiques et pharmacologiques</a></li>
+</ul></li>
+<li><span class="opener">One Health</span><ul>
+<li><a href="../One_Health/fc1.html">Introduction au concept One Health</a></li>
+<li><a href="../One_Health/fc2.html">Zoonoses et modes de transmission</a></li>
+<li><a href="../One_Health/fc3.html">Émergence et diffusion de la résistance aux antibiotiques</a></li>
+<li><a href="../One_Health/fc4.html">Maladies émergentes transmises de l'animal à l'homme</a></li>
+<li><a href="../One_Health/fc5.html">Mobiliser les professionnels et la population autour des approches One Health</a></li>
+<li><a href="../One_Health/fc6.html">Polluants de l'environnement professionnel</a></li>
+<li><a href="../One_Health/fc7.html">Évaluation, prévention et gestion des risques en santé environnementale</a></li>
+<li><a href="../One_Health/fc8.html">Principales théories, concepts et modèles en sciences sociales (One Health)</a></li>
+<li><a href="../One_Health/fc9.html">Surveillance et investigation en santé publique et santé animale</a></li>
+<li><a href="../One_Health/fc10.html">Biodiversité des plantes et liens avec la santé humaine et animale</a></li>
+<li><a href="../One_Health/fc11.html">Écologie de la faune sauvage</a></li>
+<li><a href="../One_Health/fc12_1.html">Environnement, biodiversité, écologie, évolution des risques (partie 1)</a></li>
+<li><a href="../One_Health/fc12_2.html">Environnement, biodiversité, écologie, évolution des risques (partie 2)</a></li>
+</ul></li>
+<li><span class="opener">Réglementation et éthique de la recherche - droit de la santé</span><ul>
+<li><a href="../Reglementation_Ethique_Recherche/fc1.html">Droit de la santé</a></li>
+<li><a href="../Reglementation_Ethique_Recherche/fc2.html">Réglementation et recherche de la santé</a></li>
+</ul></li>
+<li><span class="opener">Technique de vie et société</span><ul>
+<li><a href="../Technique_Vie_Societe/fc1.html">Vie, technique et société - Introduction</a></li>
+<li><a href="../Technique_Vie_Societe/fc2.html">L'éthique à l'heure de la civilisation technologique</a></li>
+<li><a href="../Technique_Vie_Societe/fc3.html">Le statut des objets techniques et des technologies dans le champ de la santé</a></li>
+<li><a href="../Technique_Vie_Societe/fc4.html">Les droits et devoirs des patients et des praticiens</a></li>
+<li><a href="../Technique_Vie_Societe/fc5.html">Le droit à l'information médicale</a></li>
+<li><a href="../Technique_Vie_Societe/fc6.html">Enjeux et statuts des objets biologiques</a></li>
+<li><a href="../Technique_Vie_Societe/fc7.html">La pensée des bio-objets chez Céline Lafontaine</a></li>
+<li><a href="../Technique_Vie_Societe/fc8.html">La technicisation médicale, une déshumanisation : précisions conceptuelles</a></li>
+<li><a href="../Technique_Vie_Societe/fc9.html">La médecine humaniste face à la biomédecine</a></li>
+<li><a href="../Technique_Vie_Societe/fc10.html">Les médecines alternatives : de la critique humaniste à l'antiscience</a></li>
+<li><a href="../Technique_Vie_Societe/fc11.html">Biomédecine et approche holistique : le modèle biopsychosocial</a></li>
+</ul></li>
+<li><span class="opener">Biotechnologie</span><ul>
+<li><a href="../Biotechnologie/fc1.html">Introduction à la biotechnologie</a></li>
+<li><a href="../Biotechnologie/fc2.html">Reprogrammation cellulaire</a></li>
+<li><a href="../Biotechnologie/fc3.html">Drug Repositioning</a></li>
+<li><a href="../Biotechnologie/fc4.html">Immunothérapie</a></li>
+<li><a href="../Biotechnologie/fc5.html">Principes généraux de la thérapie génique</a></li>
+<li><a href="../Biotechnologie/fc6.html">Les vésicules extracellulaires</a></li>
+<li><a href="../Biotechnologie/fc7.html">Bioproduction de cellules souches</a></li>
+<li><a href="../Biotechnologie/fc8.html">Stratégies vaccinales</a></li>
+<li><a href="../Biotechnologie/fc9.html">Édition du génome</a></li>
+<li><a href="../Biotechnologie/fc10.html">Biomécanique des biomatériaux</a></li>
+<li><a href="../Biotechnologie/fc11.html">Thérapie cellulaire et moelle osseuse</a></li>
+<li><a href="../Biotechnologie/fc12.html">Peptides thérapeutiques antimicrobiens</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Promotion et prévention</span><ul>
+<li><a href="../SP_Promotion_Prevention/fc1.html">Généralités en santé publique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc2.html">Méthodologie de projet en prévention et promotion de la santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc3.html">Déterminants de santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc4.html">Méthodes de prévention et de dépistage</a></li>
+<li><a href="../SP_Promotion_Prevention/fc5.html">Vaccins et promotion de la prévention</a></li>
+<li><a href="../SP_Promotion_Prevention/fc6.html">Maladies sexuellement transmissibles</a></li>
+<li><a href="../SP_Promotion_Prevention/fc7.html">Initiation aux soins d’urgence</a></li>
+<li><a href="../SP_Promotion_Prevention/fc8.html">Sédentarité et activité physique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc9.html">Le risque cardio-vasculaire</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Économie de la santé</span><ul>
+<li><a href="../SP_Economie_Sante/fc1.html">Analyse économique de la perte d’autonomie (Dépendance)</a></li>
+<li><a href="../SP_Economie_Sante/fc2.html">Analyse de la perte d’autonomie : Handicap</a></li>
+<li><a href="../SP_Economie_Sante/fc3.html">Les modes de rémunération des médecins libéraux</a></li>
+<li><a href="../SP_Economie_Sante/fc4.html">Les modes de rémunération des établissements de santé</a></li>
+<li><a href="../SP_Economie_Sante/fc5.html">Nutrition, santé et croissance économique</a></li>
+<li><a href="../SP_Economie_Sante/fc6.html">Santé et développement : santé et pauvreté</a></li>
+<li><a href="../SP_Economie_Sante/fc7.html">Santé et développement : système et égalité</a></li>
+<li><a href="../SP_Economie_Sante/fc8.html">Santé et environnement</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Géographie de la santé</span><ul>
+<li><a href="../SP_Geographie_Sante/fc1.html">Histoire et concepts de la géographie de la santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc2.html">Liens villes et santé : enjeux des usages de la carte en santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc3.html">Inégalités spatiales de l’offre de soins en France</a></li>
+<li><a href="../SP_Geographie_Sante/fc4.html">Enjeux internationaux des inégalités d’offre de soins</a></li>
+<li><a href="../SP_Geographie_Sante/fc5.html">Enjeux internationaux : le point de vue des patient.es</a></li>
+<li><a href="../SP_Geographie_Sante/fc6.html">L’accès aux soins des personnes vulnérables</a></li>
+<li><a href="../SP_Geographie_Sante/fc7.html">Alimentation et santé en ville</a></li>
+<li><a href="../SP_Geographie_Sante/fc8.html">Pouvoirs des villes et urbanisme favorable à la santé : espaces verts</a></li>
+<li><a href="../SP_Geographie_Sante/fc9.html">Urbanisme favorable à la santé : personnes âgées</a></li>
+<li><a href="../SP_Geographie_Sante/fc10.html">Urbanisme favorable à la santé : enfants</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Gestion de projet de recherche clinique</span><ul>
+<li><a href="../SP_Gestion_Projet_RC/fc1.html">Généralités sur les essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc2.html">Acteurs de la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc3.html">Vigilance, gestion des EIG et sécurité des essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc4.html">Structures de soutien à la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc5.html">Mise en place d’un essai clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc6.html">Le dossier patient, les CRF et les bases de données</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc7.html">Gestion de projet (monitoring)</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc8.html">Réglementation sur les échantillons biologiques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc9.html">Démarches auprès du MESRI</a></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

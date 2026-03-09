@@ -1,0 +1,499 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS3 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Santé publique - Géographie de la santé</h1><h2>Point de vue des patient.es</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que l’expérience patient ?', answer: 'C’est l’ensemble des interactions vécues par le patient dans son parcours de soins.', },
+{ question: 'Que signifie le terme \'patient partenaire\' ?', answer: 'Un patient impliqué activement dans ses soins et la prise de décision médicale.', },
+{ question: 'Quelle est la différence entre patient expert et patient partenaire ?', answer: 'Le patient expert a acquis des connaissances spécifiques sur sa maladie, le patient partenaire est impliqué dans la co-construction des soins.', },
+{ question: 'Donnez un exemple d’association de patients en France.', answer: 'AFM-Téléthon, France Assos Santé, AIDES.', },
+{ question: 'Qu’est-ce que l’empowerment du patient ?', answer: 'Le processus par lequel le patient acquiert les moyens d’agir sur sa santé.', },
+{ question: 'Citez un avantage de l’implication des patients dans la recherche clinique.', answer: 'Amélioration de la pertinence des questions de recherche.', },
+{ question: 'Qu’est-ce que la démocratie sanitaire ?', answer: 'C’est l’implication des usagers dans l’organisation et la politique de santé.', },
+{ question: 'Donnez une définition du terme \'parcours de soins\'.', answer: 'Ensemble des étapes et acteurs impliqués dans la prise en charge d’un patient.', },
+{ question: 'Quel est le rôle du représentant des usagers ?', answer: 'Défendre les droits et intérêts des patients dans les instances de santé.', },
+{ question: 'Quelle loi a renforcé les droits des patients en France en 2002 ?', answer: 'La loi Kouchner du 4 mars 2002.', },
+{ question: 'Donnez une conséquence positive de la prise en compte du point de vue des patients.', answer: 'Amélioration de la satisfaction et de l’observance thérapeutique.', },
+{ question: 'Qu’est-ce que l’observance thérapeutique ?', answer: 'Respect par le patient de la prescription médicale.', },
+{ question: 'Citez un outil permettant de recueillir le point de vue des patients.', answer: 'Questionnaire de satisfaction, entretien individuel, focus group.', },
+{ question: 'Qu’est-ce qu’un focus group ?', answer: 'Réunion de patients pour recueillir leurs opinions sur un sujet de santé.', },
+{ question: 'Quelle est la différence entre satisfaction et expérience patient ?', answer: 'La satisfaction mesure le ressenti, l’expérience décrit le vécu objectif.', },
+{ question: 'Qu’est-ce qu’une ETP ?', answer: 'Education Thérapeutique du Patient, programme pour aider le patient à gérer sa maladie.', },
+{ question: 'Citez une maladie où l’ETP est recommandée.', answer: 'Diabète, asthme, insuffisance cardiaque.', },
+{ question: 'Quel est le principal objectif de l’ETP ?', answer: 'Rendre le patient autonome dans la gestion de sa maladie.', },
+{ question: 'Qu’est-ce qu’un patient traceur ?', answer: 'Patient dont le parcours est analysé pour évaluer la qualité des soins.', },
+{ question: 'Donnez un exemple de situation où le point de vue du patient est essentiel.', answer: 'Choix d’un traitement en cancérologie.', },
+{ question: 'Qu’est-ce que la co-construction du projet de soins ?', answer: 'Elaboration du plan de soins avec le patient et l’équipe médicale.', },
+{ question: 'Citez une limite à la prise en compte du point de vue des patients.', answer: 'Manque de temps, difficultés de communication, biais de représentativité.', },
+{ question: 'Qu’est-ce qu’un PROMS ?', answer: 'Patient Reported Outcome Measures, indicateurs de résultats rapportés par le patient.', },
+{ question: 'Quel est le rôle des aidants dans le parcours de soins ?', answer: 'Soutenir le patient dans sa prise en charge et ses démarches.', },
+{ question: 'Qu’est-ce que la relation de soin centrée sur le patient ?', answer: 'Relation où les besoins, valeurs et préférences du patient sont prioritaires.', },
+{ question: 'Qu’est-ce que la \'pair-aidance\' ?', answer: 'Soutien apporté par un patient ayant vécu une expérience similaire.', },
+{ question: 'Donnez un exemple de pair-aidance.', answer: 'Groupes de parole pour patients atteints de cancer.', },
+{ question: 'Citez un droit fondamental du patient en France.', answer: 'Droit à l’information, au consentement, au respect de la vie privée.', },
+{ question: 'Qu’est-ce que le consentement éclairé ?', answer: 'Accord donné par le patient après avoir reçu une information complète.', },
+{ question: 'Qu’est-ce qu’une directive anticipée ?', answer: 'Document où le patient exprime ses volontés pour sa fin de vie.', },
+{ question: 'Quel est le rôle d’un médiateur en santé ?', answer: 'Faciliter la communication entre patients et professionnels de santé.', },
+{ question: 'Qu’est-ce qu’une plainte en santé ?', answer: 'Expression d’une insatisfaction ou d’un préjudice subi par le patient.', },
+{ question: 'Qu’est-ce qu’une commission des usagers (CDU) ?', answer: 'Instance hospitalière chargée de représenter les patients et traiter les plaintes.', },
+{ question: 'Donnez un exemple de situation où le patient est vulnérable.', answer: 'Personne âgée dépendante, patient en situation de handicap.', },
+{ question: 'Qu’est-ce que la littératie en santé ?', answer: 'Capacité à comprendre et utiliser les informations de santé.', },
+{ question: 'Pourquoi la littératie en santé est-elle importante ?', answer: 'Elle conditionne la capacité du patient à prendre des décisions éclairées.', },
+{ question: 'Qu’est-ce que la stigmatisation en santé ?', answer: 'Discrimination ou jugement négatif envers un patient pour sa maladie.', },
+{ question: 'Donnez un exemple de stigmatisation en santé.', answer: 'Patients atteints de VIH ou de troubles psychiatriques.', },
+{ question: 'Qu’est-ce qu’un parcours de soins coordonné ?', answer: 'Organisation des soins autour du médecin traitant pour plus d’efficacité.', },
+{ question: 'Quel est le rôle du médecin traitant dans le parcours de soins ?', answer: 'Coordonner les soins et orienter le patient vers les spécialistes.', },
+{ question: 'Qu’est-ce que le \'patient centrisme\' ?', answer: 'Approche qui place le patient au centre des décisions et des soins.', },
+{ question: 'Citez un indicateur de qualité du point de vue du patient.', answer: 'Taux de satisfaction, délai d’attente, respect de la dignité.', },
+{ question: 'Qu’est-ce qu’une enquête de satisfaction patient ?', answer: 'Questionnaire visant à recueillir l’avis des patients sur leur prise en charge.', },
+{ question: 'Donnez une limite des enquêtes de satisfaction.', answer: 'Biais de réponse, faible taux de retour, questions mal comprises.', },
+{ question: 'Qu’est-ce que la notion de \'patient ressource\' ?', answer: 'Patient qui partage son expérience pour aider d’autres patients ou les soignants.', },
+{ question: 'Qu’est-ce qu’un comité d’usagers ?', answer: 'Groupe consultatif représentant les patients dans une structure de santé.', },
+{ question: 'Qu’est-ce que la confidentialité des données de santé ?', answer: 'Obligation de protéger les informations personnelles du patient.', },
+{ question: 'Pourquoi la confidentialité est-elle importante ?', answer: 'Pour préserver la confiance et le respect de la vie privée du patient.', },
+{ question: 'Qu’est-ce que la bientraitance en santé ?', answer: 'Ensemble d’attitudes et de pratiques respectueuses du patient.', },
+{ question: 'Donnez un exemple de bientraitance.', answer: 'Ecoute active, respect du rythme du patient, absence de jugement.', },
+{ question: 'Qu’est-ce que la maltraitance en santé ?', answer: 'Acte ou omission portant atteinte à la dignité ou à la sécurité du patient.', },
+{ question: 'Citez un exemple de maltraitance en santé.', answer: 'Refus de soins, humiliation, négligence.', },
+{ question: 'Qu’est-ce que l’autonomie du patient ?', answer: 'Capacité à décider pour soi-même concernant sa santé.', },
+{ question: 'Qu’est-ce que la vulnérabilité en santé ?', answer: 'Etat de fragilité exposant le patient à des risques accrus.', },
+{ question: 'Qu’est-ce qu’un parcours de soins complexe ?', answer: 'Parcours impliquant de multiples intervenants et étapes de soins.', },
+{ question: 'Qu’est-ce qu’un patient chronique ?', answer: 'Patient atteint d’une maladie de longue durée nécessitant un suivi régulier.', },
+{ question: 'Donnez un exemple de maladie chronique.', answer: 'Diabète, hypertension, insuffisance rénale.', },
+{ question: 'Qu’est-ce que l’accompagnement personnalisé ?', answer: 'Adaptation des soins et du soutien aux besoins spécifiques du patient.', },
+{ question: 'Qu’est-ce qu’une consultation d’annonce ?', answer: 'Entretien dédié à l’annonce d’un diagnostic grave.', },
+{ question: 'Pourquoi la consultation d’annonce est-elle importante ?', answer: 'Elle permet au patient de comprendre et de poser des questions sur sa maladie.', },
+{ question: 'Qu’est-ce que la communication empathique ?', answer: 'Communication basée sur l’écoute et la compréhension des émotions du patient.', },
+{ question: 'Donnez un exemple de communication non empathique.', answer: 'Interrompre le patient, minimiser ses ressentis.', },
+{ question: 'Qu’est-ce qu’un projet de vie en santé ?', answer: 'Planification des soins tenant compte des aspirations personnelles du patient.', },
+{ question: 'Qu’est-ce que la qualité de vie liée à la santé ?', answer: 'Impact de la santé sur le bien-être physique, psychique et social du patient.', },
+{ question: 'Citez un outil de mesure de la qualité de vie.', answer: 'Questionnaire SF-36, EQ-5D.', },
+{ question: 'Qu’est-ce que la gestion du risque en santé du point de vue du patient ?', answer: 'Prise en compte des risques perçus et vécus par le patient.', },
+{ question: 'Qu’est-ce que la co-décision médicale ?', answer: 'Processus où médecin et patient prennent ensemble les décisions de soins.', },
+{ question: 'Donnez un exemple de co-décision médicale.', answer: 'Choix entre plusieurs traitements pour une même maladie.', },
+{ question: 'Qu’est-ce que la médiation en santé ?', answer: 'Intervention pour résoudre un conflit entre patient et soignant.', },
+{ question: 'Qu’est-ce que l’expérience négative du patient ?', answer: 'Vécu d’insatisfaction, de douleur ou de non-respect durant les soins.', },
+{ question: 'Qu’est-ce qu’un retour d’expérience patient ?', answer: 'Témoignage ou évaluation du vécu du patient après un soin ou une hospitalisation.', },
+{ question: 'Qu’est-ce que la participation du patient à l’évaluation des soins ?', answer: 'Implication du patient dans l’analyse de la qualité et sécurité des soins.', },
+{ question: 'Qu’est-ce qu’une enquête PREMS ?', answer: 'Patient Reported Experience Measures, mesure de l’expérience vécue par le patient.', },
+{ question: 'Donnez un exemple d’amélioration issue d’une enquête PREMS.', answer: 'Réduction des délais d’attente suite à des retours patients.', },
+{ question: 'Qu’est-ce qu’une décision partagée ?', answer: 'Décision prise conjointement par le patient et le professionnel de santé.', },
+{ question: 'Qu’est-ce qu’un parcours de soins fragmenté ?', answer: 'Parcours caractérisé par un manque de coordination entre les acteurs de soins.', },
+{ question: 'Qu’est-ce que l’auto-soin ?', answer: 'Actions réalisées par le patient pour gérer sa santé au quotidien.', },
+{ question: 'Donnez un exemple d’auto-soin.', answer: 'Auto-surveillance de la glycémie chez le diabétique.', },
+{ question: 'Qu’est-ce que la relation asymétrique en santé ?', answer: 'Relation où le professionnel détient plus de pouvoir que le patient.', },
+{ question: 'Qu’est-ce qu’un patient informé ?', answer: 'Patient qui a reçu toutes les informations nécessaires pour prendre une décision.', },
+{ question: 'Qu’est-ce que la satisfaction globale du patient ?', answer: 'Appréciation générale du patient sur l’ensemble de sa prise en charge.', },
+{ question: 'Donnez un exemple de programme national impliquant les patients.', answer: 'Plan Cancer, Plan Maladies Rares.', },
+{ question: 'Qu’est-ce que la participation citoyenne en santé ?', answer: 'Implication des citoyens dans les décisions de politique de santé.', },
+{ question: 'Qu’est-ce qu’un patient sentinelle ?', answer: 'Patient qui signale des événements indésirables ou des dysfonctionnements.', },
+{ question: 'Qu’est-ce qu’un parcours de soins personnalisé ?', answer: 'Adaptation du parcours de soins aux besoins et attentes du patient.', },
+{ question: 'Qu’est-ce que la notion de \'patient expert\' ?', answer: 'Patient ayant développé une expertise sur sa maladie et son traitement.', },
+{ question: 'Citez un exemple de formation pour patients experts.', answer: 'Université des patients, formation par des associations.', },
+{ question: 'Qu’est-ce que la prise de décision partagée ?', answer: 'Processus collaboratif de choix thérapeutique entre patient et soignant.', },
+{ question: 'Qu’est-ce que le respect du secret médical ?', answer: 'Obligation pour le professionnel de ne pas divulguer les informations du patient.', },
+{ question: 'Qu’est-ce qu’un parcours de soins intégré ?', answer: 'Coordination de l’ensemble des interventions autour du patient.', },
+{ question: 'Qu’est-ce qu’une évaluation qualitative du point de vue patient ?', answer: 'Analyse des témoignages et ressentis pour comprendre le vécu du patient.', },
+{ question: 'Donnez un exemple de méthode qualitative.', answer: 'Entretien semi-directif, analyse de contenu.', },
+{ question: 'Qu’est-ce qu’un indicateur patient-reported ?', answer: 'Indicateur basé sur les réponses directes des patients.', },
+{ question: 'Qu’est-ce que la notion de \'patient acteur\' ?', answer: 'Patient qui participe activement à ses soins et à la gestion de sa santé.', },
+{ question: 'Qu’est-ce qu’une alliance thérapeutique ?', answer: 'Relation de collaboration et de confiance entre patient et soignant.', },
+{ question: 'Qu’est-ce qu’une rupture de parcours de soins ?', answer: 'Interruption non prévue ou défaut de coordination dans le suivi du patient.', },
+{ question: 'Qu’est-ce que la satisfaction spécifique ?', answer: 'Satisfaction du patient sur un aspect précis de sa prise en charge.', },
+{ question: 'Qu’est-ce que la notion de \'patient témoin\' ?', answer: 'Patient qui partage son expérience pour sensibiliser ou former d’autres personnes.', },
+{ question: 'Qu’est-ce qu’un dispositif d’écoute patient ?', answer: 'Moyen mis en place pour recueillir la parole et les attentes des patients.', },
+{ question: 'Qu’est-ce que la co-formation patient-soignant ?', answer: 'Formation conjointe pour améliorer la compréhension mutuelle et la qualité des soins.', }
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">Bases moléculaires en oncologie</span><ul>
+<li><a href="../Bases_moleculaire_Oncologie/fc1.html">Cours 1</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc2.html">Cours 2</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc3.html">Cours 3</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc4.html">Cours 4</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc5.html">Cours 5</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc6.html">Cours 6</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc7.html">Cours 7</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc8.html">Cours 8</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc9.html">Cours 9</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc10.html">Cours 10</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc11.html">Cours 11</a></li>
+</ul></li>
+<li><span class="opener">Human nutrition</span><ul>
+<li><a href="../Human_Nutrition/fc1.html">Métabolisme bioénergétique (révision)</a></li>
+<li><a href="../Human_Nutrition/fc2.html">Anthropométrie, bilan énergétique, valeurs de référence en diététique</a></li>
+<li><a href="../Human_Nutrition/fc3.html">Macronutriments : protéines, glucides et acides gras</a></li>
+<li><a href="../Human_Nutrition/fc4.html">Les micronutriments : minéraux</a></li>
+<li><a href="../Human_Nutrition/fc5.html">Les vitamines liposolubles</a></li>
+<li><a href="../Human_Nutrition/fc5_2.html">Les vitamines hydrosolubles</a></li>
+<li><a href="../Human_Nutrition/fc6.html">Maladies cardiovasculaires</a></li>
+<li><a href="../Human_Nutrition/fc7.html">Alimentation et cancer</a></li>
+<li><a href="../Human_Nutrition/fc8.html">Consommation d'alcool et effets sur la santé</a></li>
+<li><a href="../Human_Nutrition/fc9.html">Interaction régime-maladie : obésité, syndrome métabolique et diabète</a></li>
+<li><a href="../Human_Nutrition/fc10.html">Interventions diététiques et pharmacologiques</a></li>
+</ul></li>
+<li><span class="opener">One Health</span><ul>
+<li><a href="../One_Health/fc1.html">Introduction au concept One Health</a></li>
+<li><a href="../One_Health/fc2.html">Zoonoses et modes de transmission</a></li>
+<li><a href="../One_Health/fc3.html">Émergence et diffusion de la résistance aux antibiotiques</a></li>
+<li><a href="../One_Health/fc4.html">Maladies émergentes transmises de l'animal à l'homme</a></li>
+<li><a href="../One_Health/fc5.html">Mobiliser les professionnels et la population autour des approches One Health</a></li>
+<li><a href="../One_Health/fc6.html">Polluants de l'environnement professionnel</a></li>
+<li><a href="../One_Health/fc7.html">Évaluation, prévention et gestion des risques en santé environnementale</a></li>
+<li><a href="../One_Health/fc8.html">Principales théories, concepts et modèles en sciences sociales (One Health)</a></li>
+<li><a href="../One_Health/fc9.html">Surveillance et investigation en santé publique et santé animale</a></li>
+<li><a href="../One_Health/fc10.html">Biodiversité des plantes et liens avec la santé humaine et animale</a></li>
+<li><a href="../One_Health/fc11.html">Écologie de la faune sauvage</a></li>
+<li><a href="../One_Health/fc12_1.html">Environnement, biodiversité, écologie, évolution des risques (partie 1)</a></li>
+<li><a href="../One_Health/fc12_2.html">Environnement, biodiversité, écologie, évolution des risques (partie 2)</a></li>
+</ul></li>
+<li><span class="opener">Réglementation et éthique de la recherche - droit de la santé</span><ul>
+<li><a href="../Reglementation_Ethique_Recherche/fc1.html">Droit de la santé</a></li>
+<li><a href="../Reglementation_Ethique_Recherche/fc2.html">Réglementation et recherche de la santé</a></li>
+</ul></li>
+<li><span class="opener">Technique de vie et société</span><ul>
+<li><a href="../Technique_Vie_Societe/fc1.html">Vie, technique et société - Introduction</a></li>
+<li><a href="../Technique_Vie_Societe/fc2.html">L'éthique à l'heure de la civilisation technologique</a></li>
+<li><a href="../Technique_Vie_Societe/fc3.html">Le statut des objets techniques et des technologies dans le champ de la santé</a></li>
+<li><a href="../Technique_Vie_Societe/fc4.html">Les droits et devoirs des patients et des praticiens</a></li>
+<li><a href="../Technique_Vie_Societe/fc5.html">Le droit à l'information médicale</a></li>
+<li><a href="../Technique_Vie_Societe/fc6.html">Enjeux et statuts des objets biologiques</a></li>
+<li><a href="../Technique_Vie_Societe/fc7.html">La pensée des bio-objets chez Céline Lafontaine</a></li>
+<li><a href="../Technique_Vie_Societe/fc8.html">La technicisation médicale, une déshumanisation : précisions conceptuelles</a></li>
+<li><a href="../Technique_Vie_Societe/fc9.html">La médecine humaniste face à la biomédecine</a></li>
+<li><a href="../Technique_Vie_Societe/fc10.html">Les médecines alternatives : de la critique humaniste à l'antiscience</a></li>
+<li><a href="../Technique_Vie_Societe/fc11.html">Biomédecine et approche holistique : le modèle biopsychosocial</a></li>
+</ul></li>
+<li><span class="opener">Biotechnologie</span><ul>
+<li><a href="../Biotechnologie/fc1.html">Introduction à la biotechnologie</a></li>
+<li><a href="../Biotechnologie/fc2.html">Reprogrammation cellulaire</a></li>
+<li><a href="../Biotechnologie/fc3.html">Drug Repositioning</a></li>
+<li><a href="../Biotechnologie/fc4.html">Immunothérapie</a></li>
+<li><a href="../Biotechnologie/fc5.html">Principes généraux de la thérapie génique</a></li>
+<li><a href="../Biotechnologie/fc6.html">Les vésicules extracellulaires</a></li>
+<li><a href="../Biotechnologie/fc7.html">Bioproduction de cellules souches</a></li>
+<li><a href="../Biotechnologie/fc8.html">Stratégies vaccinales</a></li>
+<li><a href="../Biotechnologie/fc9.html">Édition du génome</a></li>
+<li><a href="../Biotechnologie/fc10.html">Biomécanique des biomatériaux</a></li>
+<li><a href="../Biotechnologie/fc11.html">Thérapie cellulaire et moelle osseuse</a></li>
+<li><a href="../Biotechnologie/fc12.html">Peptides thérapeutiques antimicrobiens</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Promotion et prévention</span><ul>
+<li><a href="../SP_Promotion_Prevention/fc1.html">Généralités en santé publique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc2.html">Méthodologie de projet en prévention et promotion de la santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc3.html">Déterminants de santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc4.html">Méthodes de prévention et de dépistage</a></li>
+<li><a href="../SP_Promotion_Prevention/fc5.html">Vaccins et promotion de la prévention</a></li>
+<li><a href="../SP_Promotion_Prevention/fc6.html">Maladies sexuellement transmissibles</a></li>
+<li><a href="../SP_Promotion_Prevention/fc7.html">Initiation aux soins d’urgence</a></li>
+<li><a href="../SP_Promotion_Prevention/fc8.html">Sédentarité et activité physique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc9.html">Le risque cardio-vasculaire</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Économie de la santé</span><ul>
+<li><a href="../SP_Economie_Sante/fc1.html">Analyse économique de la perte d’autonomie (Dépendance)</a></li>
+<li><a href="../SP_Economie_Sante/fc2.html">Analyse de la perte d’autonomie : Handicap</a></li>
+<li><a href="../SP_Economie_Sante/fc3.html">Les modes de rémunération des médecins libéraux</a></li>
+<li><a href="../SP_Economie_Sante/fc4.html">Les modes de rémunération des établissements de santé</a></li>
+<li><a href="../SP_Economie_Sante/fc5.html">Nutrition, santé et croissance économique</a></li>
+<li><a href="../SP_Economie_Sante/fc6.html">Santé et développement : santé et pauvreté</a></li>
+<li><a href="../SP_Economie_Sante/fc7.html">Santé et développement : système et égalité</a></li>
+<li><a href="../SP_Economie_Sante/fc8.html">Santé et environnement</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Géographie de la santé</span><ul>
+<li><a href="../SP_Geographie_Sante/fc1.html">Histoire et concepts de la géographie de la santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc2.html">Liens villes et santé : enjeux des usages de la carte en santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc3.html">Inégalités spatiales de l’offre de soins en France</a></li>
+<li><a href="../SP_Geographie_Sante/fc4.html">Enjeux internationaux des inégalités d’offre de soins</a></li>
+<li><a href="../SP_Geographie_Sante/fc5.html">Enjeux internationaux : le point de vue des patient.es</a></li>
+<li><a href="../SP_Geographie_Sante/fc6.html">L’accès aux soins des personnes vulnérables</a></li>
+<li><a href="../SP_Geographie_Sante/fc7.html">Alimentation et santé en ville</a></li>
+<li><a href="../SP_Geographie_Sante/fc8.html">Pouvoirs des villes et urbanisme favorable à la santé : espaces verts</a></li>
+<li><a href="../SP_Geographie_Sante/fc9.html">Urbanisme favorable à la santé : personnes âgées</a></li>
+<li><a href="../SP_Geographie_Sante/fc10.html">Urbanisme favorable à la santé : enfants</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Gestion de projet de recherche clinique</span><ul>
+<li><a href="../SP_Gestion_Projet_RC/fc1.html">Généralités sur les essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc2.html">Acteurs de la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc3.html">Vigilance, gestion des EIG et sécurité des essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc4.html">Structures de soutien à la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc5.html">Mise en place d’un essai clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc6.html">Le dossier patient, les CRF et les bases de données</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc7.html">Gestion de projet (monitoring)</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc8.html">Réglementation sur les échantillons biologiques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc9.html">Démarches auprès du MESRI</a></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

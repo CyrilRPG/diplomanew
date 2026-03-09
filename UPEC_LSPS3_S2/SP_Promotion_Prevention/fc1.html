@@ -1,0 +1,499 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS3 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Santé publique - Promotion et prévention</h1><h2>Généralités en santé publique</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que la santé publique ?', answer: 'La science et l’art de prévenir la maladie, prolonger la vie et promouvoir la santé par l’action collective organisée.', },
+{ question: 'Citez les trois fonctions principales de la santé publique.', answer: 'Prévention, promotion de la santé, et protection de la santé.', },
+{ question: 'Quelle est la définition de la prévention primaire ?', answer: 'Ensemble des actions visant à éviter l’apparition d’une maladie.', },
+{ question: 'Donnez un exemple de prévention primaire.', answer: 'La vaccination contre la grippe.', },
+{ question: 'Qu’est-ce que la prévention secondaire ?', answer: 'Actions visant à détecter une maladie à un stade précoce afin d’en améliorer le pronostic.', },
+{ question: 'Donnez un exemple de prévention secondaire.', answer: 'Le dépistage du cancer du sein par mammographie.', },
+{ question: 'Qu’est-ce que la prévention tertiaire ?', answer: 'Actions visant à limiter les complications ou les séquelles d’une maladie déjà déclarée.', },
+{ question: 'Donnez un exemple de prévention tertiaire.', answer: 'La rééducation après un accident vasculaire cérébral.', },
+{ question: 'Quelle est la différence entre incidence et prévalence ?', answer: 'L’incidence mesure le nombre de nouveaux cas, la prévalence le nombre total de cas à un instant donné.', },
+{ question: 'Qu’est-ce qu’une épidémie ?', answer: 'Augmentation soudaine du nombre de cas d’une maladie dans une population donnée.', },
+{ question: 'Qu’est-ce qu’une endémie ?', answer: 'Présence constante d’une maladie dans une population ou une région donnée.', },
+{ question: 'Qu’est-ce qu’une pandémie ?', answer: 'Épidémie qui s’étend à une large zone géographique, souvent mondiale.', },
+{ question: 'Citez un exemple de pandémie récente.', answer: 'La pandémie de COVID-19.', },
+{ question: 'Qu’est-ce qu’un déterminant de santé ?', answer: 'Facteur qui influence l’état de santé d’une population ou d’un individu.', },
+{ question: 'Citez quatre grands types de déterminants de santé.', answer: 'Biologiques, environnementaux, comportements, accès aux soins.', },
+{ question: 'Qu’est-ce que la promotion de la santé ?', answer: 'Processus qui confère aux populations les moyens d’assurer un plus grand contrôle sur leur propre santé.', },
+{ question: 'Quel est le rôle de l’OMS en santé publique ?', answer: 'Coordonner la santé internationale, fournir un leadership et établir des normes.', },
+{ question: 'Qu’est-ce que la surveillance épidémiologique ?', answer: 'Collecte, analyse et interprétation continue de données de santé pour orienter les actions de santé publique.', },
+{ question: 'Citez un exemple d’indicateur de santé.', answer: 'L’espérance de vie à la naissance.', },
+{ question: 'Qu’est-ce que la mortalité infantile ?', answer: 'Nombre de décès d’enfants de moins d’un an pour 1000 naissances vivantes.', },
+{ question: 'Quel est l’ordre de grandeur de la mortalité infantile en France ?', answer: 'Environ 3 à 4 pour 1000 naissances vivantes.', },
+{ question: 'Qu’est-ce que l’espérance de vie à la naissance ?', answer: 'Nombre moyen d’années qu’un nouveau-né peut espérer vivre.', },
+{ question: 'Qu’est-ce que la morbidité ?', answer: 'Nombre de personnes malades dans une population donnée.', },
+{ question: 'Qu’est-ce qu’une maladie à déclaration obligatoire ?', answer: 'Maladie dont la notification aux autorités sanitaires est imposée par la loi.', },
+{ question: 'Citez une maladie à déclaration obligatoire en France.', answer: 'La tuberculose.', },
+{ question: 'Qu’est-ce que l’éducation pour la santé ?', answer: 'Processus visant à permettre aux personnes d’adopter des comportements favorables à la santé.', },
+{ question: 'Qu’est-ce qu’un facteur de risque ?', answer: 'Caractéristique augmentant la probabilité de survenue d’une maladie.', },
+{ question: 'Donnez un exemple de facteur de risque cardiovasculaire.', answer: 'Le tabagisme.', },
+{ question: 'Qu’est-ce qu’une inégalité de santé ?', answer: 'Différence d’état de santé entre groupes de population, souvent liée à des facteurs sociaux.', },
+{ question: 'Qu’est-ce que la couverture vaccinale ?', answer: 'Proportion de personnes vaccinées dans une population cible.', },
+{ question: 'Quel est le seuil de couverture vaccinale pour l’immunité collective contre la rougeole ?', answer: 'Environ 95%.', },
+{ question: 'Qu’est-ce qu’un programme de santé publique ?', answer: 'Ensemble d’actions coordonnées visant à améliorer la santé d’une population.', },
+{ question: 'Qu’est-ce qu’une politique de santé ?', answer: 'Ensemble de décisions et d’actions publiques visant à organiser et orienter le système de santé.', },
+{ question: 'Quel est le rôle de la Haute Autorité de Santé (HAS) ?', answer: 'Évaluer les produits, actes et organisations de soins pour garantir la qualité.', },
+{ question: 'Qu’est-ce qu’une enquête épidémiologique descriptive ?', answer: 'Étude qui décrit la fréquence et la répartition des problèmes de santé.', },
+{ question: 'Qu’est-ce qu’une enquête analytique ?', answer: 'Étude qui recherche les causes et les facteurs de risque d’une maladie.', },
+{ question: 'Qu’est-ce qu’une étude de cohorte ?', answer: 'Étude suivant un groupe d’individus dans le temps pour observer la survenue d’événements de santé.', },
+{ question: 'Qu’est-ce qu’une étude cas-témoins ?', answer: 'Étude comparant des personnes malades (cas) à des personnes non malades (témoins) pour identifier des facteurs de risque.', },
+{ question: 'Qu’est-ce qu’un taux brut de mortalité ?', answer: 'Nombre de décès par an pour 1000 habitants.', },
+{ question: 'Qu’est-ce que la DALY (Disability Adjusted Life Years) ?', answer: 'Années de vie perdues ajustées sur l’incapacité, mesure l’impact global des maladies.', },
+{ question: 'Qu’est-ce que la QALY (Quality Adjusted Life Years) ?', answer: 'Années de vie ajustées sur la qualité, mesure le gain de vie en bonne santé.', },
+{ question: 'Qu’est-ce qu’une intervention de santé publique basée sur les preuves ?', answer: 'Action dont l’efficacité est démontrée par des données scientifiques.', },
+{ question: 'Qu’est-ce que la planification sanitaire ?', answer: 'Processus d’organisation des ressources et des actions pour répondre aux besoins de santé.', },
+{ question: 'Citez un exemple de plan national de santé publique en France.', answer: 'Le Plan Cancer.', },
+{ question: 'Qu’est-ce que la veille sanitaire ?', answer: 'Surveillance active pour détecter rapidement tout événement sanitaire inhabituel.', },
+{ question: 'Qu’est-ce que l’équité en santé ?', answer: 'Absence de différences injustes et évitables dans l’accès à la santé.', },
+{ question: 'Qu’est-ce qu’un indicateur composite de santé ?', answer: 'Indicateur combinant plusieurs dimensions de la santé, comme l’IDH.', },
+{ question: 'Qu’est-ce que l’IDH (Indice de Développement Humain) ?', answer: 'Indicateur composite mesurant le développement d’un pays selon la santé, l’éducation et le niveau de vie.', },
+{ question: 'Qu’est-ce qu’une zoonose ?', answer: 'Maladie transmissible de l’animal à l’homme.', },
+{ question: 'Donnez un exemple de zoonose.', answer: 'La rage.', },
+{ question: 'Qu’est-ce que la santé environnementale ?', answer: 'Discipline étudiant l’impact de l’environnement sur la santé humaine.', },
+{ question: 'Citez un polluant de l’air ayant un impact sur la santé publique.', answer: 'Les particules fines (PM2,5).', },
+{ question: 'Qu’est-ce que la santé globale (One Health) ?', answer: 'Approche intégrée de la santé humaine, animale et environnementale.', },
+{ question: 'Qu’est-ce que l’épidémiologie ?', answer: 'Science étudiant la distribution et les déterminants des maladies dans les populations.', },
+{ question: 'Qu’est-ce qu’une intervention universelle en santé publique ?', answer: 'Action destinée à l’ensemble de la population, indépendamment du risque individuel.', },
+{ question: 'Qu’est-ce qu’une intervention ciblée ?', answer: 'Action destinée à un groupe à risque particulier.', },
+{ question: 'Qu’est-ce qu’un système de santé ?', answer: 'Ensemble des organisations, institutions et ressources dédiées à la santé.', },
+{ question: 'Qu’est-ce que l’accès aux soins ?', answer: 'Possibilité pour une population d’obtenir des services de santé appropriés.', },
+{ question: 'Qu’est-ce que la couverture universelle en santé ?', answer: 'Accès pour tous à des services de santé de qualité sans difficulté financière.', },
+{ question: 'Qu’est-ce que la santé communautaire ?', answer: 'Approche impliquant la participation active de la communauté dans la gestion de sa santé.', },
+{ question: 'Qu’est-ce que la littératie en santé ?', answer: 'Capacité à comprendre et utiliser l’information pour prendre des décisions de santé.', },
+{ question: 'Qu’est-ce que la prévention quaternaire ?', answer: 'Action visant à éviter les interventions médicales inutiles ou excessives.', },
+{ question: 'Donnez un exemple de prévention quaternaire.', answer: 'Éviter la prescription d’antibiotiques pour une infection virale bénigne.', },
+{ question: 'Qu’est-ce qu’une maladie chronique ?', answer: 'Maladie de longue durée, évolutive, souvent associée à une invalidité.', },
+{ question: 'Citez un exemple de maladie chronique.', answer: 'Le diabète.', },
+{ question: 'Qu’est-ce que la démographie sanitaire ?', answer: 'Étude des populations appliquée à la santé.', },
+{ question: 'Qu’est-ce que la transition épidémiologique ?', answer: 'Passage d’une prédominance de maladies infectieuses à des maladies chroniques dans une population.', },
+{ question: 'Qu’est-ce qu’une action intersectorielle en santé publique ?', answer: 'Collaboration entre plusieurs secteurs (santé, éducation, environnement) pour améliorer la santé.', },
+{ question: 'Qu’est-ce que la santé mentale en santé publique ?', answer: 'Prise en compte de la prévention, du dépistage et de la prise en charge des troubles psychiques.', },
+{ question: 'Quel est le principal objectif de la vaccination ?', answer: 'Prévenir la survenue de maladies infectieuses.', },
+{ question: 'Qu’est-ce que la résistance aux antibiotiques ?', answer: 'Capacité de bactéries à survivre malgré la présence d’antibiotiques.', },
+{ question: 'Qu’est-ce que la surveillance syndromique ?', answer: 'Surveillance basée sur l’observation de syndromes plutôt que sur des diagnostics confirmés.', },
+{ question: 'Qu’est-ce qu’une intervention communautaire ?', answer: 'Action de santé publique impliquant activement la communauté dans sa conception et sa mise en œuvre.', },
+{ question: 'Qu’est-ce que le gradient social de santé ?', answer: 'Relation entre le niveau socio-économique et l’état de santé : plus le niveau est bas, plus la santé est mauvaise.', },
+{ question: 'Qu’est-ce que la santé reproductive ?', answer: 'État de bien-être physique, mental et social dans tous les aspects liés à la reproduction.', },
+{ question: 'Qu’est-ce que la mortalité prématurée ?', answer: 'Décès survenant avant l’âge de 65 ans (ou un seuil défini).', },
+{ question: 'Qu’est-ce que la vaccination obligatoire en France ?', answer: 'Vaccins que la loi impose pour l’ensemble de la population ou certains groupes.', },
+{ question: 'Citez un vaccin obligatoire en France chez l’enfant.', answer: 'Le vaccin contre la diphtérie.', },
+{ question: 'Qu’est-ce que la couverture maladie universelle (CMU) ?', answer: 'Dispositif garantissant l’accès aux soins pour tous en France.', },
+{ question: 'Qu’est-ce que l’évaluation d’impact sur la santé (EIS) ?', answer: 'Processus permettant d’estimer les effets potentiels d’une politique ou d’un projet sur la santé.', },
+{ question: 'Qu’est-ce qu’un déterminant social de la santé ?', answer: 'Facteur social (revenu, éducation, emploi) influençant la santé.', },
+{ question: 'Qu’est-ce que la précarité en santé ?', answer: 'Situation d’instabilité sociale et économique augmentant le risque de problèmes de santé.', },
+{ question: 'Qu’est-ce qu’un indicateur de santé négatif ?', answer: 'Indicateur mesurant un aspect défavorable de la santé, comme la mortalité ou la morbidité.', },
+{ question: 'Qu’est-ce que l’épidémiologie descriptive ?', answer: 'Étude de la fréquence et de la répartition des maladies dans la population.', },
+{ question: 'Qu’est-ce que l’épidémiologie analytique ?', answer: 'Étude des causes et des déterminants des maladies.', },
+{ question: 'Qu’est-ce que la santé positive ?', answer: 'Concept valorisant les ressources et capacités d’une personne à maintenir ou améliorer sa santé.', },
+{ question: 'Qu’est-ce qu’un déterminant environnemental de la santé ?', answer: 'Facteur lié à l’environnement physique ou chimique influençant la santé.', },
+{ question: 'Qu’est-ce que l’épidémiologie interventionnelle ?', answer: 'Étude de l’effet d’une intervention sur la santé d’une population.', },
+{ question: 'Qu’est-ce que la santé publique vétérinaire ?', answer: 'Discipline s’intéressant à la prévention des maladies animales transmissibles à l’homme.', },
+{ question: 'Qu’est-ce que la surveillance passive ?', answer: 'Collecte de données de santé à partir des déclarations spontanées des professionnels.', },
+{ question: 'Qu’est-ce que la surveillance active ?', answer: 'Collecte proactive de données de santé par des enquêtes systématiques.', },
+{ question: 'Qu’est-ce que l’accès géographique aux soins ?', answer: 'Facilité avec laquelle une population peut se rendre dans une structure de soins.', },
+{ question: 'Qu’est-ce que l’accès financier aux soins ?', answer: 'Capacité à payer les soins sans difficulté économique.', },
+{ question: 'Qu’est-ce que la planification familiale ?', answer: 'Ensemble de moyens permettant aux individus de choisir le nombre et l’espacement de leurs enfants.', },
+{ question: 'Qu’est-ce qu’un déterminant comportemental de la santé ?', answer: 'Comportement individuel influençant la santé, comme l’alimentation ou l’activité physique.', },
+{ question: 'Qu’est-ce que la charte d’Ottawa ?', answer: 'Document fondateur de la promotion de la santé, adopté en 1986.', },
+{ question: 'Qu’est-ce que la surveillance des maladies non transmissibles ?', answer: 'Suivi épidémiologique des maladies chroniques comme le diabète ou le cancer.', },
+{ question: 'Qu’est-ce que la prévention des accidents domestiques ?', answer: 'Actions visant à réduire les risques d’accidents à la maison.', },
+{ question: 'Qu’est-ce qu’un registre de morbidité ?', answer: 'Base de données recensant les cas d’une maladie dans une population.', },
+{ question: 'Qu’est-ce que la santé au travail ?', answer: 'Discipline visant à prévenir les maladies et accidents liés au travail.', }
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">Bases moléculaires en oncologie</span><ul>
+<li><a href="../Bases_moleculaire_Oncologie/fc1.html">Cours 1</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc2.html">Cours 2</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc3.html">Cours 3</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc4.html">Cours 4</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc5.html">Cours 5</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc6.html">Cours 6</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc7.html">Cours 7</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc8.html">Cours 8</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc9.html">Cours 9</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc10.html">Cours 10</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc11.html">Cours 11</a></li>
+</ul></li>
+<li><span class="opener">Human nutrition</span><ul>
+<li><a href="../Human_Nutrition/fc1.html">Métabolisme bioénergétique (révision)</a></li>
+<li><a href="../Human_Nutrition/fc2.html">Anthropométrie, bilan énergétique, valeurs de référence en diététique</a></li>
+<li><a href="../Human_Nutrition/fc3.html">Macronutriments : protéines, glucides et acides gras</a></li>
+<li><a href="../Human_Nutrition/fc4.html">Les micronutriments : minéraux</a></li>
+<li><a href="../Human_Nutrition/fc5.html">Les vitamines liposolubles</a></li>
+<li><a href="../Human_Nutrition/fc5_2.html">Les vitamines hydrosolubles</a></li>
+<li><a href="../Human_Nutrition/fc6.html">Maladies cardiovasculaires</a></li>
+<li><a href="../Human_Nutrition/fc7.html">Alimentation et cancer</a></li>
+<li><a href="../Human_Nutrition/fc8.html">Consommation d'alcool et effets sur la santé</a></li>
+<li><a href="../Human_Nutrition/fc9.html">Interaction régime-maladie : obésité, syndrome métabolique et diabète</a></li>
+<li><a href="../Human_Nutrition/fc10.html">Interventions diététiques et pharmacologiques</a></li>
+</ul></li>
+<li><span class="opener">One Health</span><ul>
+<li><a href="../One_Health/fc1.html">Introduction au concept One Health</a></li>
+<li><a href="../One_Health/fc2.html">Zoonoses et modes de transmission</a></li>
+<li><a href="../One_Health/fc3.html">Émergence et diffusion de la résistance aux antibiotiques</a></li>
+<li><a href="../One_Health/fc4.html">Maladies émergentes transmises de l'animal à l'homme</a></li>
+<li><a href="../One_Health/fc5.html">Mobiliser les professionnels et la population autour des approches One Health</a></li>
+<li><a href="../One_Health/fc6.html">Polluants de l'environnement professionnel</a></li>
+<li><a href="../One_Health/fc7.html">Évaluation, prévention et gestion des risques en santé environnementale</a></li>
+<li><a href="../One_Health/fc8.html">Principales théories, concepts et modèles en sciences sociales (One Health)</a></li>
+<li><a href="../One_Health/fc9.html">Surveillance et investigation en santé publique et santé animale</a></li>
+<li><a href="../One_Health/fc10.html">Biodiversité des plantes et liens avec la santé humaine et animale</a></li>
+<li><a href="../One_Health/fc11.html">Écologie de la faune sauvage</a></li>
+<li><a href="../One_Health/fc12_1.html">Environnement, biodiversité, écologie, évolution des risques (partie 1)</a></li>
+<li><a href="../One_Health/fc12_2.html">Environnement, biodiversité, écologie, évolution des risques (partie 2)</a></li>
+</ul></li>
+<li><span class="opener">Réglementation et éthique de la recherche - droit de la santé</span><ul>
+<li><a href="../Reglementation_Ethique_Recherche/fc1.html">Droit de la santé</a></li>
+<li><a href="../Reglementation_Ethique_Recherche/fc2.html">Réglementation et recherche de la santé</a></li>
+</ul></li>
+<li><span class="opener">Technique de vie et société</span><ul>
+<li><a href="../Technique_Vie_Societe/fc1.html">Vie, technique et société - Introduction</a></li>
+<li><a href="../Technique_Vie_Societe/fc2.html">L'éthique à l'heure de la civilisation technologique</a></li>
+<li><a href="../Technique_Vie_Societe/fc3.html">Le statut des objets techniques et des technologies dans le champ de la santé</a></li>
+<li><a href="../Technique_Vie_Societe/fc4.html">Les droits et devoirs des patients et des praticiens</a></li>
+<li><a href="../Technique_Vie_Societe/fc5.html">Le droit à l'information médicale</a></li>
+<li><a href="../Technique_Vie_Societe/fc6.html">Enjeux et statuts des objets biologiques</a></li>
+<li><a href="../Technique_Vie_Societe/fc7.html">La pensée des bio-objets chez Céline Lafontaine</a></li>
+<li><a href="../Technique_Vie_Societe/fc8.html">La technicisation médicale, une déshumanisation : précisions conceptuelles</a></li>
+<li><a href="../Technique_Vie_Societe/fc9.html">La médecine humaniste face à la biomédecine</a></li>
+<li><a href="../Technique_Vie_Societe/fc10.html">Les médecines alternatives : de la critique humaniste à l'antiscience</a></li>
+<li><a href="../Technique_Vie_Societe/fc11.html">Biomédecine et approche holistique : le modèle biopsychosocial</a></li>
+</ul></li>
+<li><span class="opener">Biotechnologie</span><ul>
+<li><a href="../Biotechnologie/fc1.html">Introduction à la biotechnologie</a></li>
+<li><a href="../Biotechnologie/fc2.html">Reprogrammation cellulaire</a></li>
+<li><a href="../Biotechnologie/fc3.html">Drug Repositioning</a></li>
+<li><a href="../Biotechnologie/fc4.html">Immunothérapie</a></li>
+<li><a href="../Biotechnologie/fc5.html">Principes généraux de la thérapie génique</a></li>
+<li><a href="../Biotechnologie/fc6.html">Les vésicules extracellulaires</a></li>
+<li><a href="../Biotechnologie/fc7.html">Bioproduction de cellules souches</a></li>
+<li><a href="../Biotechnologie/fc8.html">Stratégies vaccinales</a></li>
+<li><a href="../Biotechnologie/fc9.html">Édition du génome</a></li>
+<li><a href="../Biotechnologie/fc10.html">Biomécanique des biomatériaux</a></li>
+<li><a href="../Biotechnologie/fc11.html">Thérapie cellulaire et moelle osseuse</a></li>
+<li><a href="../Biotechnologie/fc12.html">Peptides thérapeutiques antimicrobiens</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Promotion et prévention</span><ul>
+<li><a href="../SP_Promotion_Prevention/fc1.html">Généralités en santé publique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc2.html">Méthodologie de projet en prévention et promotion de la santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc3.html">Déterminants de santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc4.html">Méthodes de prévention et de dépistage</a></li>
+<li><a href="../SP_Promotion_Prevention/fc5.html">Vaccins et promotion de la prévention</a></li>
+<li><a href="../SP_Promotion_Prevention/fc6.html">Maladies sexuellement transmissibles</a></li>
+<li><a href="../SP_Promotion_Prevention/fc7.html">Initiation aux soins d’urgence</a></li>
+<li><a href="../SP_Promotion_Prevention/fc8.html">Sédentarité et activité physique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc9.html">Le risque cardio-vasculaire</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Économie de la santé</span><ul>
+<li><a href="../SP_Economie_Sante/fc1.html">Analyse économique de la perte d’autonomie (Dépendance)</a></li>
+<li><a href="../SP_Economie_Sante/fc2.html">Analyse de la perte d’autonomie : Handicap</a></li>
+<li><a href="../SP_Economie_Sante/fc3.html">Les modes de rémunération des médecins libéraux</a></li>
+<li><a href="../SP_Economie_Sante/fc4.html">Les modes de rémunération des établissements de santé</a></li>
+<li><a href="../SP_Economie_Sante/fc5.html">Nutrition, santé et croissance économique</a></li>
+<li><a href="../SP_Economie_Sante/fc6.html">Santé et développement : santé et pauvreté</a></li>
+<li><a href="../SP_Economie_Sante/fc7.html">Santé et développement : système et égalité</a></li>
+<li><a href="../SP_Economie_Sante/fc8.html">Santé et environnement</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Géographie de la santé</span><ul>
+<li><a href="../SP_Geographie_Sante/fc1.html">Histoire et concepts de la géographie de la santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc2.html">Liens villes et santé : enjeux des usages de la carte en santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc3.html">Inégalités spatiales de l’offre de soins en France</a></li>
+<li><a href="../SP_Geographie_Sante/fc4.html">Enjeux internationaux des inégalités d’offre de soins</a></li>
+<li><a href="../SP_Geographie_Sante/fc5.html">Enjeux internationaux : le point de vue des patient.es</a></li>
+<li><a href="../SP_Geographie_Sante/fc6.html">L’accès aux soins des personnes vulnérables</a></li>
+<li><a href="../SP_Geographie_Sante/fc7.html">Alimentation et santé en ville</a></li>
+<li><a href="../SP_Geographie_Sante/fc8.html">Pouvoirs des villes et urbanisme favorable à la santé : espaces verts</a></li>
+<li><a href="../SP_Geographie_Sante/fc9.html">Urbanisme favorable à la santé : personnes âgées</a></li>
+<li><a href="../SP_Geographie_Sante/fc10.html">Urbanisme favorable à la santé : enfants</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Gestion de projet de recherche clinique</span><ul>
+<li><a href="../SP_Gestion_Projet_RC/fc1.html">Généralités sur les essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc2.html">Acteurs de la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc3.html">Vigilance, gestion des EIG et sécurité des essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc4.html">Structures de soutien à la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc5.html">Mise en place d’un essai clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc6.html">Le dossier patient, les CRF et les bases de données</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc7.html">Gestion de projet (monitoring)</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc8.html">Réglementation sur les échantillons biologiques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc9.html">Démarches auprès du MESRI</a></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

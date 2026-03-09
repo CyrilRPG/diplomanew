@@ -1,0 +1,476 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Pharmacocinétique et formes galéniques</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce qu’une forme galénique ?', answer: 'La forme sous laquelle un médicament est présenté pour son administration (comprimé, gélule, sirop, injection, etc.).' },
+{ question: 'Sur quelle étape de la pharmacocinétique la forme galénique a-t-elle le plus d’influence ?', answer: 'Principalement sur l’absorption (résorption) du principe actif.' },
+{ question: 'Quelles sont les quatre étapes de la pharmacocinétique (ADME) ?', answer: 'Absorption, Distribution, Métabolisme et Élimination.' },
+{ question: 'Quelles sont les trois étapes que subit une forme orale solide avant l’absorption ?', answer: 'Désagrégation (libération), dissolution et résorption (absorption).' },
+{ question: 'Qu’est-ce que la désagrégation d’un comprimé ?', answer: 'La fragmentation du comprimé en petits grains ou particules, libérant le principe actif.' },
+{ question: 'Qu’est-ce que la dissolution du principe actif ?', answer: 'La mise en solution du principe actif dans les liquides biologiques (ou dans l’eau pour certaines formes).' },
+{ question: 'Qu’est-ce que la résorption (absorption) du principe actif ?', answer: 'Le passage du principe actif à travers les membranes biologiques (muqueuse digestive) vers la circulation sanguine.' },
+{ question: 'Qu’est-ce qu’un comprimé nu ?', answer: 'Un comprimé sans enrobage particulier, qui se désagrège et se dissout dans l’estomac et l’intestin.' },
+{ question: 'Où ont lieu la désagrégation et la dissolution d’un comprimé nu ?', answer: 'Dans l’estomac et l’intestin.' },
+{ question: 'Où a lieu la résorption d’un comprimé nu ?', answer: 'Principalement dans l’intestin grêle (et partiellement dans l’estomac).' },
+{ question: 'Quel est le trajet du principe actif d’un comprimé nu après résorption ?', answer: 'Muqueuse digestive → système porte hépatique → foie → circulation générale.' },
+{ question: 'Qu’est-ce que le système porte hépatique ?', answer: 'Le réseau veineux qui draine le sang du tube digestif vers le foie avant qu’il ne rejoigne la circulation générale.' },
+{ question: 'Qu’est-ce que l’effet de premier passage hépatique ?', answer: 'La métabolisation partielle du principe actif par le foie lors de son premier passage avant d’atteindre la circulation générale.' },
+{ question: 'Pourquoi l’effet de premier passage hépatique est-il important ?', answer: 'Il réduit la biodisponibilité du médicament : seule une fraction du principe actif absorbé atteint la circulation systémique.' },
+{ question: 'Le comprimé nu subit-il l’effet de premier passage hépatique ?', answer: 'Oui, le principe actif passe par le système porte puis le foie avant d’atteindre la circulation générale.' },
+{ question: 'Qu’est-ce qu’un comprimé gastro-résistant (entro-soluble) ?', answer: 'Un comprimé doté d’un enrobage résistant à l’acidité gastrique, ne se désagrégeant que dans l’intestin.' },
+{ question: 'Où a lieu la désagrégation d’un comprimé gastro-résistant ?', answer: 'Uniquement dans l’intestin (pas dans l’estomac).' },
+{ question: 'Où ont lieu la dissolution et la résorption d’un comprimé gastro-résistant ?', answer: 'Dans l’intestin uniquement.' },
+{ question: 'Pourquoi un comprimé gastro-résistant traverse-t-il l’estomac sans être altéré ?', answer: 'Grâce à son enrobage protecteur résistant au pH acide de l’estomac.' },
+{ question: 'Quel est le trajet du principe actif d’un comprimé gastro-résistant ?', answer: 'Intestin → système porte hépatique → foie → circulation générale.' },
+{ question: 'Le comprimé gastro-résistant subit-il l’effet de premier passage hépatique ?', answer: 'Oui, car la résorption intestinale draine vers le système porte puis le foie.' },
+{ question: 'Donner un exemple d’indication pour un comprimé gastro-résistant.', answer: 'Protéger un principe actif détruit par l’acidité gastrique, ou protéger la muqueuse gastrique d’un PA irritant.' },
+{ question: 'Qu’est-ce qu’un comprimé dispersible ?', answer: 'Un comprimé que l’on place dans un verre d’eau où il se désagrège avant d’être avalé sous forme de suspension.' },
+{ question: 'Où a lieu la désagrégation d’un comprimé dispersible ?', answer: 'Dans le verre d’eau (hors de l’organisme).' },
+{ question: 'Où ont lieu la dissolution et la résorption d’un comprimé dispersible ?', answer: 'Dans l’estomac et l’intestin.' },
+{ question: 'Quel est le trajet du principe actif d’un comprimé dispersible ?', answer: 'Système porte hépatique → foie → circulation générale (même trajet qu’un comprimé nu).' },
+{ question: 'Le comprimé dispersible subit-il l’effet de premier passage hépatique ?', answer: 'Oui, car la résorption reste digestive (estomac/intestin → système porte).' },
+{ question: 'Quel est l’avantage du comprimé dispersible ?', answer: 'Facilité d’administration pour les patients ayant des difficultés à avaler, et désagrégation plus rapide.' },
+{ question: 'Qu’est-ce qu’un comprimé effervescent ?', answer: 'Un comprimé qui se désagrège ET se dissout complètement dans un verre d’eau grâce à une réaction acide-base (effervescence).' },
+{ question: 'Où ont lieu la désagrégation et la dissolution d’un comprimé effervescent ?', answer: 'Dans le verre d’eau (hors de l’organisme), grâce à la réaction effervescente.' },
+{ question: 'Quelle différence y a-t-il entre comprimé dispersible et effervescent ?', answer: 'Le dispersible ne se désagrège que (suspension), tandis que l’effervescent se désagrège ET se dissout complètement (solution).' },
+{ question: 'Où a lieu la résorption d’un comprimé effervescent ?', answer: 'Dans l’estomac et l’intestin.' },
+{ question: 'Quel est le trajet du PA d’un comprimé effervescent ?', answer: 'Système porte hépatique → foie → circulation générale.' },
+{ question: 'L’effervescent subit-il l’effet de premier passage hépatique ?', answer: 'Oui, car la résorption est digestive.' },
+{ question: 'Quel est l’avantage de la forme effervescente en termes de vitesse d’action ?', answer: 'Le PA étant déjà en solution, la résorption est plus rapide (pas d’étape de dissolution dans le tube digestif).' },
+{ question: 'Qu’est-ce qu’un comprimé à libération prolongée (LP) ?', answer: 'Un comprimé conçu pour libérer le PA de façon progressive et contrôlée sur une période prolongée.' },
+{ question: 'Quelles étapes subit un comprimé LP dans le tube digestif ?', answer: 'Désagrégation et libération progressive du PA, puis dissolution et résorption dans l’estomac et l’intestin.' },
+{ question: 'Quel est le trajet du PA d’un comprimé LP ?', answer: 'Système porte hépatique → foie → circulation générale.' },
+{ question: 'Le comprimé LP subit-il l’effet de premier passage hépatique ?', answer: 'Oui.' },
+{ question: 'Quel est l’avantage principal d’un comprimé LP ?', answer: 'Réduire le nombre de prises quotidiennes et maintenir des concentrations plasmatiques stables, limitant les pics et les creux.' },
+{ question: 'Pourquoi ne faut-il pas écraser un comprimé LP ?', answer: 'Car cela détruirait le système de libération contrôlée, entraînant une libération massive et rapide du PA (dose-dumping).' },
+{ question: 'Qu’est-ce que le dose-dumping ?', answer: 'La libération brutale et totale du PA d’une forme LP altérée, pouvant provoquer un surdosage toxique.' },
+{ question: 'Qu’est-ce qu’un comprimé sublingual (glossette) ?', answer: 'Un comprimé placé sous la langue qui se désagrège, se dissout et est résorbé directement par la muqueuse buccale.' },
+{ question: 'Où se font la désagrégation, la dissolution et la résorption d’un comprimé sublingual ?', answer: 'Entièrement dans la bouche, au niveau de la muqueuse sublinguale.' },
+{ question: 'Quel est le trajet du PA d’un comprimé sublingual ?', answer: 'Muqueuse sublinguale → directement la circulation générale (veines linguales → veine jugulaire → veine cave).' },
+{ question: 'Le comprimé sublingual subit-il l’effet de premier passage hépatique ?', answer: 'Non, car il passe directement dans la circulation générale sans transiter par le système porte.' },
+{ question: 'Pourquoi le comprimé sublingual agit-il plus rapidement ?', answer: 'Parce que le PA évite le premier passage hépatique et accède rapidement à la circulation systémique via la muqueuse très vascularisée.' },
+{ question: 'Donner un exemple de médicament sublingual.', answer: 'La trinitrine (nitroglycérine) sublinguale utilisée dans l’angor (crise d’angine de poitrine).' },
+{ question: 'Pourquoi la trinitrine est-elle donnée par voie sublinguale ?', answer: 'Parce qu’elle a un fort effet de premier passage hépatique : la voie sublinguale permet de l’éviter et d’obtenir un effet rapide.' },
+{ question: 'Qu’est-ce qu’une gélule ?', answer: 'Une enveloppe de gélatine contenant le PA sous forme de poudre, granulés ou microgranules.' },
+{ question: 'Où a lieu la désagrégation de la gélule ?', answer: 'L’enveloppe de gélatine se désagrège dans l’estomac.' },
+{ question: 'Où a lieu la dissolution du PA d’une gélule ?', answer: 'Dans l’estomac (après libération du contenu).' },
+{ question: 'Où a lieu la résorption du PA d’une gélule ?', answer: 'Principalement dans l’intestin.' },
+{ question: 'Quel est le trajet du PA d’une gélule ?', answer: 'Système porte hépatique → foie → circulation générale.' },
+{ question: 'La gélule subit-elle l’effet de premier passage hépatique ?', answer: 'Oui, car la résorption est intestinale et draine vers le système porte.' },
+{ question: 'Peut-on ouvrir une gélule pour en mélanger le contenu à un aliment ?', answer: 'Seulement si la notice l’autorise ; certaines gélules contiennent des microgranules gastro-résistants ou LP qui ne doivent pas être écrasés.' },
+{ question: 'Qu’est-ce que la biodisponibilité ?', answer: 'La fraction du PA qui atteint la circulation générale sous forme inchangée et la vitesse à laquelle elle y parvient.' },
+{ question: 'Quelle est la biodisponibilité d’un médicament administré par voie intraveineuse ?', answer: '100 % (par définition, car le PA est directement dans la circulation).' },
+{ question: 'Pourquoi la biodisponibilité par voie orale est-elle souvent inférieure à 100 % ?', answer: 'À cause de l’absorption incomplète, de la dégradation dans le tube digestif et de l’effet de premier passage hépatique.' },
+{ question: 'Quelles voies d’administration évitent le premier passage hépatique ?', answer: 'Sublinguale, rectale (partiellement), intraveineuse, intramusculaire, sous-cutanée, transdermique, inhalée.' },
+{ question: 'La voie rectale évite-t-elle complètement le premier passage hépatique ?', answer: 'Partiellement seulement : les veines rectales inférieures et moyennes drainent vers la VCI, mais les supérieures drainent vers le système porte.' },
+{ question: 'Qu’est-ce que la veine porte hépatique ?', answer: 'La veine qui collecte le sang veineux de l’ensemble du tube digestif, de la rate et du pancréas pour l’amener au foie.' },
+{ question: 'Quels organes sont drainés par le système porte ?', answer: 'L’estomac, l’intestin grêle, le côlon, la rate et le pancréas.' },
+{ question: 'Pourquoi le foie est-il l’organe clé du premier passage ?', answer: 'Il contient de nombreuses enzymes (cytochromes P450 notamment) qui métabolisent les PA dès leur premier contact.' },
+{ question: 'Qu’est-ce qu’un prodrogue (ou prodrug) ?', answer: 'Un médicament inactif qui nécessite une activation métabolique (souvent hépatique) pour devenir pharmacologiquement actif.' },
+{ question: 'Le premier passage hépatique est-il toujours défavorable ?', answer: 'Non : pour les prodrogues, le premier passage est nécessaire à l’activation du médicament.' },
+{ question: 'Qu’est-ce qu’une forme à libération immédiate (LI) ?', answer: 'Une forme galénique où le PA est libéré rapidement et en totalité après administration.' },
+{ question: 'Quelle différence entre une forme LI et une forme LP sur la courbe de concentration plasmatique ?', answer: 'LI : pic de concentration rapide et élevé puis décroissance. LP : concentration plus stable et prolongée avec un pic atténué.' },
+{ question: 'Qu’est-ce que le Cmax ?', answer: 'La concentration plasmatique maximale atteinte après administration du médicament.' },
+{ question: 'Qu’est-ce que le Tmax ?', answer: 'Le temps nécessaire pour atteindre la concentration plasmatique maximale (Cmax).' },
+{ question: 'Comment la forme galénique influence-t-elle le Tmax ?', answer: 'Une forme LI donne un Tmax court, une forme LP donne un Tmax plus long, une forme effervescente donne un Tmax intermédiaire.' },
+{ question: 'Comment la forme galénique influence-t-elle le Cmax ?', answer: 'Une forme LI donne un Cmax élevé, une forme LP donne un Cmax plus bas mais plus prolongé.' },
+{ question: 'Qu’est-ce que l’AUC (aire sous la courbe) ?', answer: 'L’aire sous la courbe concentration-temps, reflétant l’exposition totale de l’organisme au PA.' },
+{ question: 'La forme galénique modifie-t-elle l’AUC ?', answer: 'Idéalement non si la même quantité de PA est absorbée, mais en pratique la biodisponibilité peut varier selon la forme.' },
+{ question: 'Quels sont les avantages de la voie orale ?', answer: 'Facilité d’administration, non invasive, bonne observance, coût réduit et nombreuses formes galéniques disponibles.' },
+{ question: 'Quels sont les inconvénients de la voie orale ?', answer: 'Effet de premier passage hépatique, absorption variable, délai d’action, dégradation gastrique possible, nécessite la coopération du patient.' },
+{ question: 'Dans quelles situations la voie orale n’est-elle pas adaptée ?', answer: 'Vomissements, patient inconscient, urgence nécessitant un effet immédiat, PA détruit par le tube digestif.' },
+{ question: 'Qu’est-ce qu’un excipient ?', answer: 'Un composant inactif du médicament servant à la fabrication, la stabilité, le goût ou la libération du PA.' },
+{ question: 'Les excipients peuvent-ils avoir un effet sur le patient ?', answer: 'Oui, certains excipients peuvent provoquer des intolérances ou allergies (excipients à effet notoire).' },
+{ question: 'Qu’est-ce qu’un excipient à effet notoire ?', answer: 'Un excipient pouvant provoquer des effets indésirables chez certains patients (ex : lactose, amidon de blé, aspartame, éthanol).' },
+{ question: 'Quels types d’enrobage existent pour les comprimés ?', answer: 'Enrobage sucré (dragée), enrobage pelliculé, enrobage gastro-résistant, enrobage à libération modifiée.' },
+{ question: 'Pourquoi enrobe-t-on certains comprimés avec un film gastro-résistant ?', answer: 'Pour protéger le PA de l’acidité gastrique ou protéger la muqueuse gastrique d’un PA irritant.' },
+{ question: 'Qu’est-ce qu’une solution buvable ?', answer: 'Une forme liquide où le PA est déjà dissous dans un solvant, prête à être absorbée sans étape de dissolution.' },
+{ question: 'Quel est l’avantage des solutions buvables par rapport aux comprimés ?', answer: 'L’absorption est plus rapide car il n’y a pas d’étapes de désagrégation ni de dissolution.' },
+{ question: 'Qu’est-ce qu’une suspension buvable ?', answer: 'Une forme liquide contenant des particules de PA non dissoutes, nécessitant une agitation avant prise.' },
+{ question: 'Pourquoi faut-il agiter une suspension avant de la prendre ?', answer: 'Pour remettre en suspension les particules de PA qui ont sédimenté, afin d’assurer un dosage homogène.' },
+{ question: 'Qu’est-ce que la voie transdermique ?', answer: 'L’administration d’un médicament à travers la peau via un patch (timbre) pour une action systémique.' },
+{ question: 'La voie transdermique subit-elle le premier passage hépatique ?', answer: 'Non, car le PA passe directement dans la circulation générale via les capillaires cutanés.' },
+{ question: 'Donner un exemple de médicament transdermique.', answer: 'Le patch de nicotine, le patch de fentanyl, le patch d’œstradiol.' },
+{ question: 'Qu’est-ce que la voie inhalée ?', answer: 'L’administration de médicaments par les voies respiratoires, pour une action locale (bronches) ou systémique (alvéoles).' },
+{ question: 'Qu’est-ce que la voie parentale ?', answer: 'Toute voie d’administration qui contourne le tube digestif : intraveineuse, intramusculaire, sous-cutanée, etc.' },
+{ question: 'Classer les formes galéniques orales solides de la plus lente à la plus rapide en termes d’absorption.', answer: 'LP < comprimé nu < gélule < comprimé dispersible < comprimé effervescent (le PA étant déjà en solution pour l’effervescent).' },
+{ question: 'Quel rôle jouent les cytochromes P450 dans le premier passage hépatique ?', answer: 'Ce sont des enzymes hépatiques de phase I qui oxydent, réduisent ou hydrolysent les PA, diminuant leur biodisponibilité.' },
+{ question: 'Qu’est-ce que la voie sublinguale en termes d’avantage par rapport à la voie orale ?', answer: 'Action plus rapide et évitement du premier passage hépatique, grâce à l’absorption directe par la muqueuse buccale richement vascularisée.' },
+{ question: 'Qu’est-ce qu’un comprimé orodispersible ?', answer: 'Un comprimé qui se désagrège rapidement dans la bouche sans eau, mais dont le PA est ensuite avalé et absorbé par le tube digestif.' },
+{ question: 'Le comprimé orodispersible évite-t-il le premier passage hépatique ?', answer: 'Non, car le PA est avalé et absorbé au niveau gastro-intestinal (contrairement au sublingual).' },
+{ question: 'Quelle différence y a-t-il entre un comprimé sublingual et un comprimé orodispersible ?', answer: 'Le sublingual est absorbé par la muqueuse buccale (évite le premier passage), l’orodispersible se délite en bouche mais est avalé (ne l’évite pas).' },
+{ question: 'En résumé, quelles formes galéniques orales passent par le système porte ?', answer: 'Comprimé nu, gastro-résistant, dispersible, effervescent, LP, gélule et orodispersible – toutes sauf la sublinguale.' },
+{ question: 'Quelle est la seule forme galénique orale classique qui évite le système porte hépatique ?', answer: 'Le comprimé sublingual (glossette).' },
+{ question: 'Pourquoi la forme galénique est-elle un élément clé de la prescription ?', answer: 'Parce qu’elle détermine la vitesse et l’intensité de l’absorption, donc l’efficacité et la tolérance du traitement.' },
+{ question: 'Peut-on substituer un comprimé LP par un comprimé LI à la même dose ?', answer: 'Non, car la libération immédiate de toute la dose pourrait provoquer un surdosage (le LP libère progressivement).' },
+{ question: 'Qu’est-ce que le premier passage intestinal ?', answer: 'La métabolisation du PA par les enzymes de la paroi intestinale (entérocytes) avant même qu’il n’atteigne le foie.' },
+{ question: 'Le premier passage intestinal contribue-t-il à la réduction de biodisponibilité ?', answer: 'Oui, certains PA sont métabolisés par les entérocytes (CYP3A4 intestinal, efflux par la P-gp), réduisant la quantité atteignant le système porte.' },
+];
+
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../../images/diploma.jpeg" />
+<script src="../../../security.js" defer></script>
+<script src="../../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Régulation Neuroendocrienne - Anatomie</h1><h2>Anatomie générale du système nerveux</h2></div><span class="image main"><img src="../../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Quels sont les grands rôles du système nerveux ?', answer: 'Perception/sensation, action/mouvement, régulation des émotions, et cognition (mémoire, attention, langage, raisonnement, apprentissages).' },
+{ question: 'Qu\u2019est-ce que la perception dans le contexte du système nerveux ?', answer: 'La capacité de recevoir et d\u2019interpréter les informations sensorielles provenant de l\u2019environnement et du corps.' },
+{ question: 'Quelles fonctions cognitives sont assurées par le système nerveux ?', answer: 'La mémoire, l\u2019attention, le langage, le raisonnement et les apprentissages.' },
+{ question: 'Sur quoi repose la transmission de l\u2019information dans le système nerveux ?', answer: 'Sur des signaux électrochimiques transmis entre neurones via des neurotransmetteurs et des variations de potentiel électrique.' },
+{ question: 'Que sont les neuromédiateurs ou neurotransmetteurs ?', answer: 'Des molécules chimiques libérées au niveau des synapses permettant la transmission de l\u2019influx nerveux d\u2019un neurone à l\u2019autre.' },
+{ question: 'Comment l\u2019influx nerveux se propage-t-il le long de l\u2019axone ?', answer: 'Par des variations de potentiel électrique de la membrane axonale (potentiel d\u2019action).' },
+{ question: 'Quel est le rôle des cellules gliales ?', answer: 'Assurer le support, la nutrition, la protection et l\u2019homéostasie des neurones.' },
+{ question: 'Qu\u2019est-ce que l\u2019axe hypothalamo-hypophysaire ?', answer: 'Un système de régulation neuroendocrinienne reliant l\u2019hypothalamus à l\u2019hypophyse, contrôlant de nombreuses fonctions hormonales.' },
+{ question: 'Quelles fonctions sont régulées par l\u2019axe hypothalamo-hypophysaire ?', answer: 'Le métabolisme, l\u2019homéostasie énergétique, le stress, le rythme circadien, la croissance et la reproduction.' },
+{ question: 'Avec quels autres systèmes le système nerveux interagit-il ?', answer: 'Le système immunitaire et le système digestif.' },
+{ question: 'Quels sont les deux composants du système nerveux central (SNC) ?', answer: 'L\u2019encéphale (dans la cavité crânienne) et la moelle épinière (dans le canal rachidien).' },
+{ question: 'Quelles structures composent l\u2019encéphale ?', answer: 'Le cerveau, le cervelet et le tronc cérébral.' },
+{ question: 'Où est situé l\u2019encéphale ?', answer: 'Dans la cavité crânienne (boîte crânienne).' },
+{ question: 'De quoi est composé le système nerveux périphérique (SNP) ?', answer: 'Des nerfs crâniens (issus de l\u2019encéphale) et des nerfs rachidiens (issus de la moelle épinière).' },
+{ question: 'De quoi est composé le cerveau ?', answer: 'De deux hémisphères cérébraux et du diencéphale (thalamus + hypothalamus).' },
+{ question: 'Qu\u2019est-ce que le diencéphale ?', answer: 'La partie centrale du cerveau comprenant le thalamus et l\u2019hypothalamus.' },
+{ question: 'Quel est le rôle du thalamus ?', answer: 'C\u2019est un relais sensoriel majeur qui filtre et transmet les informations sensorielles vers le cortex cérébral.' },
+{ question: 'Quel est le rôle de l\u2019hypothalamus ?', answer: 'Réguler les fonctions végétatives (faim, soif, température), le système endocrinien via l\u2019hypophyse, et le rythme circadien.' },
+{ question: 'Comment les deux hémisphères cérébraux sont-ils reliés ?', answer: 'Par le corps calleux (principal) et la commissure antérieure.' },
+{ question: 'Qu\u2019est-ce que le corps calleux ?', answer: 'La plus grande commissure inter-hémisphérique, constituée de fibres nerveuses reliant les deux hémisphères cérébraux.' },
+{ question: 'Que sont les gyri (ou gyrus) ?', answer: 'Les plis convexes de la surface du cortex cérébral.' },
+{ question: 'Que sont les sillons et scissures ?', answer: 'Les dépressions entre les gyri ; les scissures sont les sillons les plus profonds qui délimitent les lobes.' },
+{ question: 'Quels sont les quatre lobes majeurs du cerveau ?', answer: 'Le lobe frontal, le lobe temporal, le lobe occipital et le lobe pariétal.' },
+{ question: 'Quel est le lobe mineur du cerveau ?', answer: 'L\u2019insula, situé en profondeur dans le sillon latéral.' },
+{ question: 'Combien de lobes le cerveau possède-t-il au total ?', answer: '5 lobes : 4 majeurs (frontal, temporal, occipital, pariétal) et 1 mineur (insula).' },
+{ question: 'Qu\u2019est-ce que la substance grise ?', answer: 'Du tissu nerveux constitué principalement de corps cellulaires neuronaux, présent au cortex et dans les noyaux gris centraux.' },
+{ question: 'Où se trouve la substance grise dans le cerveau ?', answer: 'En surface (cortex cérébral) et en profondeur (noyaux gris centraux ou noyaux basaux).' },
+{ question: 'Qu\u2019est-ce que la substance blanche ?', answer: 'Du tissu nerveux constitué principalement d\u2019axones myélinisés, assurant la connexion entre différentes régions.' },
+{ question: 'Que sont les noyaux gris centraux ?', answer: 'Des amas de substance grise situés en profondeur dans les hémisphères, impliqués dans le contrôle moteur et d\u2019autres fonctions.' },
+{ question: 'Quelle est la fonction de l\u2019aire motrice du cortex ?', answer: 'Commander les mouvements volontaires du corps.' },
+{ question: 'Quelle est la fonction de l\u2019aire somesthésique ?', answer: 'Recevoir et traiter les informations tactiles, thermiques, douloureuses et proprioceptives.' },
+{ question: 'Quelle est la fonction de l\u2019aire auditive ?', answer: 'Recevoir et traiter les informations sonores.' },
+{ question: 'Quelle est la fonction de l\u2019aire olfactive ?', answer: 'Recevoir et traiter les informations liées à l\u2019odorat.' },
+{ question: 'Qu\u2019est-ce que l\u2019aire de Wernicke ?', answer: 'L\u2019aire corticale impliquée dans la compréhension du langage, située dans le lobe temporal.' },
+{ question: 'Qu\u2019est-ce que l\u2019aire de Broca ?', answer: 'L\u2019aire corticale impliquée dans la production du langage, située dans le lobe frontal.' },
+{ question: 'Quelle est la fonction de l\u2019aire préfrontale ?', answer: 'Les fonctions exécutives : planification, prise de décision, jugement, personnalité, comportement social.' },
+{ question: 'Quelle est la fonction de l\u2019aire temporale ?', answer: 'Le traitement des informations auditives, la mémoire et la reconnaissance des objets.' },
+{ question: 'Qu\u2019est-ce que le cervelet possède en surface ?', answer: 'Un cortex cérébelleux de substance grise creusé de sillons transversaux formant des lobules et des lamelles.' },
+{ question: 'Comment la surface du cervelet est-elle organisée ?', answer: 'En lobules et lamelles séparés par des sillons transversaux.' },
+{ question: 'Quels sont les quatre noyaux cérébelleux profonds ?', answer: 'Le noyau fastigial, les noyaux globuleux et ombelliformes (interposés), et le noyau dentelé.' },
+{ question: 'Que sont les noyaux interposés du cervelet ?', answer: 'L\u2019ensemble formé par les noyaux globuleux et ombelliformes.' },
+{ question: 'Quels sont les trois lobes du cervelet ?', answer: 'Le lobe flocculonodulaire, le lobe antérieur et le lobe postérieur.' },
+{ question: 'Qu\u2019est-ce que le lobe flocculonodulaire ?', answer: 'Le lobe le plus ancien du cervelet, composé du nodule et de deux floculus, séparé par la fissure postéro-latérale.' },
+{ question: 'Quelle est la fonction du lobe flocculonodulaire ?', answer: 'Le contrôle des mouvements oculaires.' },
+{ question: 'Quelle fissure sépare le lobe flocculonodulaire du reste du cervelet ?', answer: 'La fissure postéro-latérale.' },
+{ question: 'Où se situe le lobe antérieur du cervelet ?', answer: 'En avant de la fissure primaire.' },
+{ question: 'Où se situe le lobe postérieur du cervelet ?', answer: 'En arrière de la fissure primaire, entre la fissure primaire et la fissure postéro-latérale.' },
+{ question: 'Comment le cervelet est-il organisé sur le plan anatomique ?', answer: 'En un vermis médian et deux hémisphères cérébelleux latéraux.' },
+{ question: 'Qu\u2019est-ce que le vermis ?', answer: 'La partie médiane du cervelet, impliquée dans le contrôle de la posture, de l\u2019équilibre et de la marche.' },
+{ question: 'Quelle est la fonction du vermis et de la région paravermienne ?', answer: 'Le contrôle de la posture, de l\u2019équilibre et de la marche.' },
+{ question: 'Quelle est la fonction des hémisphères cérébelleux ?', answer: 'La coordination des mouvements des membres.' },
+{ question: 'Qu\u2019est-ce que le néocervelet ?', answer: 'La partie la plus récente du cervelet correspondant aux hémisphères cérébelleux, impliquée dans la coordination fine des membres.' },
+{ question: 'Quelles sont les trois divisions fonctionnelles du cervelet ?', answer: 'Flocculonodulaire (mouvements oculaires), vermis/paravermien (posture/équilibre/marche), hémisphères (coordination des membres).' },
+{ question: 'Où se situe le tronc cérébral ?', answer: 'Dans la fosse crânienne postérieure, entre le cerveau et la moelle épinière.' },
+{ question: 'Quels sont les trois segments du tronc cérébral de haut en bas ?', answer: 'Le mésencéphale, la protubérance (pont) et le bulbe rachidien.' },
+{ question: 'Quel est le rôle principal du tronc cérébral ?', answer: 'Organe de liaison entre le cerveau, le cervelet et la moelle épinière, contenant des centres de régulation vitaux.' },
+{ question: 'Que sont les faisceaux ascendants du tronc cérébral ?', answer: 'Des voies sensitives transmettant les informations de la moelle vers le cerveau.' },
+{ question: 'Que sont les faisceaux descendants du tronc cérébral ?', answer: 'Des voies motrices transmettant les commandes du cerveau vers la moelle épinière.' },
+{ question: 'Quels centres de régulation sont situés dans le tronc cérébral ?', answer: 'Les centres de la respiration, de la pression artérielle, de l\u2019équilibre et du cycle éveil-sommeil.' },
+{ question: 'Où se situe le centre respiratoire ?', answer: 'Dans le bulbe rachidien et la protubérance du tronc cérébral.' },
+{ question: 'Où se situe le centre de régulation de la pression artérielle ?', answer: 'Dans le bulbe rachidien.' },
+{ question: 'Quelles sont les dimensions de la moelle épinière ?', answer: 'Environ 40 cm de long et 1 cm de large.' },
+{ question: 'Où est située la moelle épinière ?', answer: 'Dans le canal rachidien (canal vertébral).' },
+{ question: 'De quelle structure à quelle structure s\u2019étend la moelle épinière ?', answer: 'Du foramen occipital (trou occipital) jusqu\u2019au niveau de la vertèbre L1.' },
+{ question: 'Qu\u2019est-ce que le cône médullaire ?', answer: 'L\u2019extrémité inférieure effilée de la moelle épinière, située au niveau de L1.' },
+{ question: 'Qu\u2019est-ce que le filum terminale ?', answer: 'Un prolongement fibreux de pie-mère qui s\u2019étend du cône médullaire jusqu\u2019au coccyx, ancrant la moelle.' },
+{ question: 'De quelle méninge est issu le filum terminale ?', answer: 'De la pie-mère.' },
+{ question: 'Qu\u2019est-ce que la queue de cheval ?', answer: 'L\u2019ensemble des racines nerveuses lombaires et sacrées qui descendent sous le cône médullaire dans le canal rachidien.' },
+{ question: 'Quels sont les deux types fonctionnels de fibres dans le SNP ?', answer: 'Les fibres afférentes (sensorielles) et les fibres efférentes (motrices).' },
+{ question: 'Quel est le rôle des fibres afférentes ?', answer: 'Transmettre les informations sensorielles de la périphérie vers le SNC (moelle épinière et encéphale).' },
+{ question: 'Quel est le rôle des fibres efférentes ?', answer: 'Transmettre les commandes motrices du SNC vers les muscles squelettiques.' },
+{ question: 'D\u2019où émergent les nerfs crâniens ?', answer: 'De l\u2019encéphale (principalement du tronc cérébral).' },
+{ question: 'Combien y a-t-il de paires de nerfs crâniens ?', answer: '12 paires.' },
+{ question: 'D\u2019où émergent les nerfs rachidiens ?', answer: 'De la moelle épinière, par les trous de conjugaison (foramens intervertébraux).' },
+{ question: 'Combien y a-t-il de paires de nerfs rachidiens ?', answer: '31 paires.' },
+{ question: 'Quelle est la différence entre SNP somatique et SNP végétatif ?', answer: 'Le SNP somatique innerve les muscles squelettiques (mouvements volontaires), le SNP végétatif innerve les viscères (fonctions involontaires).' },
+{ question: 'Quelle fissure sépare le lobe frontal du lobe pariétal ?', answer: 'Le sillon central (scissure de Rolando).' },
+{ question: 'Quelle fissure sépare le lobe temporal du lobe frontal et pariétal ?', answer: 'Le sillon latéral (scissure de Sylvius).' },
+{ question: 'Où se situe l\u2019aire motrice primaire ?', answer: 'Dans le gyrus précentral, en avant du sillon central.' },
+{ question: 'Où se situe l\u2019aire somesthésique primaire ?', answer: 'Dans le gyrus postcentral, en arrière du sillon central.' },
+{ question: 'Quelle région du cerveau est responsable de la vision ?', answer: 'Le lobe occipital (aire visuelle primaire).' },
+{ question: 'Comment la moelle épinière est-elle organisée en substance grise et blanche ?', answer: 'La substance grise est centrale (en forme de H ou papillon), entourée par la substance blanche périphérique.' },
+{ question: 'Quelle est la différence d\u2019organisation entre cortex cérébral et moelle épinière ?', answer: 'Au cortex, la substance grise est en périphérie et la blanche en profondeur ; dans la moelle, c\u2019est l\u2019inverse.' },
+{ question: 'Qu\u2019est-ce que le mésencéphale ?', answer: 'Le segment supérieur du tronc cérébral, situé entre le diencéphale et la protubérance.' },
+{ question: 'Qu\u2019est-ce que la protubérance (pont) ?', answer: 'Le segment moyen du tronc cérébral, situé entre le mésencéphale et le bulbe rachidien.' },
+{ question: 'Qu\u2019est-ce que le bulbe rachidien ?', answer: 'Le segment inférieur du tronc cérébral, en continuité avec la moelle épinière, contenant des centres vitaux.' },
+{ question: 'Pourquoi le cervelet est-il parfois appelé « arbre de vie » en coupe ?', answer: 'Car sa substance blanche ramifiée au centre, recouverte du cortex gris, forme un motif arborescent en coupe sagittale.' },
+{ question: 'Le lobe flocculonodulaire est-il phylogénétiquement ancien ou récent ?', answer: 'C\u2019est le plus ancien (archéocervelet), lié aux fonctions vestibulaires.' },
+{ question: 'Quel est le noyau cérébelleux le plus latéral et le plus volumineux ?', answer: 'Le noyau dentelé.' },
+{ question: 'Où se situe le noyau fastigial ?', answer: 'En position médiale, près du vermis.' },
+{ question: 'Quel est le rôle du noyau dentelé du cervelet ?', answer: 'Il participe à la coordination des mouvements volontaires des membres en relayant les informations vers le cortex moteur via le thalamus.' },
+{ question: 'Qu\u2019est-ce que l\u2019archéocervelet ?', answer: 'La partie la plus ancienne du cervelet correspondant au lobe flocculonodulaire, impliquée dans l\u2019équilibre et les mouvements oculaires.' },
+{ question: 'Qu\u2019est-ce que le paléocervelet ?', answer: 'La partie intermédiaire du cervelet (vermis et paravermien), impliquée dans le tonus musculaire, la posture et la marche.' },
+{ question: 'Qu\u2019est-ce que le néocervelet ?', answer: 'La partie la plus récente du cervelet (hémisphères cérébelleux), impliquée dans la coordination fine des mouvements des membres.' },
+{ question: 'Quelles informations sensorielles sont captées par la peau ?', answer: 'Les informations tactiles (toucher, pression), thermiques (chaud/froid) et nociceptives (douleur).' },
+{ question: 'Quelles informations les yeux transmettent-ils au système nerveux ?', answer: 'Les informations visuelles, traitées dans le cortex occipital (aire visuelle primaire).' },
+{ question: 'Quelles informations les oreilles transmettent-elles au système nerveux ?', answer: 'Les informations auditives (son) et vestibulaires (équilibre et position de la tête).' },
+{ question: 'Qu\u2019est-ce que la fissure primaire du cervelet ?', answer: 'Le sillon profond séparant le lobe antérieur du lobe postérieur du cervelet.' },
+{ question: 'Comment le système nerveux interagit-il avec le système immunitaire ?', answer: 'Via des médiateurs neuroendocriniens (cortisol, catécholamines) et des voies nerveuses (nerf vague) qui modulent la réponse immunitaire.' },
+{ question: 'Comment le système nerveux interagit-il avec le système digestif ?', answer: 'Via le système nerveux entérique (« deuxième cerveau »), le nerf vague et des hormones qui régulent la motilité, la sécrétion et l\u2019absorption digestive.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../../index.html">Accueil</a></li>
+<li><a href="../../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../../assets/js/jquery.min.js"></script>
+<script src="../../../assets/js/browser.min.js"></script>
+<script src="../../../assets/js/breakpoints.min.js"></script>
+<script src="../../../assets/js/util.js"></script>
+<script src="../../../assets/js/main.js"></script>
+<script src="../../../assets/js/darkmode.js"></script>
+<script src="../../../assets/js/favorites.js"></script>
+
+</body>
+</html>

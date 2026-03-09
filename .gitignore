@@ -1,0 +1,14 @@
+node_modules/
+package-lock.json
+revokedTokens.json
+security.js
+
+# Gros fichiers / générés (pour alléger le dépôt GitHub)
+images/
+Contenu L3/
+Contenu SU/
+Contenu UVSQ/
+scripts/extracted_content/
+scripts/__pycache__/
+.claude/
+upecl1/

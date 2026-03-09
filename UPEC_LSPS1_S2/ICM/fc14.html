@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Circuits de dispensation des médicaments</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que la prescription médicamenteuse ?', answer: 'Un acte majeur de la pratique médicale, réalisé suite à un diagnostic.' },
+{ question: 'Quelle est la valeur juridique d’une ordonnance ?', answer: 'L’ordonnance a une valeur juridique civile et pénale.' },
+{ question: 'Quels sont les deux types de responsabilité engagés par l’ordonnance ?', answer: 'La responsabilité civile et la responsabilité pénale.' },
+{ question: 'Quels sont les professionnels habilités à prescrire des médicaments ?', answer: 'Médecins, chirurgiens-dentistes, sages-femmes, vétérinaires (et certains dispositifs par infirmiers et podologues).' },
+{ question: 'Auprès de quel organisme les médecins prescripteurs sont-ils inscrits ?', answer: 'Auprès du Conseil de l’Ordre des médecins.' },
+{ question: 'Dans quel domaine les chirurgiens-dentistes peuvent-ils prescrire ?', answer: 'Dans le domaine bucco-dentaire uniquement.' },
+{ question: 'Pour quels patients les sages-femmes peuvent-elles prescrire ?', answer: 'Pour les femmes enceintes, les accouchées et les enfants de moins de 28 jours.' },
+{ question: 'Les infirmières peuvent-elles prescrire des médicaments ?', answer: 'Non, jamais. Elles ne peuvent prescrire que certains dispositifs médicaux.' },
+{ question: 'Que peuvent prescrire les podologues ?', answer: 'Uniquement les produits figurant sur une liste limitative.' },
+{ question: 'Quels sont les quatre destinataires d’une ordonnance ?', answer: 'Le malade, le pharmacien, la Sécurité sociale et les paramédicaux.' },
+{ question: 'Quelles sont les qualités requises d’une ordonnance ?', answer: 'Elle doit être claire, non ambiguë, intelligible, idéalement dactylographiée, et expliquée au patient.' },
+{ question: 'Quels éléments administratifs doivent figurer sur une ordonnance ?', answer: 'Date, identité du prescripteur avec numéro RPPS, nom/prénom/sexe du patient, signature.' },
+{ question: 'Où doit être placée la signature du prescripteur sur l’ordonnance ?', answer: 'Après le dernier médicament prescrit.' },
+{ question: 'Quelles informations doivent figurer pour chaque médicament sur l’ordonnance ?', answer: 'DCI, forme galénique, posologie, nombre de prises, durée du traitement et renouvellement éventuel.' },
+{ question: 'Que signifie DCI ?', answer: 'Dénomination Commune Internationale : le nom scientifique du principe actif.' },
+{ question: 'Comment doit-on signaler un dépassement de posologie usuelle sur l’ordonnance ?', answer: 'En écrivant la mention « Je dis » suivie de la posologie en toutes lettres.' },
+{ question: 'Que signifie la mention « Non substituable » sur une ordonnance ?', answer: 'Le pharmacien ne peut pas remplacer le médicament prescrit par un générique.' },
+{ question: 'Que signifie la mention « NR » sur une ordonnance ?', answer: 'Prescription hors AMM, non remboursable.' },
+{ question: 'Pourquoi faut-il barrer l’espace vide sous le dernier médicament prescrit ?', answer: 'Pour éviter l’ajout frauduleux de médicaments.' },
+{ question: 'Quelles informations le prescripteur doit-il expliquer oralement au patient ?', answer: 'Le mode de prise, les effets indésirables possibles et la conduite à tenir.' },
+{ question: 'Qu’est-ce que le numéro RPPS ?', answer: 'Le Répertoire Partagé des Professionnels de Santé, identifiant unique du prescripteur.' },
+{ question: 'Quelles sont les trois listes de substances vénéneuses ?', answer: 'Hors liste, Liste I et Liste II (auxquelles s’ajoutent les stupéfiants).' },
+{ question: 'Quelles sont les caractéristiques des médicaments hors liste ?', answer: 'Ils sont disponibles sans ordonnance, sans restriction de durée ni de fractionnement.' },
+{ question: 'Quelle couleur de cadre caractérise les médicaments de Liste I ?', answer: 'Un cadre rouge.' },
+{ question: 'Les médicaments de Liste I sont-ils renouvelables par défaut ?', answer: 'Non, ils ne sont pas renouvelables sauf mention contraire du prescripteur.' },
+{ question: 'Quelle est la durée maximale de prescription pour un médicament de Liste I ?', answer: '12 mois.' },
+{ question: 'Par quelle fraction les médicaments de Liste I sont-ils délivrés ?', answer: 'Par fraction de 28 jours.' },
+{ question: 'Pendant combien de temps l’ordonnance de Liste I est-elle valable pour la première délivrance ?', answer: '3 mois.' },
+{ question: 'Quelle couleur de cadre caractérise les médicaments de Liste II ?', answer: 'Un cadre vert.' },
+{ question: 'Les médicaments de Liste II sont-ils renouvelables par défaut ?', answer: 'Oui, sauf mention contraire du prescripteur.' },
+{ question: 'Quelle est la durée maximale de prescription pour un médicament de Liste II ?', answer: '12 mois.' },
+{ question: 'Par quelle fraction les médicaments de Liste II sont-ils délivrés ?', answer: 'Par fraction de 28 jours.' },
+{ question: 'Quel type d’ordonnance est requis pour les stupéfiants ?', answer: 'Une ordonnance sécurisée.' },
+{ question: 'Quelle est la durée de prescription des stupéfiants ?', answer: 'De 7 à 28 jours selon la substance.' },
+{ question: 'Pendant combien de temps l’ordonnance de stupéfiants est-elle valable ?', answer: '3 jours après la date de prescription.' },
+{ question: 'Comment sont identifiés les stupéfiants sur le conditionnement ?', answer: 'Par un double cadre rouge.' },
+{ question: 'Comment doivent être inscrites les quantités de stupéfiants sur l’ordonnance ?', answer: 'En toutes lettres.' },
+{ question: 'Quels sont les quatre types d’ordonnances ?', answer: 'Ordonnances simples, ordonnances sécurisées, ordonnances bizones et ordonnances CERFA 4 volets.' },
+{ question: 'Pour quels médicaments les ordonnances sécurisées sont-elles obligatoires ?', answer: 'Pour les stupéfiants.' },
+{ question: 'Quelles caractéristiques particulières ont les ordonnances sécurisées ?', answer: 'Impression pré-identifiée, numéro de lot, carré pour le nombre de médicaments prescrits.' },
+{ question: 'À quoi servent les ordonnances bizones ?', answer: 'À distinguer les soins liés à une ALD (zone supérieure) des soins sans rapport (zone inférieure).' },
+{ question: 'Que signifie ALD ?', answer: 'Affection de Longue Durée.' },
+{ question: 'Dans quel cas utilise-t-on les ordonnances CERFA à 4 volets ?', answer: 'Pour les médicaments d’exception.' },
+{ question: 'Que doit respecter la prescription sur ordonnance CERFA 4 volets ?', answer: 'Les indications de la fiche d’intérêt thérapeutique.' },
+{ question: 'Qu’est-ce que la prescription restreinte ?', answer: 'Une catégorie de médicaments soumise à des conditions particulières de prescription.' },
+{ question: 'Que signifie l’abréviation RH en prescription restreinte ?', answer: 'Réservé à l’usage hospitalier.' },
+{ question: 'Que signifie l’abréviation PH en prescription restreinte ?', answer: 'Prescription hospitalière.' },
+{ question: 'Que signifie l’abréviation PIH en prescription restreinte ?', answer: 'Prescription initiale hospitalière.' },
+{ question: 'Que signifie l’abréviation PRS en prescription restreinte ?', answer: 'Prescription réservée à certains spécialistes.' },
+{ question: 'Quelles sont les cinq catégories de prescription restreinte ?', answer: 'RH, PH, PIH, PRS et médicaments d’exception.' },
+{ question: 'Qui a le monopole de la dispensation des médicaments ?', answer: 'Le pharmacien d’officine.' },
+{ question: 'Quelles sont les étapes de la dispensation par le pharmacien ?', answer: 'Analyse de la prescription, refus si nécessaire, conseils, délivrance et vigilance.' },
+{ question: 'En quoi consiste l’analyse pharmaceutique de l’ordonnance ?', answer: 'Contrôle de la forme et du fond : interactions, posologie, durée, recherche d’anomalies.' },
+{ question: 'Dans quel cas le pharmacien peut-il refuser de délivrer un médicament ?', answer: 'S’il existe un doute ou une anomalie mettant en danger le patient.' },
+{ question: 'Quelle est la durée maximale de délivrance d’un traitement en une seule fois ?', answer: '30 jours, sauf exceptions.' },
+{ question: 'Quels médicaments doivent être inscrits dans un registre par le pharmacien ?', answer: 'Les médicaments de Liste I, Liste II et les stupéfiants.' },
+{ question: 'Quel type de conseil le pharmacien doit-il donner au patient ?', answer: 'Des conseils sur le bon usage du médicament, les précautions et les effets indésirables.' },
+{ question: 'Quelles sont les règles d’or de la prescription ?', answer: 'Prescrire si nécessaire, le moins possible, des médicaments connus, en DCI, expliquer, réévaluer.' },
+{ question: 'Pourquoi faut-il prescrire le moins de médicaments possible ?', answer: 'Pour réduire les risques d’interactions médicamenteuses et d’effets indésirables.' },
+{ question: 'Pourquoi privilégier la prescription en DCI ?', answer: 'Pour faciliter la substitution par des génériques et réduire le coût du traitement.' },
+{ question: 'Pourquoi faut-il réévaluer régulièrement le traitement ?', answer: 'Pour s’assurer que le traitement reste nécessaire, efficace et bien toléré.' },
+{ question: 'Les vétérinaires peuvent-ils prescrire pour les humains ?', answer: 'Non, ils prescrivent exclusivement pour les animaux.' },
+{ question: 'Que risque un prescripteur en cas d’erreur sur une ordonnance ?', answer: 'Des poursuites civiles et/ou pénales.' },
+{ question: 'Quelle est la différence entre Liste I et Liste II pour le renouvellement ?', answer: 'Liste I : non renouvelable sauf mention. Liste II : renouvelable sauf mention.' },
+{ question: 'Quelle est la durée de validité commune des ordonnances de Liste I et Liste II ?', answer: '3 mois pour la première délivrance.' },
+{ question: 'Quelle est la durée maximale de traitement prescriptible en une seule ordonnance ?', answer: '12 mois pour les listes I et II.' },
+{ question: 'Que se passe-t-il si un patient présente une ordonnance de stupéfiant après 3 jours ?', answer: 'L’ordonnance n’est plus valable et le pharmacien ne peut pas délivrer.' },
+{ question: 'Comment différencier visuellement un médicament de Liste I d’un de Liste II ?', answer: 'Liste I : cadre rouge. Liste II : cadre vert.' },
+{ question: 'Comment différencier un stupéfiant d’un médicament de Liste I sur le conditionnement ?', answer: 'Le stupéfiant a un double cadre rouge, la Liste I un simple cadre rouge.' },
+{ question: 'Un médicament hors liste nécessite-t-il une ordonnance ?', answer: 'Non, il est disponible sans ordonnance.' },
+{ question: 'Qui peut délivrer les médicaments en France ?', answer: 'Uniquement les pharmaciens (monopole pharmaceutique).' },
+{ question: 'Pourquoi la dispensation est-elle un monopole pharmaceutique ?', answer: 'Pour garantir la sécurité du patient grâce à l’expertise du pharmacien.' },
+{ question: 'Qu’est-ce que la vigilance pharmaceutique ?', answer: 'La surveillance par le pharmacien des effets indésirables et du bon usage des médicaments.' },
+{ question: 'Quel est le but général du circuit de dispensation des médicaments ?', answer: 'Garantir une utilisation sûre, efficace et appropriée des médicaments.' },
+{ question: 'Que fait le pharmacien s’il détecte une interaction médicamenteuse sur l’ordonnance ?', answer: 'Il contacte le prescripteur pour discuter d’une alternative thérapeutique.' },
+{ question: 'Peut-on renouveler une ordonnance de stupéfiants ?', answer: 'Non, une nouvelle ordonnance sécurisée est nécessaire à chaque fois.' },
+{ question: 'Combien de volets comporte l’ordonnance CERFA pour les médicaments d’exception ?', answer: '4 volets.' },
+{ question: 'Quelle mention doit figurer si le prescripteur ne souhaite pas de substitution ?', answer: 'La mention « Non substituable ».' },
+{ question: 'En cas de prescription hors AMM, quelle mention apposer ?', answer: 'La mention « NR » (non remboursable).' },
+{ question: 'Quelle est la responsabilité du prescripteur vis-à-vis du patient ?', answer: 'Il doit informer le patient et s’assurer de la bonne compréhension du traitement.' },
+{ question: 'Quels patients une sage-femme ne peut-elle pas traiter ?', answer: 'Ceux qui ne sont ni femmes enceintes, ni accouchées, ni nouveau-nés de moins de 28 jours.' },
+{ question: 'Les infirmières peuvent-elles prescrire des dispositifs médicaux ?', answer: 'Oui, certains dispositifs médicaux uniquement.' },
+{ question: 'Quelle différence entre prescription hospitalière (PH) et prescription initiale hospitalière (PIH) ?', answer: 'PH : toute la prescription à l’hôpital. PIH : seule la première prescription est hospitalière, le renouvellement peut se faire en ville.' },
+{ question: 'Un médicament réservé à l’usage hospitalier peut-il être dispensé en pharmacie de ville ?', answer: 'Non, il est réservé à l’usage hospitalier uniquement.' },
+{ question: 'Que signifie « médicament d’exception » ?', answer: 'Un médicament coûteux dont la prise en charge nécessite le respect d’indications précises sur ordonnance CERFA.' },
+{ question: 'Pourquoi les ordonnances sécurisées ont-elles un numéro de lot ?', answer: 'Pour assurer la traçabilité et prévenir la fraude.' },
+{ question: 'Que contient le carré en bas de l’ordonnance sécurisée ?', answer: 'Le nombre de médicaments prescrits, inscrit par le prescripteur.' },
+{ question: 'Quand la zone supérieure de l’ordonnance bizone est-elle utilisée ?', answer: 'Pour les soins en rapport direct avec l’ALD du patient.' },
+{ question: 'Quand la zone inférieure de l’ordonnance bizone est-elle utilisée ?', answer: 'Pour les soins sans rapport avec l’ALD.' },
+{ question: 'Le pharmacien peut-il modifier la posologie d’une ordonnance ?', answer: 'Non, il doit contacter le prescripteur en cas de problème.' },
+{ question: 'Pourquoi indiquer le sexe du patient sur l’ordonnance ?', answer: 'Pour adapter les traitements et vérifier les contre-indications liées au sexe.' },
+{ question: 'Quelles informations le pharmacien doit-il archiver pour les stupéfiants ?', answer: 'Identité du patient, prescripteur, médicament, quantité, date de délivrance dans un registre.' },
+{ question: 'Quel est le rôle du Conseil de l’Ordre dans la prescription ?', answer: 'Il réglemente l’exercice professionnel et garantit le respect des règles déontologiques.' },
+{ question: 'Que doit faire le prescripteur si le médicament n’a pas d’AMM pour l’indication ?', answer: 'Apposer la mention « NR » et informer le patient.' },
+{ question: 'Qu’est-ce que la substitution pharmaceutique ?', answer: 'Le remplacement par le pharmacien du médicament prescrit par un générique équivalent.' },
+{ question: 'La substitution est-elle possible pour les stupéfiants ?', answer: 'Non, la substitution ne s’applique pas aux stupéfiants.' },
+{ question: 'Quel est le délai maximal pour se présenter en pharmacie avec une ordonnance de Liste I ?', answer: '3 mois pour la première délivrance.' },
+{ question: 'Pourquoi les médicaments connus du prescripteur sont-ils à privilégier ?', answer: 'Pour mieux maîtriser les effets attendus, les interactions et les effets indésirables.' },
+{ question: 'Quelle est la différence entre médicament à prescription médicale obligatoire et facultative ?', answer: 'Obligatoire : délivré uniquement sur ordonnance. Facultative : disponible sans ordonnance.' },
+{ question: 'Pourquoi l’ordonnance est-elle considérée comme un vecteur d’information ?', answer: 'Elle informe le malade, le pharmacien, la Sécurité sociale et les paramédicaux sur le traitement prescrit.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

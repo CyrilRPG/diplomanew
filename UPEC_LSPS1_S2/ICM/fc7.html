@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS1 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>ICM</h1><h2>Pharmacocinétique et prescription</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu\u2019est-ce que les coordonnées semi-logarithmiques en pharmacocinétique ?', answer: 'Un système de représentation avec les concentrations en ordonnée sur une échelle logarithmique et le temps en abscisse sur une échelle arithmétique.' },
+{ question: 'Pourquoi utilise-t-on des coordonnées semi-logarithmiques ?', answer: 'Pour linéariser la décroissance exponentielle des concentrations plasmatiques et faciliter l\u2019analyse de la cinétique.' },
+{ question: 'Qu\u2019observe-t-on en coordonnées semi-log lorsque la cinétique est linéaire ?', answer: 'Une droite dont la pente est liée à la constante d\u2019élimination et donc à la demi-vie.' },
+{ question: 'Que représente la pente de la droite en coordonnées semi-logarithmiques ?', answer: 'Elle est proportionnelle à la constante d\u2019élimination et permet de calculer la demi-vie d\u2019élimination.' },
+{ question: 'Qu\u2019est-ce qu\u2019une cinétique linéaire ?', answer: 'Une cinétique où la décroissance exponentielle des concentrations donne une droite en coordonnées semi-logarithmiques.' },
+{ question: 'Comment la demi-vie d\u2019élimination est-elle déterminée graphiquement ?', answer: 'À partir de la pente de la droite de décroissance en coordonnées semi-logarithmiques.' },
+{ question: 'Quel est l\u2019intérêt de comparer les pentes en semi-log entre patients ?', answer: 'Cela permet de comparer les demi-vies d\u2019élimination entre différentes populations ou conditions pathologiques.' },
+{ question: 'Quel est le mode d\u2019administration le plus courant des médicaments ?', answer: 'L\u2019administration répétée (voie orale le plus souvent), car la majorité des traitements nécessitent des prises multiples.' },
+{ question: 'Pourquoi la plupart des médicaments sont-ils administrés de façon répétée ?', answer: 'Pour maintenir une concentration plasmatique efficace dans le temps et atteindre un état d\u2019équilibre.' },
+{ question: 'Qu\u2019est-ce qu\u2019une perfusion intraveineuse à débit constant ?', answer: 'Une administration continue par voie IV qui permet une élévation progressive et constante des concentrations plasmatiques.' },
+{ question: 'Que se passe-t-il au niveau des concentrations lors d\u2019une perfusion IV à débit constant ?', answer: 'Les concentrations augmentent progressivement jusqu\u2019à atteindre un plateau appelé état d\u2019équilibre ou steady-state.' },
+{ question: 'Qu\u2019est-ce que le plateau ou steady-state (Css) ?', answer: 'La concentration d\u2019équilibre atteinte lorsque la vitesse d\u2019entrée du médicament égale sa vitesse d\u2019élimination.' },
+{ question: 'Combien de temps faut-il pour atteindre le plateau lors d\u2019une perfusion IV ?', answer: 'Environ 5 demi-vies d\u2019élimination.' },
+{ question: 'De quel paramètre dépend exclusivement le temps pour atteindre le steady-state en perfusion ?', answer: 'De la demi-vie d\u2019élimination du médicament, indépendamment du débit de perfusion.' },
+{ question: 'Comment évolue la courbe de montée vers le plateau en perfusion IV ?', answer: 'La montée est l\u2019image miroir de la courbe de décroissance après arrêt de la perfusion.' },
+{ question: 'Que signifie l\u2019expression « image miroir » en perfusion IV ?', answer: 'Que la phase de montée vers le plateau est symétrique à la phase de décroissance après l\u2019arrêt.' },
+{ question: 'Quel pourcentage du plateau est atteint après 1 demi-vie de perfusion IV ?', answer: 'Environ 50% du Css.' },
+{ question: 'Quel pourcentage du plateau est atteint après 2 demi-vies ?', answer: 'Environ 75% du Css.' },
+{ question: 'Quel pourcentage du plateau est atteint après 3 demi-vies ?', answer: 'Environ 87,5% du Css.' },
+{ question: 'Quel pourcentage du plateau est atteint après 4 demi-vies ?', answer: 'Environ 93,75% du Css.' },
+{ question: 'Quel pourcentage du plateau est atteint après 5 demi-vies ?', answer: 'Environ 97% du Css, considéré comme le plateau effectif.' },
+{ question: 'Qu\u2019est-ce qu\u2019une dose de charge en perfusion IV ?', answer: 'Un bolus intraveineux administré simultanément au début de la perfusion pour atteindre immédiatement la concentration Css.' },
+{ question: 'Pourquoi administre-t-on une dose de charge ?', answer: 'Pour obtenir un effet thérapeutique immédiat sans attendre les 5 demi-vies nécessaires au plateau.' },
+{ question: 'Dans quelle situation la dose de charge est-elle particulièrement utile ?', answer: 'Lorsque la demi-vie du médicament est longue et qu\u2019un effet rapide est nécessaire (urgence thérapeutique).' },
+{ question: 'Comment est calculée la dose de charge IV ?', answer: 'En multipliant la concentration cible Css par le volume de distribution (Vd).' },
+{ question: 'Que se passe-t-il si on augmente le débit de perfusion sans dose de charge ?', answer: 'On atteint un Css plus élevé, mais toujours après 5 demi-vies.' },
+{ question: 'Le débit de perfusion influence-t-il le temps pour atteindre le plateau ?', answer: 'Non, seul le niveau du plateau (Css) change ; le temps pour l\u2019atteindre reste de 5 demi-vies.' },
+{ question: 'Qu\u2019est-ce que l\u2019accumulation lors d\u2019une administration orale répétée ?', answer: 'L\u2019augmentation progressive des concentrations plasmatiques car une partie de la dose précédente n\u2019est pas encore éliminée.' },
+{ question: 'Quand observe-t-on une accumulation en administration répétée ?', answer: 'Lorsque l\u2019intervalle d\u2019administration τ est inférieur à 5 demi-vies.' },
+{ question: 'Quand n\u2019y a-t-il pas d\u2019accumulation en administration répétée ?', answer: 'Lorsque τ est supérieur ou égal à 5 demi-vies, car la quasi-totalité de la dose est éliminée avant la prise suivante.' },
+{ question: 'Qu\u2019est-ce que l\u2019état d\u2019équilibre en voie orale répétée ?', answer: 'L\u2019état atteint lorsque la quantité de médicament absorbée à chaque prise compense exactement la quantité éliminée.' },
+{ question: 'Quels paramètres caractérisent l\u2019état d\u2019équilibre en administration répétée ?', answer: 'La Cmin (concentration résiduelle), la Cmax (concentration maximale) et la Cmoy (concentration moyenne ou Css).' },
+{ question: 'En combien de temps l\u2019état d\u2019équilibre est-il atteint par voie orale répétée ?', answer: 'En 5 demi-vies d\u2019élimination, quel que soit l\u2019intervalle entre les prises.' },
+{ question: 'Que se passe-t-il si on modifie la posologie d\u2019un traitement chronique ?', answer: 'Un nouvel état d\u2019équilibre est atteint après 5 nouvelles demi-vies.' },
+{ question: 'La modification de la dose change-t-elle le temps pour atteindre le nouvel équilibre ?', answer: 'Non, le temps reste toujours de 5 demi-vies, seul le niveau du nouveau Css change.' },
+{ question: 'La modification de l\u2019intervalle d\u2019administration change-t-elle le temps pour atteindre l\u2019équilibre ?', answer: 'Non, le temps dépend uniquement de la demi-vie, pas de τ.' },
+{ question: 'Qu\u2019est-ce que la Cmin à l\u2019état d\u2019équilibre ?', answer: 'La concentration résiduelle la plus basse mesurée juste avant la prise suivante.' },
+{ question: 'Qu\u2019est-ce que la Cmax à l\u2019état d\u2019équilibre ?', answer: 'La concentration maximale mesurée après chaque prise, au pic d\u2019absorption.' },
+{ question: 'Qu\u2019est-ce que la Cmoy ou Css en administration répétée ?', answer: 'La concentration moyenne entre Cmin et Cmax, correspondant à la valeur autour de laquelle oscillent les concentrations.' },
+{ question: 'Qu\u2019est-ce que l\u2019intervalle thérapeutique ?', answer: 'La fourchette de concentrations plasmatiques comprise entre la concentration minimale efficace (CME) et la concentration maximale tolérée (CMT).' },
+{ question: 'Que se passe-t-il si les concentrations descendent en dessous de la CME ?', answer: 'Le médicament n\u2019a plus d\u2019effet thérapeutique (sous-dosage).' },
+{ question: 'Que se passe-t-il si les concentrations dépassent la CMT ?', answer: 'Des effets indésirables ou toxiques apparaissent (surdosage).' },
+{ question: 'Qu\u2019est-ce qu\u2019un médicament à marge thérapeutique étroite ?', answer: 'Un médicament dont l\u2019écart entre CME et CMT est faible, nécessitant une surveillance étroite des concentrations.' },
+{ question: 'Citez trois exemples de médicaments à marge thérapeutique étroite.', answer: 'Les AVK (antivitamines K), les antiépileptiques et les immunosuppresseurs.' },
+{ question: 'Pourquoi les médicaments à marge étroite nécessitent-ils un suivi thérapeutique pharmacologique ?', answer: 'Car de faibles variations de concentration peuvent entraîner soit un échec thérapeutique, soit une toxicité.' },
+{ question: 'Comment exprime-t-on mathématiquement les fluctuations des concentrations ?', answer: 'Par le rapport Δ = (Cmax − Cmin) / Cmin.' },
+{ question: 'De quoi dépend l\u2019amplitude des fluctuations Δ ?', answer: 'Du rapport entre l\u2019intervalle d\u2019administration τ et la demi-vie t1/2.' },
+{ question: 'Quelle est la valeur de Δ lorsque τ = t1/2 ?', answer: 'Δ = 50%.' },
+{ question: 'Quelle est la valeur de Δ lorsque τ < t1/2 ?', answer: 'Δ < 50% (fluctuations plus faibles).' },
+{ question: 'Quelle est la valeur de Δ lorsque τ > t1/2 ?', answer: 'Δ > 50% (fluctuations plus importantes).' },
+{ question: 'Comment réduire les fluctuations de concentration à l\u2019état d\u2019équilibre ?', answer: 'En diminuant l\u2019intervalle entre les prises (τ) par rapport à la demi-vie, ou en utilisant des formes à libération prolongée.' },
+{ question: 'Pourquoi des fluctuations importantes sont-elles problématiques ?', answer: 'Car elles augmentent le risque de dépasser la CMT (toxicité) ou de descendre sous la CME (inefficacité).' },
+{ question: 'Quel est l\u2019objectif de l\u2019administration chronique d\u2019un médicament ?', answer: 'Maintenir les concentrations plasmatiques dans l\u2019intervalle thérapeutique de façon continue.' },
+{ question: 'Peut-on utiliser une dose de charge par voie orale ?', answer: 'Oui, on peut administrer une dose initiale plus élevée pour atteindre rapidement des concentrations efficaces.' },
+{ question: 'Quelle est la différence entre dose de charge et dose d\u2019entretien ?', answer: 'La dose de charge permet d\u2019atteindre rapidement le Css, tandis que la dose d\u2019entretien maintient ce niveau.' },
+{ question: 'Qu\u2019est-ce que le facteur d\u2019accumulation ?', answer: 'Le rapport entre la concentration au plateau et la concentration après la première dose ; il dépend du rapport τ/t1/2.' },
+{ question: 'Comment évolue le facteur d\u2019accumulation quand τ diminue par rapport à t1/2 ?', answer: 'Le facteur d\u2019accumulation augmente (davantage d\u2019accumulation).' },
+{ question: 'Que vaut approximativement le facteur d\u2019accumulation lorsque τ = t1/2 ?', answer: 'Environ 2 (la concentration au plateau est le double de celle après la première dose).' },
+{ question: 'Pourquoi le steady-state est-il un concept fondamental en prescription ?', answer: 'Car c\u2019est à ce moment que les concentrations sont stables et que l\u2019effet thérapeutique est prévisible et reproductible.' },
+{ question: 'Quel est le lien entre demi-vie longue et risque d\u2019accumulation ?', answer: 'Plus la demi-vie est longue par rapport à τ, plus l\u2019accumulation est importante et le temps pour atteindre le plateau est long.' },
+{ question: 'Pourquoi ne faut-il pas juger l\u2019efficacité d\u2019un traitement chronique avant 5 demi-vies ?', answer: 'Car l\u2019état d\u2019équilibre n\u2019est pas encore atteint et les concentrations ne sont pas stabilisées.' },
+{ question: 'Qu\u2019implique une demi-vie très courte pour la posologie ?', answer: 'Des prises plus fréquentes ou l\u2019utilisation de formes à libération prolongée pour maintenir des concentrations stables.' },
+{ question: 'Qu\u2019implique une demi-vie très longue pour la posologie ?', answer: 'Des prises moins fréquentes, mais un temps plus long pour atteindre l\u2019équilibre et un risque d\u2019accumulation toxique.' },
+{ question: 'Comment la voie d\u2019administration influence-t-elle le profil de concentration ?', answer: 'La voie IV donne un pic immédiat puis une décroissance, tandis que la voie orale présente une phase d\u2019absorption avant le pic.' },
+{ question: 'Quelle est la différence entre perfusion IV continue et bolus IV répétés ?', answer: 'La perfusion donne des concentrations stables au plateau, les bolus répétés entraînent des fluctuations entre Cmax et Cmin.' },
+{ question: 'Qu\u2019est-ce que la biodisponibilité et quel est son impact sur le Css en voie orale ?', answer: 'C\u2019est la fraction de la dose qui atteint la circulation systémique ; une biodisponibilité réduite diminue le Css.' },
+{ question: 'Comment la clairance influence-t-elle le Css ?', answer: 'Css = (F × Dose) / (Cl × τ). Plus la clairance augmente, plus le Css diminue.' },
+{ question: 'Quelle formule relie Css, biodisponibilité, dose, clairance et intervalle ?', answer: 'Css = (F × D) / (Cl × τ), où F est la biodisponibilité, D la dose, Cl la clairance et τ l\u2019intervalle.' },
+{ question: 'Comment augmenter le Css sans changer la dose ?', answer: 'En diminuant l\u2019intervalle d\u2019administration τ.' },
+{ question: 'Comment diminuer les fluctuations sans changer le Css moyen ?', answer: 'En diminuant la dose unitaire et en augmentant la fréquence d\u2019administration proportionnellement.' },
+{ question: 'Que signifie une pente raide en coordonnées semi-logarithmiques ?', answer: 'Que la demi-vie d\u2019élimination est courte (élimination rapide).' },
+{ question: 'Que signifie une pente faible en coordonnées semi-logarithmiques ?', answer: 'Que la demi-vie d\u2019élimination est longue (élimination lente).' },
+{ question: 'Pourquoi la phase de décroissance après arrêt de perfusion suit-elle une exponentielle ?', answer: 'Car l\u2019élimination du médicament suit une cinétique d\u2019ordre 1 (proportionnelle à la concentration).' },
+{ question: 'Qu\u2019est-ce que la cinétique d\u2019ordre 1 ?', answer: 'Une cinétique où la vitesse d\u2019élimination est proportionnelle à la concentration plasmatique du médicament.' },
+{ question: 'Comment le volume de distribution affecte-t-il la dose de charge ?', answer: 'Plus le Vd est grand, plus la dose de charge nécessaire pour atteindre une concentration cible est élevée.' },
+{ question: 'Qu\u2019est-ce que le suivi thérapeutique pharmacologique (STP) ?', answer: 'Le dosage des concentrations plasmatiques du médicament pour ajuster la posologie, surtout pour les médicaments à marge étroite.' },
+{ question: 'Quand dose-t-on habituellement la concentration résiduelle (Cmin) ?', answer: 'Juste avant la prise suivante, à l\u2019état d\u2019équilibre (après au moins 5 demi-vies de traitement).' },
+{ question: 'Pourquoi les AVK sont-ils des médicaments à marge thérapeutique étroite ?', answer: 'Car un sous-dosage expose au risque thromboembolique et un surdosage au risque hémorragique.' },
+{ question: 'Pourquoi les antiépileptiques sont-ils à marge thérapeutique étroite ?', answer: 'Car un sous-dosage entraîne des crises et un surdosage provoque des effets neurologiques toxiques.' },
+{ question: 'Pourquoi les immunosuppresseurs sont-ils à marge thérapeutique étroite ?', answer: 'Car un sous-dosage expose au rejet de greffe et un surdosage à des infections graves par immunodépression excessive.' },
+{ question: 'Qu\u2019est-ce que la zone sous-thérapeutique ?', answer: 'La zone de concentrations en dessous de la CME où le médicament est inefficace.' },
+{ question: 'Qu\u2019est-ce que la zone toxique ?', answer: 'La zone de concentrations au-dessus de la CMT où apparaissent les effets indésirables graves.' },
+{ question: 'Comment l\u2019insuffisance rénale affecte-t-elle le steady-state ?', answer: 'Elle diminue la clairance, augmente la demi-vie, retarde l\u2019atteinte du plateau et augmente le Css.' },
+{ question: 'Comment l\u2019insuffisance hépatique affecte-t-elle la pharmacocinétique ?', answer: 'Elle diminue le métabolisme, augmente la demi-vie et le Css, nécessitant une adaptation posologique.' },
+{ question: 'Quel est l\u2019impact d\u2019une augmentation de la clairance sur le Css ?', answer: 'Le Css diminue proportionnellement à l\u2019augmentation de la clairance.' },
+{ question: 'Qu\u2019est-ce qu\u2019un inducteur enzymatique et quel est son effet sur le Css ?', answer: 'Une substance qui augmente l\u2019activité des enzymes de métabolisme, augmentant la clairance et diminuant le Css.' },
+{ question: 'Qu\u2019est-ce qu\u2019un inhibiteur enzymatique et quel est son effet sur le Css ?', answer: 'Une substance qui diminue l\u2019activité des enzymes de métabolisme, diminuant la clairance et augmentant le Css.' },
+{ question: 'Pourquoi faut-il attendre 5 demi-vies après un changement de posologie pour évaluer l\u2019effet ?', answer: 'Car c\u2019est le temps nécessaire pour que les concentrations se stabilisent au nouveau plateau.' },
+{ question: 'Que vaut le Css lors d\u2019une perfusion IV en fonction du débit et de la clairance ?', answer: 'Css = Débit de perfusion / Clairance.' },
+{ question: 'Quelle est la relation entre le débit de perfusion et le Css ?', answer: 'Le Css est directement proportionnel au débit de perfusion (doubler le débit double le Css).' },
+{ question: 'Pourquoi la dose de charge n\u2019influence-t-elle pas la valeur finale du Css ?', answer: 'Car le Css dépend du débit de perfusion et de la clairance ; la dose de charge ne fait qu\u2019accélérer l\u2019atteinte du plateau.' },
+{ question: 'Comment choisit-on l\u2019intervalle d\u2019administration d\u2019un médicament ?', answer: 'En fonction de la demi-vie et de la marge thérapeutique, pour limiter les fluctuations tout en restant pratique.' },
+{ question: 'Pourquoi une forme à libération prolongée réduit-elle les fluctuations ?', answer: 'Car elle ralentit l\u2019absorption, étalant le pic et réduisant l\u2019écart entre Cmax et Cmin.' },
+{ question: 'Quel est l\u2019avantage d\u2019une forme à libération prolongée pour l\u2019observance ?', answer: 'Elle permet de réduire le nombre de prises quotidiennes.' },
+{ question: 'Qu\u2019observe-t-on sur le profil de concentration si le patient oublie une prise ?', answer: 'La Cmin descend davantage, risquant de passer sous la CME et de perdre l\u2019efficacité thérapeutique.' },
+{ question: 'Que se passe-t-il si le patient double la dose pour compenser un oubli ?', answer: 'La Cmax peut dépasser la CMT et provoquer des effets toxiques.' },
+{ question: 'Quelle est la règle pratique pour l\u2019oubli d\u2019une prise ?', answer: 'Ne pas doubler la dose suivante mais reprendre le schéma habituel ; la concentration se restabilisera après 5 demi-vies.' },
+{ question: 'Pourquoi le concept de 5 demi-vies est-il fondamental en pharmacocinétique clinique ?', answer: 'Il s\u2019applique aussi bien à l\u2019atteinte du plateau qu\u2019à l\u2019élimination complète et au réajustement posologique.' },
+{ question: 'Après arrêt d\u2019un traitement, en combien de temps le médicament est-il pratiquement éliminé ?', answer: 'En environ 5 demi-vies (il reste moins de 3% de la concentration initiale).' },
+{ question: 'Comment les fluctuations affectent-elles un médicament à marge large ?', answer: 'Elles sont mieux tolérées car l\u2019écart entre CME et CMT est grand, réduisant le risque de sortir de l\u2019intervalle thérapeutique.' },
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">ICM</span><ul>
+<li><a href="../ICM/fc1.html">Généralités sur les médicaments (partie 1)</a></li>
+<li><a href="../ICM/fc1_2.html">Généralités sur les médicaments (partie 2)</a></li>
+<li><a href="../ICM/fc2.html">Interaction ligand-récepteur</a></li>
+<li><a href="../ICM/fc3.html">Voies de signalisation</a></li>
+<li><a href="../ICM/fc4.html">Pharmacométrie</a></li>
+<li><a href="../ICM/fc5.html">Étapes pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_1.html">Paramètres pharmacocinétiques</a></li>
+<li><a href="../ICM/fc6_2.html">Pharmacocinétique et formes galéniques</a></li>
+<li><a href="../ICM/fc7.html">Pharmacocinétique et prescription</a></li>
+<li><a href="../ICM/fc8.html">Variabilité de la réponse au médicament</a></li>
+<li><a href="../ICM/fc9.html">Conception et identification du médicament</a></li>
+<li><a href="../ICM/fc10.html">Développement pré-clinique</a></li>
+<li><a href="../ICM/fc11.html">Développement clinique</a></li>
+<li><a href="../ICM/fc12.html">Structure et régulation du médicament</a></li>
+<li><a href="../ICM/fc13.html">Générique et biosimilaire</a></li>
+<li><a href="../ICM/fc14.html">Circuits de dispensation des médicaments</a></li>
+<li><a href="../ICM/fc15.html">Iatrogénie</a></li>
+</ul></li>
+<li><span class="opener">Bio-informatique</span><ul>
+<li><a href="../Bio_Informatique/fc1.html">Introduction à la bio-informatique</a></li>
+<li><a href="../Bio_Informatique/fc2.html">Bases de données bio-informatiques</a></li>
+<li><a href="../Bio_Informatique/fc3.html">Comparaison de séquences</a></li>
+</ul></li>
+<li><span class="opener">Circulation Respiration</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Circulation_Respiration/Anatomie/fc1.html">Introduction sur l'appareil cardiovasculaire</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc2.html">Cœur, aspects extérieurs</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc3.html">Cœur droit et cœur gauche</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc4.html">Péricarde</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc5.html">Artères et veines coronaires</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc6.html">Innervation du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc7.html">Structure du cœur et valves cardiaques</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc8.html">Principales artères du corps</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc9.html">Coupes du cœur</a></li>
+<li><a href="../Circulation_Respiration/Anatomie/fc10.html">Anatomie de l'appareil respiratoire</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Circulation_Respiration/Physiologie/fc1.html">Voies aériennes et transports gazeux</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc2.html">Équilibre acide-base</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc3.html">Cellule musculaire cardiaque</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc4.html">ECG et cœur</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc5.html">Pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc6.html">Régulation de la pression artérielle</a></li>
+<li><a href="../Circulation_Respiration/Physiologie/fc7.html">Le cycle cardiaque</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Régulation Neuroendocrienne</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc1.html">Anatomie générale du système nerveux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc2.html">Neurone</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc3.html">Schéma général des réseaux neuronaux</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc4.html">Système nerveux végétatif ou autonome</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc5.html">Sécrétion hormonale</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Anatomie/fc6.html">Anatomie digestive simplifiée</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc1.html">Fonction digestive</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc2.html">Fonctions hépatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc3.html">Fonctions pancréatiques</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc4.html">Rôle de l'intestin grêle et du colon</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc5.html">Diabète</a></li>
+<li><a href="../Regulation_Neuroendocrienne/Physiologie/fc6.html">Hypothalamus, faim et satiété</a></li>
+</ul></li>
+</ul></li>
+<li><span class="opener">Squelette et Motricité</span><ul>
+<li><span class="opener">Anatomie</span><ul>
+<li><a href="../Squelette_Motricite/Anatomie/fc1.html">Les os du crâne</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc2.html">Os de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc3.html">Cavités de la face</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc4.html">Membre supérieur</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc5.html">Ceinture scapulaire</a></li>
+<li><a href="../Squelette_Motricite/Anatomie/fc6.html">Bras</a></li>
+</ul></li>
+<li><span class="opener">Activité physique et santé</span><ul>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc1.html">Connaissances générales sur l'activité physique</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc2.html">Adaptations cardiaques à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc3.html">Adaptations respiratoires à l'exercice</a></li>
+<li><a href="../Squelette_Motricite/Activite_Physique/fc4.html">Adaptations hormonales à l'exercice</a></li>
+</ul></li>
+<li><span class="opener">Situations de handicap</span><ul>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc1.html">Réadaptation</a></li>
+<li><a href="../Squelette_Motricite/Situations_Handicap/fc2.html">Moyens de compensation</a></li>
+</ul></li>
+<li><span class="opener">Physiologie</span><ul>
+<li><a href="../Squelette_Motricite/Physiologie/fc1.html">Biomécanique de la force musculaire</a></li>
+<li><a href="../Squelette_Motricite/Physiologie/fc2.html">Excitation-contraction</a></li>
+</ul></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

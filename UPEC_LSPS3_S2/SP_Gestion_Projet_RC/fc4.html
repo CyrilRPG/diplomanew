@@ -1,0 +1,499 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS3 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Santé publique - Gestion de projet de recherche clinique</h1><h2>Structures de soutien à la recherche clinique</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce qu’une structure de soutien à la recherche clinique (SSRC) ?', answer: 'Une entité dédiée à l’accompagnement logistique, réglementaire et méthodologique des projets de recherche clinique.', },
+{ question: 'Quel est le rôle principal d’un Centre d’Investigation Clinique (CIC) ?', answer: 'Accueillir et accompagner la réalisation d’essais cliniques chez l’homme.', },
+{ question: 'Que signifie DRCI ?', answer: 'Direction de la Recherche Clinique et de l’Innovation.', },
+{ question: 'Quel organisme finance principalement les CRC ?', answer: 'L’Inserm.', },
+{ question: 'Qu’est-ce qu’un promoteur dans la recherche clinique ?', answer: 'La personne ou l’organisme responsable de la mise en œuvre d’une recherche.', },
+{ question: 'Quel est le rôle d’un ARC ?', answer: 'Assurer le suivi, la coordination et la qualité des essais cliniques.', },
+{ question: 'Que veut dire CRC ?', answer: 'Centre de Recherche Clinique.', },
+{ question: 'Quel document doit être validé par un CPP avant tout essai clinique ?', answer: 'Le protocole de recherche.', },
+{ question: 'Qu’est-ce qu’un CPP ?', answer: 'Comité de Protection des Personnes.', },
+{ question: 'Qui peut être investigateur principal d’un essai clinique ?', answer: 'Un médecin ou un professionnel de santé habilité.', },
+{ question: 'Quel est le rôle du CRB ?', answer: 'Gérer la collecte, la conservation et la mise à disposition d’échantillons biologiques.', },
+{ question: 'Que signifie CRB ?', answer: 'Centre de Ressources Biologiques.', },
+{ question: 'Quel est le rôle du Data Manager ?', answer: 'Gérer la collecte, la qualité et la sécurité des données cliniques.', },
+{ question: 'Qu’est-ce qu’un e-CRF ?', answer: 'Un Case Report Form électronique, outil de saisie des données d’étude.', },
+{ question: 'Quelle est la mission du DRCI dans un CHU ?', answer: 'Coordonner et soutenir les activités de recherche clinique et d’innovation.', },
+{ question: 'Que signifie F-CRIN ?', answer: 'French Clinical Research Infrastructure Network.', },
+{ question: 'Quel est le rôle de F-CRIN ?', answer: 'Structurer et promouvoir la recherche clinique en France au niveau international.', },
+{ question: 'Que signifie PHRC ?', answer: 'Programme Hospitalier de Recherche Clinique.', },
+{ question: 'Quel est l’objectif du PHRC ?', answer: 'Financer des projets de recherche clinique hospitaliers.', },
+{ question: 'Qu’est-ce qu’un centre investigateur ?', answer: 'Un site où se déroule concrètement la recherche clinique.', },
+{ question: 'Quelle est la différence entre promoteur et investigateur ?', answer: 'Le promoteur organise la recherche, l’investigateur la réalise sur le terrain.', },
+{ question: 'Qu’est-ce qu’un monitorage d’essai clinique ?', answer: 'Vérification sur site de la conformité et de la qualité des données recueillies.', },
+{ question: 'Quel est le rôle du pharmacien dans un essai clinique ?', answer: 'Gérer l’approvisionnement, la préparation et la dispensation des médicaments expérimentaux.', },
+{ question: 'Que veut dire ANSM ?', answer: 'Agence Nationale de Sécurité du Médicament et des produits de santé.', },
+{ question: 'Quel est le rôle de l’ANSM dans la recherche clinique ?', answer: 'Autoriser et surveiller les essais cliniques de médicaments en France.', },
+{ question: 'Qu’est-ce qu’un centre coordonnateur ?', answer: 'Le site responsable de la coordination d’un essai multicentrique.', },
+{ question: 'Qu’est-ce qu’une plateforme de données cliniques ?', answer: 'Un outil ou service centralisé pour la gestion et l’analyse des données de recherche clinique.', },
+{ question: 'Quel est le rôle d’un biostatisticien en recherche clinique ?', answer: 'Concevoir les plans d’analyse et interpréter les résultats statistiques des essais.', },
+{ question: 'Qu’est-ce qu’un consentement éclairé ?', answer: 'Accord écrit du participant après information complète sur l’étude.', },
+{ question: 'Quel document réglementaire doit être obtenu avant l’inclusion du premier patient ?', answer: 'L’autorisation de l’ANSM et l’avis favorable du CPP.', },
+{ question: 'Qu’est-ce qu’une étude interventionnelle ?', answer: 'Une étude où une action est réalisée sur le participant (ex: médicament, dispositif).', },
+{ question: 'Qu’est-ce qu’une étude observationnelle ?', answer: 'Une étude sans intervention, où l’on observe simplement les pratiques ou les patients.', },
+{ question: 'Quel est le rôle du Comité de Pilotage d’un essai ?', answer: 'Superviser le déroulement et la qualité scientifique de l’essai.', },
+{ question: 'Qu’est-ce qu’un GCS ?', answer: 'Groupement de Coopération Sanitaire, structure de mutualisation de moyens pour la recherche.', },
+{ question: 'Que signifie IHU ?', answer: 'Institut Hospitalo-Universitaire.', },
+{ question: 'Quel est le rôle d’un IHU dans la recherche clinique ?', answer: 'Favoriser l’innovation et la recherche translationnelle entre hôpital et université.', },
+{ question: 'Qu’est-ce qu’un promoteur industriel ?', answer: 'Une entreprise pharmaceutique ou biomédicale qui finance et organise une recherche.', },
+{ question: 'Qu’est-ce qu’un promoteur institutionnel ?', answer: 'Un hôpital, CHU, université ou organisme public qui organise une recherche.', },
+{ question: 'Qu’est-ce qu’un EudraCT ?', answer: 'Base de données européenne des essais cliniques de médicaments.', },
+{ question: 'Qu’est-ce qu’un registre d’essais cliniques ?', answer: 'Base publique répertoriant les essais cliniques en cours et terminés.', },
+{ question: 'Quel est le rôle du ClinicalTrials.gov ?', answer: 'Fournir un accès public mondial aux informations sur les essais cliniques.', },
+{ question: 'Qu’est-ce qu’un Data Safety Monitoring Board (DSMB) ?', answer: 'Comité indépendant chargé de surveiller la sécurité des participants pendant l’essai.', },
+{ question: 'Qu’est-ce qu’une randomisation ?', answer: 'Procédure attribuant au hasard les traitements aux participants d’un essai.', },
+{ question: 'Qu’est-ce qu’une étude multicentrique ?', answer: 'Une étude menée simultanément dans plusieurs centres.', },
+{ question: 'Qu’est-ce qu’un centre unique ?', answer: 'Une étude menée dans un seul centre de recherche.', },
+{ question: 'Quel est le rôle du coordinateur de recherche clinique ?', answer: 'Organiser et superviser les activités de recherche au sein d’un centre.', },
+{ question: 'Qu’est-ce qu’un essai de phase I ?', answer: 'Étude évaluant la sécurité et la tolérance d’un médicament chez l’homme.', },
+{ question: 'Qu’est-ce qu’un essai de phase II ?', answer: 'Étude évaluant l’efficacité et les effets secondaires d’un médicament.', },
+{ question: 'Qu’est-ce qu’un essai de phase III ?', answer: 'Étude comparant un nouveau traitement à la prise en charge de référence.', },
+{ question: 'Qu’est-ce qu’un essai de phase IV ?', answer: 'Étude post-autorisation surveillant les effets à long terme d’un médicament.', },
+{ question: 'Qu’est-ce qu’un promoteur délégué ?', answer: 'Un organisme mandaté par le promoteur pour certaines tâches de gestion de l’essai.', },
+{ question: 'Qu’est-ce qu’un investigateur associé ?', answer: 'Un professionnel de santé participant à la recherche sous la responsabilité de l’investigateur principal.', },
+{ question: 'Quel est le rôle de l’attaché de recherche clinique (ARC) ?', answer: 'Assurer le suivi, la qualité et la conformité réglementaire des essais.', },
+{ question: 'Qu’est-ce qu’un audit d’essai clinique ?', answer: 'Évaluation indépendante de la conformité des procédures de l’essai.', },
+{ question: 'Qu’est-ce qu’une non-conformité majeure en recherche clinique ?', answer: 'Un écart significatif par rapport aux exigences réglementaires ou au protocole.', },
+{ question: 'Qu’est-ce qu’un rapport d’événement indésirable grave ?', answer: 'Document rapportant un effet indésirable sérieux survenu pendant l’essai.', },
+{ question: 'Quel est le délai pour déclarer un événement indésirable grave à l’ANSM ?', answer: '24 heures pour les événements inattendus et graves.', },
+{ question: 'Qu’est-ce qu’un plan de gestion des risques ?', answer: 'Document identifiant et prévoyant la gestion des risques liés à l’essai.', },
+{ question: 'Qu’est-ce qu’un SOP en recherche clinique ?', answer: 'Standard Operating Procedure, procédure standardisée pour garantir la qualité.', },
+{ question: 'Qu’est-ce qu’un monitoring à distance ?', answer: 'Contrôle des données d’essai à distance via des outils électroniques sécurisés.', },
+{ question: 'Qu’est-ce qu’une visite de sélection ?', answer: 'Visite préalable pour vérifier l’adéquation d’un centre à la participation à l’essai.', },
+{ question: 'Qu’est-ce qu’une visite d’initiation ?', answer: 'Visite pour former l’équipe du centre aux procédures spécifiques de l’essai.', },
+{ question: 'Qu’est-ce qu’une visite de clôture ?', answer: 'Visite pour finaliser la participation du centre et archiver les documents.', },
+{ question: 'Qu’est-ce qu’une base de données sécurisée ?', answer: 'Système informatique protégeant l’intégrité et la confidentialité des données d’essai.', },
+{ question: 'Quel est le rôle du responsable qualité en recherche clinique ?', answer: 'Mettre en place et surveiller les procédures garantissant la qualité des essais.', },
+{ question: 'Qu’est-ce que la loi Jardé ?', answer: 'Loi encadrant la recherche impliquant la personne humaine en France.', },
+{ question: 'Qu’est-ce qu’une recherche de catégorie 1 selon la loi Jardé ?', answer: 'Recherche interventionnelle à risque et contrainte minimes ou supérieurs.', },
+{ question: 'Qu’est-ce qu’une recherche de catégorie 2 selon la loi Jardé ?', answer: 'Recherche interventionnelle à risques et contraintes minimes.', },
+{ question: 'Qu’est-ce qu’une recherche de catégorie 3 selon la loi Jardé ?', answer: 'Recherche non interventionnelle (observationnelle).', },
+{ question: 'Qu’est-ce qu’un financement sur appel à projets ?', answer: 'Obtention de fonds après sélection d’un dossier par un comité d’experts.', },
+{ question: 'Qu’est-ce qu’un financement institutionnel ?', answer: 'Financement assuré par des organismes publics ou privés non commerciaux.', },
+{ question: 'Qu’est-ce qu’un financement industriel ?', answer: 'Financement par une entreprise privée, souvent promoteur industriel.', },
+{ question: 'Qu’est-ce qu’un partenariat public-privé en recherche clinique ?', answer: 'Collaboration entre organismes publics et entreprises privées pour mener une recherche.', },
+{ question: 'Qu’est-ce qu’un consentement rétrospectif ?', answer: 'Consentement obtenu après la collecte des données, dans certains cas particuliers.', },
+{ question: 'Qu’est-ce qu’un consentement implicite ?', answer: 'Consentement présumé par la participation active du sujet (rarement admis en France).', },
+{ question: 'Qu’est-ce qu’une recherche translationnelle ?', answer: 'Recherche visant à transférer les découvertes fondamentales vers la pratique clinique.', },
+{ question: 'Quel est le rôle du coordinateur national d’un essai multicentrique ?', answer: 'Superviser l’ensemble des centres participants au niveau national.', },
+{ question: 'Qu’est-ce qu’un centre satellite ?', answer: 'Centre participant à un essai sous la supervision d’un centre coordonnateur.', },
+{ question: 'Qu’est-ce qu’un registre de patients ?', answer: 'Base de données recensant des patients selon une pathologie ou un traitement.', },
+{ question: 'Qu’est-ce qu’un circuit du médicament expérimental ?', answer: 'Ensemble des étapes de gestion du médicament dans un essai clinique.', },
+{ question: 'Qu’est-ce qu’un rapport final d’essai clinique ?', answer: 'Document synthétisant les résultats et conclusions de l’essai.', },
+{ question: 'Qu’est-ce que la pharmacovigilance ?', answer: 'Surveillance des effets indésirables des médicaments pendant et après l’essai.', },
+{ question: 'Qu’est-ce que la matériovigilance ?', answer: 'Surveillance des incidents liés à l’utilisation de dispositifs médicaux.', },
+{ question: 'Qu’est-ce qu’un essai ouvert ?', answer: 'Essai où les patients et les chercheurs connaissent le traitement administré.', },
+{ question: 'Qu’est-ce qu’un essai en double aveugle ?', answer: 'Essai où ni le patient ni le médecin ne connaissent le traitement attribué.', },
+{ question: 'Qu’est-ce qu’un essai en simple aveugle ?', answer: 'Essai où seul le patient ignore le traitement reçu.', },
+{ question: 'Qu’est-ce qu’un placebo ?', answer: 'Substance sans effet thérapeutique utilisée comme comparateur dans un essai.', },
+{ question: 'Qu’est-ce qu’un critère de jugement principal ?', answer: 'Critère principal permettant d’évaluer l’efficacité d’un traitement dans l’essai.', },
+{ question: 'Qu’est-ce qu’un critère de jugement secondaire ?', answer: 'Critère additionnel évaluant d’autres aspects du traitement dans l’essai.', },
+{ question: 'Qu’est-ce qu’un amendement au protocole ?', answer: 'Modification officielle du protocole d’essai nécessitant une nouvelle validation réglementaire.', },
+{ question: 'Qu’est-ce qu’une confidentialité des données ?', answer: 'Protection des informations personnelles des participants à l’essai.', },
+{ question: 'Qu’est-ce que la traçabilité en recherche clinique ?', answer: 'Capacité à retrouver l’origine et l’historique des données et produits utilisés.', },
+{ question: 'Qu’est-ce qu’un kit d’inclusion ?', answer: 'Ensemble de documents et matériels nécessaires à l’inclusion d’un patient dans un essai.', },
+{ question: 'Qu’est-ce qu’un échantillon biologique ?', answer: 'Prélèvement (sang, urine, tissu) utilisé à des fins de recherche.', },
+{ question: 'Qu’est-ce qu’une base de données anonymisée ?', answer: 'Base de données où les informations permettant d’identifier les participants ont été supprimées.', },
+{ question: 'Qu’est-ce qu’un numéro d’inclusion ?', answer: 'Numéro unique attribué à chaque participant lors de son entrée dans l’essai.', },
+{ question: 'Qu’est-ce qu’un rapport d’audit ?', answer: 'Document détaillant les constatations et recommandations à l’issue d’un audit d’essai clinique.', },
+{ question: 'Qu’est-ce qu’un rapport de monitoring ?', answer: 'Compte-rendu des visites de suivi réalisées par l’ARC sur site.', },
+{ question: 'Qu’est-ce qu’une base de données verrouillée ?', answer: 'Base de données dont la saisie est terminée et validée pour analyse statistique.', },
+{ question: 'Qu’est-ce qu’une analyse intermédiaire ?', answer: 'Analyse des données réalisée avant la fin de l’essai pour évaluer la sécurité ou l’efficacité.', }
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">Bases moléculaires en oncologie</span><ul>
+<li><a href="../Bases_moleculaire_Oncologie/fc1.html">Cours 1</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc2.html">Cours 2</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc3.html">Cours 3</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc4.html">Cours 4</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc5.html">Cours 5</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc6.html">Cours 6</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc7.html">Cours 7</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc8.html">Cours 8</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc9.html">Cours 9</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc10.html">Cours 10</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc11.html">Cours 11</a></li>
+</ul></li>
+<li><span class="opener">Human nutrition</span><ul>
+<li><a href="../Human_Nutrition/fc1.html">Métabolisme bioénergétique (révision)</a></li>
+<li><a href="../Human_Nutrition/fc2.html">Anthropométrie, bilan énergétique, valeurs de référence en diététique</a></li>
+<li><a href="../Human_Nutrition/fc3.html">Macronutriments : protéines, glucides et acides gras</a></li>
+<li><a href="../Human_Nutrition/fc4.html">Les micronutriments : minéraux</a></li>
+<li><a href="../Human_Nutrition/fc5.html">Les vitamines liposolubles</a></li>
+<li><a href="../Human_Nutrition/fc5_2.html">Les vitamines hydrosolubles</a></li>
+<li><a href="../Human_Nutrition/fc6.html">Maladies cardiovasculaires</a></li>
+<li><a href="../Human_Nutrition/fc7.html">Alimentation et cancer</a></li>
+<li><a href="../Human_Nutrition/fc8.html">Consommation d'alcool et effets sur la santé</a></li>
+<li><a href="../Human_Nutrition/fc9.html">Interaction régime-maladie : obésité, syndrome métabolique et diabète</a></li>
+<li><a href="../Human_Nutrition/fc10.html">Interventions diététiques et pharmacologiques</a></li>
+</ul></li>
+<li><span class="opener">One Health</span><ul>
+<li><a href="../One_Health/fc1.html">Introduction au concept One Health</a></li>
+<li><a href="../One_Health/fc2.html">Zoonoses et modes de transmission</a></li>
+<li><a href="../One_Health/fc3.html">Émergence et diffusion de la résistance aux antibiotiques</a></li>
+<li><a href="../One_Health/fc4.html">Maladies émergentes transmises de l'animal à l'homme</a></li>
+<li><a href="../One_Health/fc5.html">Mobiliser les professionnels et la population autour des approches One Health</a></li>
+<li><a href="../One_Health/fc6.html">Polluants de l'environnement professionnel</a></li>
+<li><a href="../One_Health/fc7.html">Évaluation, prévention et gestion des risques en santé environnementale</a></li>
+<li><a href="../One_Health/fc8.html">Principales théories, concepts et modèles en sciences sociales (One Health)</a></li>
+<li><a href="../One_Health/fc9.html">Surveillance et investigation en santé publique et santé animale</a></li>
+<li><a href="../One_Health/fc10.html">Biodiversité des plantes et liens avec la santé humaine et animale</a></li>
+<li><a href="../One_Health/fc11.html">Écologie de la faune sauvage</a></li>
+<li><a href="../One_Health/fc12_1.html">Environnement, biodiversité, écologie, évolution des risques (partie 1)</a></li>
+<li><a href="../One_Health/fc12_2.html">Environnement, biodiversité, écologie, évolution des risques (partie 2)</a></li>
+</ul></li>
+<li><span class="opener">Réglementation et éthique de la recherche - droit de la santé</span><ul>
+<li><a href="../Reglementation_Ethique_Recherche/fc1.html">Droit de la santé</a></li>
+<li><a href="../Reglementation_Ethique_Recherche/fc2.html">Réglementation et recherche de la santé</a></li>
+</ul></li>
+<li><span class="opener">Technique de vie et société</span><ul>
+<li><a href="../Technique_Vie_Societe/fc1.html">Vie, technique et société - Introduction</a></li>
+<li><a href="../Technique_Vie_Societe/fc2.html">L'éthique à l'heure de la civilisation technologique</a></li>
+<li><a href="../Technique_Vie_Societe/fc3.html">Le statut des objets techniques et des technologies dans le champ de la santé</a></li>
+<li><a href="../Technique_Vie_Societe/fc4.html">Les droits et devoirs des patients et des praticiens</a></li>
+<li><a href="../Technique_Vie_Societe/fc5.html">Le droit à l'information médicale</a></li>
+<li><a href="../Technique_Vie_Societe/fc6.html">Enjeux et statuts des objets biologiques</a></li>
+<li><a href="../Technique_Vie_Societe/fc7.html">La pensée des bio-objets chez Céline Lafontaine</a></li>
+<li><a href="../Technique_Vie_Societe/fc8.html">La technicisation médicale, une déshumanisation : précisions conceptuelles</a></li>
+<li><a href="../Technique_Vie_Societe/fc9.html">La médecine humaniste face à la biomédecine</a></li>
+<li><a href="../Technique_Vie_Societe/fc10.html">Les médecines alternatives : de la critique humaniste à l'antiscience</a></li>
+<li><a href="../Technique_Vie_Societe/fc11.html">Biomédecine et approche holistique : le modèle biopsychosocial</a></li>
+</ul></li>
+<li><span class="opener">Biotechnologie</span><ul>
+<li><a href="../Biotechnologie/fc1.html">Introduction à la biotechnologie</a></li>
+<li><a href="../Biotechnologie/fc2.html">Reprogrammation cellulaire</a></li>
+<li><a href="../Biotechnologie/fc3.html">Drug Repositioning</a></li>
+<li><a href="../Biotechnologie/fc4.html">Immunothérapie</a></li>
+<li><a href="../Biotechnologie/fc5.html">Principes généraux de la thérapie génique</a></li>
+<li><a href="../Biotechnologie/fc6.html">Les vésicules extracellulaires</a></li>
+<li><a href="../Biotechnologie/fc7.html">Bioproduction de cellules souches</a></li>
+<li><a href="../Biotechnologie/fc8.html">Stratégies vaccinales</a></li>
+<li><a href="../Biotechnologie/fc9.html">Édition du génome</a></li>
+<li><a href="../Biotechnologie/fc10.html">Biomécanique des biomatériaux</a></li>
+<li><a href="../Biotechnologie/fc11.html">Thérapie cellulaire et moelle osseuse</a></li>
+<li><a href="../Biotechnologie/fc12.html">Peptides thérapeutiques antimicrobiens</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Promotion et prévention</span><ul>
+<li><a href="../SP_Promotion_Prevention/fc1.html">Généralités en santé publique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc2.html">Méthodologie de projet en prévention et promotion de la santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc3.html">Déterminants de santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc4.html">Méthodes de prévention et de dépistage</a></li>
+<li><a href="../SP_Promotion_Prevention/fc5.html">Vaccins et promotion de la prévention</a></li>
+<li><a href="../SP_Promotion_Prevention/fc6.html">Maladies sexuellement transmissibles</a></li>
+<li><a href="../SP_Promotion_Prevention/fc7.html">Initiation aux soins d’urgence</a></li>
+<li><a href="../SP_Promotion_Prevention/fc8.html">Sédentarité et activité physique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc9.html">Le risque cardio-vasculaire</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Économie de la santé</span><ul>
+<li><a href="../SP_Economie_Sante/fc1.html">Analyse économique de la perte d’autonomie (Dépendance)</a></li>
+<li><a href="../SP_Economie_Sante/fc2.html">Analyse de la perte d’autonomie : Handicap</a></li>
+<li><a href="../SP_Economie_Sante/fc3.html">Les modes de rémunération des médecins libéraux</a></li>
+<li><a href="../SP_Economie_Sante/fc4.html">Les modes de rémunération des établissements de santé</a></li>
+<li><a href="../SP_Economie_Sante/fc5.html">Nutrition, santé et croissance économique</a></li>
+<li><a href="../SP_Economie_Sante/fc6.html">Santé et développement : santé et pauvreté</a></li>
+<li><a href="../SP_Economie_Sante/fc7.html">Santé et développement : système et égalité</a></li>
+<li><a href="../SP_Economie_Sante/fc8.html">Santé et environnement</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Géographie de la santé</span><ul>
+<li><a href="../SP_Geographie_Sante/fc1.html">Histoire et concepts de la géographie de la santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc2.html">Liens villes et santé : enjeux des usages de la carte en santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc3.html">Inégalités spatiales de l’offre de soins en France</a></li>
+<li><a href="../SP_Geographie_Sante/fc4.html">Enjeux internationaux des inégalités d’offre de soins</a></li>
+<li><a href="../SP_Geographie_Sante/fc5.html">Enjeux internationaux : le point de vue des patient.es</a></li>
+<li><a href="../SP_Geographie_Sante/fc6.html">L’accès aux soins des personnes vulnérables</a></li>
+<li><a href="../SP_Geographie_Sante/fc7.html">Alimentation et santé en ville</a></li>
+<li><a href="../SP_Geographie_Sante/fc8.html">Pouvoirs des villes et urbanisme favorable à la santé : espaces verts</a></li>
+<li><a href="../SP_Geographie_Sante/fc9.html">Urbanisme favorable à la santé : personnes âgées</a></li>
+<li><a href="../SP_Geographie_Sante/fc10.html">Urbanisme favorable à la santé : enfants</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Gestion de projet de recherche clinique</span><ul>
+<li><a href="../SP_Gestion_Projet_RC/fc1.html">Généralités sur les essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc2.html">Acteurs de la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc3.html">Vigilance, gestion des EIG et sécurité des essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc4.html">Structures de soutien à la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc5.html">Mise en place d’un essai clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc6.html">Le dossier patient, les CRF et les bases de données</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc7.html">Gestion de projet (monitoring)</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc8.html">Réglementation sur les échantillons biologiques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc9.html">Démarches auprès du MESRI</a></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

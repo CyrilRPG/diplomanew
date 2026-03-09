@@ -1,0 +1,494 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS3 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Santé publique - Géographie de la santé</h1><h2>Urbanisme et santé des enfants</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que l’urbanisme ?', answer: 'L’urbanisme est l’ensemble des sciences, techniques et arts relatifs à l’organisation et à l’aménagement des villes.', },
+{ question: 'Définis la santé environnementale des enfants.', answer: 'La santé environnementale des enfants concerne l’impact de l’environnement physique, social et économique sur leur bien-être et leur développement.', },
+{ question: 'Quel est le lien principal entre urbanisme et santé des enfants ?', answer: 'L’urbanisme influence la santé des enfants via la qualité de l’air, l’accès aux espaces verts, la sécurité et la mobilité.', },
+{ question: 'Cite un exemple d’effet négatif de la pollution de l’air urbain sur les enfants.', answer: 'La pollution de l’air urbain augmente le risque d’asthme chez les enfants.', },
+{ question: 'Quel est le rôle des espaces verts pour la santé des enfants ?', answer: 'Ils favorisent l’activité physique, réduisent le stress et améliorent la santé mentale.', },
+{ question: 'Donne une définition de la mobilité active.', answer: 'La mobilité active désigne les déplacements à pied, à vélo ou en trottinette, favorisant l’activité physique.', },
+{ question: 'Quel pourcentage d’enfants français ne respectent pas les recommandations d’activité physique ?', answer: 'Environ 80% des enfants français ne respectent pas les recommandations d’activité physique.', },
+{ question: 'Quels sont les principaux risques liés à la circulation automobile pour les enfants ?', answer: 'Les accidents de la route et l’exposition à la pollution de l’air.', },
+{ question: 'Qu’est-ce qu’une \'zone 30\' ?', answer: 'Une zone où la vitesse maximale autorisée est de 30 km/h pour améliorer la sécurité.', },
+{ question: 'Pourquoi les écoles sont-elles des lieux stratégiques en urbanisme de santé ?', answer: 'Parce qu’elles concentrent de nombreux enfants et structurent la vie du quartier.', },
+{ question: 'Donne un exemple de mesure d’urbanisme favorisant la sécurité des enfants.', answer: 'La création de passages piétons surélevés près des écoles.', },
+{ question: 'Qu’est-ce qu’un \'quartier favorable à la santé\' ?', answer: 'Un quartier qui offre un environnement sain, sûr, inclusif et propice au développement des enfants.', },
+{ question: 'Quel impact l’exposition au bruit urbain a-t-elle sur les enfants ?', answer: 'Elle peut entraîner des troubles du sommeil, de l’attention et du développement cognitif.', },
+{ question: 'Donne une source de pollution intérieure fréquente dans les logements urbains.', answer: 'Le tabagisme passif.', },
+{ question: 'Qu’est-ce qu’un \'ilôt de chaleur urbain\' ?', answer: 'Une zone urbaine où la température est nettement plus élevée que dans les zones rurales environnantes.', },
+{ question: 'Quels enfants sont les plus vulnérables aux ilôts de chaleur urbains ?', answer: 'Les enfants en bas âge, en raison de leur thermorégulation immature.', },
+{ question: 'Cite un exemple d’aménagement pour lutter contre les ilôts de chaleur.', answer: 'La plantation d’arbres et la création d’espaces verts.', },
+{ question: 'Qu’est-ce qu’une \'cour d’école végétalisée\' ?', answer: 'Une cour d’école transformée avec des plantations et des surfaces perméables pour améliorer le confort et la biodiversité.', },
+{ question: 'Quel est l’effet de la végétalisation des cours d’école sur la santé mentale des enfants ?', answer: 'Elle réduit le stress et favorise le bien-être psychologique.', },
+{ question: 'Quel est le principal polluant de l’air extérieur en ville ?', answer: 'Les particules fines (PM10 et PM2,5).', },
+{ question: 'Quels sont les effets des particules fines sur la santé des enfants ?', answer: 'Elles augmentent le risque de maladies respiratoires et de troubles du développement.', },
+{ question: 'Donne un exemple d’action municipale pour réduire l’exposition des enfants à la pollution de l’air.', answer: 'Fermer les rues aux voitures autour des écoles aux heures d’entrée et de sortie.', },
+{ question: 'Qu’est-ce qu’un \'chemin scolaire sécurisé\' ?', answer: 'Un itinéraire balisé et aménagé pour permettre aux enfants d’aller à l’école en toute sécurité.', },
+{ question: 'Pourquoi l’accès aux équipements sportifs est-il important en ville ?', answer: 'Il favorise l’activité physique et lutte contre la sédentarité des enfants.', },
+{ question: 'Quel est le rôle de l’éclairage public pour la sécurité des enfants ?', answer: 'Il réduit les risques d’accidents et favorise le sentiment de sécurité.', },
+{ question: 'Comment l’urbanisme peut-il favoriser l’inclusion des enfants en situation de handicap ?', answer: 'En adaptant les espaces publics et les équipements pour l’accessibilité universelle.', },
+{ question: 'Quel est le risque principal lié à l’habitat insalubre pour les enfants ?', answer: 'Le développement de maladies respiratoires et d’intoxications au plomb.', },
+{ question: 'Qu’est-ce que la \'densification urbaine\' ?', answer: 'L’augmentation du nombre d’habitants ou de constructions sur une même surface.', },
+{ question: 'Quel est l’avantage de la densification urbaine pour la santé des enfants ?', answer: 'Elle permet de rapprocher les services et équipements, facilitant l’accès à l’école et aux loisirs.', },
+{ question: 'Quel est l’inconvénient de la densification urbaine pour les enfants ?', answer: 'Elle peut réduire les espaces verts et augmenter l’exposition à la pollution.', },
+{ question: 'Quel est le seuil recommandé par l’OMS pour les PM2,5 ?', answer: '5 µg/m³ en moyenne annuelle.', },
+{ question: 'Qu’est-ce qu’un \'quartier piétonnier\' ?', answer: 'Un quartier où la circulation automobile est limitée ou interdite pour favoriser la marche.', },
+{ question: 'Pourquoi les enfants sont-ils plus sensibles à la pollution de l’air ?', answer: 'Parce qu’ils respirent plus d’air par kilo de poids corporel et leurs organes sont en développement.', },
+{ question: 'Quel est l’impact d’un logement surpeuplé sur la santé des enfants ?', answer: 'Il favorise la transmission des maladies infectieuses et le stress.', },
+{ question: 'Qu’est-ce qu’un \'parc urbain\' ?', answer: 'Un espace vert aménagé en ville pour les loisirs et la détente.', },
+{ question: 'Quel est le bénéfice du jeu en plein air pour les enfants ?', answer: 'Il favorise le développement moteur, social et émotionnel.', },
+{ question: 'Qu’est-ce qu’un \'alimentaire désert\' en ville ?', answer: 'Une zone où l’accès à des aliments sains et frais est limité.', },
+{ question: 'Quel est l’impact d’un désert alimentaire sur la santé des enfants ?', answer: 'Il augmente le risque d’obésité et de carences nutritionnelles.', },
+{ question: 'Qu’est-ce que l’\'urbanisme tactique\' ?', answer: 'Des interventions temporaires et réversibles pour tester de nouveaux aménagements urbains.', },
+{ question: 'Donne un exemple d’urbanisme tactique bénéfique pour les enfants.', answer: 'Installer des jeux temporaires sur une place publique.', },
+{ question: 'Quel est le rôle du bruit dans la performance scolaire des enfants ?', answer: 'Un bruit excessif diminue la concentration et les performances cognitives.', },
+{ question: 'À partir de quel seuil sonore le bruit devient-il nocif pour la santé ?', answer: 'À partir de 55 dB(A) en journée.', },
+{ question: 'Qu’est-ce qu’une \'aire de jeux inclusive\' ?', answer: 'Une aire de jeux accessible à tous les enfants, y compris ceux en situation de handicap.', },
+{ question: 'Cite un matériau de revêtement de sol recommandé pour les aires de jeux.', answer: 'Le sol amortissant en caoutchouc ou copeaux de bois.', },
+{ question: 'Quel est le risque principal des aires de jeux mal entretenues ?', answer: 'Les blessures accidentelles.', },
+{ question: 'Qu’est-ce qu’un \'plan local d’urbanisme\' (PLU) ?', answer: 'Un document qui fixe les règles d’aménagement et d’utilisation des sols d’une commune.', },
+{ question: 'Comment le PLU peut-il intégrer la santé des enfants ?', answer: 'En réservant des espaces pour les écoles, parcs et équipements sportifs.', },
+{ question: 'Qu’est-ce qu’un \'logement social\' ?', answer: 'Un logement à loyer modéré destiné aux ménages à revenus modestes.', },
+{ question: 'Quel est le lien entre précarité et santé des enfants en ville ?', answer: 'La précarité augmente les risques de mal-logement et d’exposition à des facteurs environnementaux nocifs.', },
+{ question: 'Qu’est-ce qu’un \'écoquartier\' ?', answer: 'Un quartier conçu pour limiter son impact environnemental et favoriser la qualité de vie.', },
+{ question: 'Donne un exemple d’initiative d’écoquartier favorable aux enfants.', answer: 'Des écoles à proximité, des rues piétonnes et des espaces verts accessibles.', },
+{ question: 'Quel est le rôle des transports en commun pour la santé des enfants ?', answer: 'Ils réduisent la pollution et favorisent l’autonomie des déplacements.', },
+{ question: 'Qu’est-ce qu’un \'bassin de vie\' ?', answer: 'Une zone géographique où la population accède aux services essentiels du quotidien.', },
+{ question: 'Pourquoi la mixité fonctionnelle est-elle importante pour les enfants ?', answer: 'Elle permet d’avoir écoles, loisirs et commerces à proximité, réduisant les déplacements.', },
+{ question: 'Qu’est-ce qu’un \'mobilier urbain adapté\' ?', answer: 'Un mobilier conçu pour la sécurité et le confort des enfants (bancs bas, barrières, etc.).', },
+{ question: 'Quel est l’impact du manque de lumière naturelle dans les logements ?', answer: 'Il favorise la fatigue, la dépression et des troubles du sommeil chez les enfants.', },
+{ question: 'Qu’est-ce que la \'trame verte et bleue\' en urbanisme ?', answer: 'Un réseau d’espaces naturels et de corridors écologiques pour préserver la biodiversité.', },
+{ question: 'Quel est le bénéfice de la trame verte pour les enfants ?', answer: 'Elle offre des espaces de nature pour le jeu et l’apprentissage.', },
+{ question: 'Qu’est-ce qu’un \'pédibus\' ?', answer: 'Un groupe d’enfants accompagnés à pied à l’école par des adultes, sur un parcours sécurisé.', },
+{ question: 'Quel est le principal avantage du pédibus ?', answer: 'Il favorise l’activité physique et la sécurité sur le chemin de l’école.', },
+{ question: 'Qu’est-ce qu’un \'plan de déplacement scolaire\' ?', answer: 'Un dispositif visant à organiser et sécuriser les trajets domicile-école.', },
+{ question: 'Quel est l’impact de la distance domicile-école sur la santé des enfants ?', answer: 'Une grande distance favorise la sédentarité et l’utilisation de la voiture.', },
+{ question: 'Qu’est-ce qu’un \'quartier prioritaire de la politique de la ville\' (QPV) ?', answer: 'Un quartier ciblé pour des actions de réduction des inégalités sociales et environnementales.', },
+{ question: 'Quel est le lien entre QPV et santé des enfants ?', answer: 'Les enfants y sont plus exposés à des risques environnementaux et sociaux.', },
+{ question: 'Qu’est-ce que la \'co-construction\' en urbanisme ?', answer: 'La participation des habitants, y compris des enfants, à la conception des espaces urbains.', },
+{ question: 'Quel est l’intérêt de la co-construction pour les enfants ?', answer: 'Elle permet de mieux répondre à leurs besoins et de favoriser leur implication.', },
+{ question: 'Qu’est-ce qu’un \'plan d’exposition au bruit\' (PEB) ?', answer: 'Un document réglementant l’urbanisation autour des infrastructures bruyantes.', },
+{ question: 'Quel est le principal risque de l’exposition au plomb dans les logements anciens ?', answer: 'Le saturnisme infantile.', },
+{ question: 'Qu’est-ce que le \'saturnisme\' ?', answer: 'Une intoxication au plomb, affectant le développement neurologique des enfants.', },
+{ question: 'Qu’est-ce qu’un \'logement passif\' ?', answer: 'Un logement à très faible consommation énergétique, bien isolé et ventilé.', },
+{ question: 'Pourquoi la ventilation des logements est-elle importante pour la santé des enfants ?', answer: 'Elle limite l’accumulation de polluants intérieurs.', },
+{ question: 'Qu’est-ce qu’un \'urbanisme favorable à la santé\' (UFS) ?', answer: 'Un urbanisme intégrant la santé dans la planification et l’aménagement des espaces urbains.', },
+{ question: 'Quel est le rôle des politiques publiques dans l’urbanisme et la santé des enfants ?', answer: 'Elles fixent les normes et financent les aménagements favorables à la santé.', },
+{ question: 'Qu’est-ce que la \'sécurité routière\' autour des écoles ?', answer: 'L’ensemble des mesures visant à protéger les enfants des accidents de la circulation.', },
+{ question: 'Donne un exemple de signalisation spécifique pour la sécurité des enfants.', answer: 'Les panneaux \'attention école\' et les marquages au sol colorés.', },
+{ question: 'Qu’est-ce qu’un \'bilan de santé scolaire\' ?', answer: 'Un examen médical régulier pour dépister les problèmes de santé chez les enfants.', },
+{ question: 'Quel est l’impact de la précarité énergétique sur la santé des enfants ?', answer: 'Elle favorise les maladies respiratoires et les troubles du développement.', },
+{ question: 'Qu’est-ce qu’une \'aire d’éveil\' en crèche ?', answer: 'Un espace aménagé pour stimuler le développement sensoriel et moteur des tout-petits.', },
+{ question: 'Pourquoi la proximité des infrastructures sportives est-elle importante en ville ?', answer: 'Elle facilite l’accès à l’activité physique régulière.', },
+{ question: 'Qu’est-ce qu’un \'banc d’école ergonomique\' ?', answer: 'Un banc conçu pour respecter la morphologie des enfants et prévenir les troubles musculo-squelettiques.', },
+{ question: 'Quel est le rôle des associations dans l’urbanisme et la santé des enfants ?', answer: 'Elles sensibilisent, proposent des projets et accompagnent les familles.', },
+{ question: 'Qu’est-ce qu’une \'zone sans tabac\' autour des écoles ?', answer: 'Un périmètre où il est interdit de fumer pour protéger les enfants du tabagisme passif.', },
+{ question: 'Pourquoi l’accès à l’eau potable est-il un enjeu d’urbanisme ?', answer: 'Il prévient les maladies hydriques et favorise l’hygiène des enfants.', },
+{ question: 'Qu’est-ce qu’un \'diagnostic en santé environnementale\' ?', answer: 'Une analyse des risques environnementaux pour la santé dans un territoire donné.', },
+{ question: 'Quel est l’impact de la proximité des axes routiers sur la santé des enfants ?', answer: 'Elle augmente l’exposition à la pollution et au bruit.', },
+{ question: 'Qu’est-ce qu’un \'plan canicule\' en milieu urbain ?', answer: 'Un dispositif pour protéger les populations vulnérables, dont les enfants, lors de fortes chaleurs.', },
+{ question: 'Comment l’urbanisme peut-il prévenir les noyades chez les enfants ?', answer: 'En sécurisant l’accès aux plans d’eau et en installant des barrières de protection.', },
+{ question: 'Qu’est-ce qu’un \'espace multisports\' ?', answer: 'Un équipement permettant la pratique de plusieurs sports en accès libre.', },
+{ question: 'Quel est l’intérêt des jardins partagés pour les enfants ?', answer: 'Ils favorisent l’éducation à l’environnement et la cohésion sociale.', },
+{ question: 'Qu’est-ce qu’un \'espace sans écran\' en ville ?', answer: 'Un lieu où l’usage des écrans est limité pour encourager le jeu actif.', },
+{ question: 'Pourquoi l’accessibilité des transports publics est-elle cruciale pour les familles ?', answer: 'Elle facilite les déplacements quotidiens avec enfants et poussettes.', },
+{ question: 'Qu’est-ce qu’un \'espace intergénérationnel\' ?', answer: 'Un lieu favorisant les échanges entre enfants, adultes et personnes âgées.', },
+{ question: 'Quel est le rôle de la végétation dans la réduction de la pollution de l’air ?', answer: 'Elle capte une partie des polluants atmosphériques.', },
+{ question: 'Qu’est-ce qu’un \'urbanisme de transition\' ?', answer: 'Un urbanisme adaptatif, évolutif et participatif face aux enjeux environnementaux et sociaux.', },
+{ question: 'Quel est le principal objectif de l’urbanisme pour la santé des enfants ?', answer: 'Créer des environnements sûrs, sains et favorables à leur développement global.', }
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">Bases moléculaires en oncologie</span><ul>
+<li><a href="../Bases_moleculaire_Oncologie/fc1.html">Cours 1</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc2.html">Cours 2</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc3.html">Cours 3</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc4.html">Cours 4</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc5.html">Cours 5</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc6.html">Cours 6</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc7.html">Cours 7</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc8.html">Cours 8</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc9.html">Cours 9</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc10.html">Cours 10</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc11.html">Cours 11</a></li>
+</ul></li>
+<li><span class="opener">Human nutrition</span><ul>
+<li><a href="../Human_Nutrition/fc1.html">Métabolisme bioénergétique (révision)</a></li>
+<li><a href="../Human_Nutrition/fc2.html">Anthropométrie, bilan énergétique, valeurs de référence en diététique</a></li>
+<li><a href="../Human_Nutrition/fc3.html">Macronutriments : protéines, glucides et acides gras</a></li>
+<li><a href="../Human_Nutrition/fc4.html">Les micronutriments : minéraux</a></li>
+<li><a href="../Human_Nutrition/fc5.html">Les vitamines liposolubles</a></li>
+<li><a href="../Human_Nutrition/fc5_2.html">Les vitamines hydrosolubles</a></li>
+<li><a href="../Human_Nutrition/fc6.html">Maladies cardiovasculaires</a></li>
+<li><a href="../Human_Nutrition/fc7.html">Alimentation et cancer</a></li>
+<li><a href="../Human_Nutrition/fc8.html">Consommation d'alcool et effets sur la santé</a></li>
+<li><a href="../Human_Nutrition/fc9.html">Interaction régime-maladie : obésité, syndrome métabolique et diabète</a></li>
+<li><a href="../Human_Nutrition/fc10.html">Interventions diététiques et pharmacologiques</a></li>
+</ul></li>
+<li><span class="opener">One Health</span><ul>
+<li><a href="../One_Health/fc1.html">Introduction au concept One Health</a></li>
+<li><a href="../One_Health/fc2.html">Zoonoses et modes de transmission</a></li>
+<li><a href="../One_Health/fc3.html">Émergence et diffusion de la résistance aux antibiotiques</a></li>
+<li><a href="../One_Health/fc4.html">Maladies émergentes transmises de l'animal à l'homme</a></li>
+<li><a href="../One_Health/fc5.html">Mobiliser les professionnels et la population autour des approches One Health</a></li>
+<li><a href="../One_Health/fc6.html">Polluants de l'environnement professionnel</a></li>
+<li><a href="../One_Health/fc7.html">Évaluation, prévention et gestion des risques en santé environnementale</a></li>
+<li><a href="../One_Health/fc8.html">Principales théories, concepts et modèles en sciences sociales (One Health)</a></li>
+<li><a href="../One_Health/fc9.html">Surveillance et investigation en santé publique et santé animale</a></li>
+<li><a href="../One_Health/fc10.html">Biodiversité des plantes et liens avec la santé humaine et animale</a></li>
+<li><a href="../One_Health/fc11.html">Écologie de la faune sauvage</a></li>
+<li><a href="../One_Health/fc12_1.html">Environnement, biodiversité, écologie, évolution des risques (partie 1)</a></li>
+<li><a href="../One_Health/fc12_2.html">Environnement, biodiversité, écologie, évolution des risques (partie 2)</a></li>
+</ul></li>
+<li><span class="opener">Réglementation et éthique de la recherche - droit de la santé</span><ul>
+<li><a href="../Reglementation_Ethique_Recherche/fc1.html">Droit de la santé</a></li>
+<li><a href="../Reglementation_Ethique_Recherche/fc2.html">Réglementation et recherche de la santé</a></li>
+</ul></li>
+<li><span class="opener">Technique de vie et société</span><ul>
+<li><a href="../Technique_Vie_Societe/fc1.html">Vie, technique et société - Introduction</a></li>
+<li><a href="../Technique_Vie_Societe/fc2.html">L'éthique à l'heure de la civilisation technologique</a></li>
+<li><a href="../Technique_Vie_Societe/fc3.html">Le statut des objets techniques et des technologies dans le champ de la santé</a></li>
+<li><a href="../Technique_Vie_Societe/fc4.html">Les droits et devoirs des patients et des praticiens</a></li>
+<li><a href="../Technique_Vie_Societe/fc5.html">Le droit à l'information médicale</a></li>
+<li><a href="../Technique_Vie_Societe/fc6.html">Enjeux et statuts des objets biologiques</a></li>
+<li><a href="../Technique_Vie_Societe/fc7.html">La pensée des bio-objets chez Céline Lafontaine</a></li>
+<li><a href="../Technique_Vie_Societe/fc8.html">La technicisation médicale, une déshumanisation : précisions conceptuelles</a></li>
+<li><a href="../Technique_Vie_Societe/fc9.html">La médecine humaniste face à la biomédecine</a></li>
+<li><a href="../Technique_Vie_Societe/fc10.html">Les médecines alternatives : de la critique humaniste à l'antiscience</a></li>
+<li><a href="../Technique_Vie_Societe/fc11.html">Biomédecine et approche holistique : le modèle biopsychosocial</a></li>
+</ul></li>
+<li><span class="opener">Biotechnologie</span><ul>
+<li><a href="../Biotechnologie/fc1.html">Introduction à la biotechnologie</a></li>
+<li><a href="../Biotechnologie/fc2.html">Reprogrammation cellulaire</a></li>
+<li><a href="../Biotechnologie/fc3.html">Drug Repositioning</a></li>
+<li><a href="../Biotechnologie/fc4.html">Immunothérapie</a></li>
+<li><a href="../Biotechnologie/fc5.html">Principes généraux de la thérapie génique</a></li>
+<li><a href="../Biotechnologie/fc6.html">Les vésicules extracellulaires</a></li>
+<li><a href="../Biotechnologie/fc7.html">Bioproduction de cellules souches</a></li>
+<li><a href="../Biotechnologie/fc8.html">Stratégies vaccinales</a></li>
+<li><a href="../Biotechnologie/fc9.html">Édition du génome</a></li>
+<li><a href="../Biotechnologie/fc10.html">Biomécanique des biomatériaux</a></li>
+<li><a href="../Biotechnologie/fc11.html">Thérapie cellulaire et moelle osseuse</a></li>
+<li><a href="../Biotechnologie/fc12.html">Peptides thérapeutiques antimicrobiens</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Promotion et prévention</span><ul>
+<li><a href="../SP_Promotion_Prevention/fc1.html">Généralités en santé publique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc2.html">Méthodologie de projet en prévention et promotion de la santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc3.html">Déterminants de santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc4.html">Méthodes de prévention et de dépistage</a></li>
+<li><a href="../SP_Promotion_Prevention/fc5.html">Vaccins et promotion de la prévention</a></li>
+<li><a href="../SP_Promotion_Prevention/fc6.html">Maladies sexuellement transmissibles</a></li>
+<li><a href="../SP_Promotion_Prevention/fc7.html">Initiation aux soins d’urgence</a></li>
+<li><a href="../SP_Promotion_Prevention/fc8.html">Sédentarité et activité physique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc9.html">Le risque cardio-vasculaire</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Économie de la santé</span><ul>
+<li><a href="../SP_Economie_Sante/fc1.html">Analyse économique de la perte d’autonomie (Dépendance)</a></li>
+<li><a href="../SP_Economie_Sante/fc2.html">Analyse de la perte d’autonomie : Handicap</a></li>
+<li><a href="../SP_Economie_Sante/fc3.html">Les modes de rémunération des médecins libéraux</a></li>
+<li><a href="../SP_Economie_Sante/fc4.html">Les modes de rémunération des établissements de santé</a></li>
+<li><a href="../SP_Economie_Sante/fc5.html">Nutrition, santé et croissance économique</a></li>
+<li><a href="../SP_Economie_Sante/fc6.html">Santé et développement : santé et pauvreté</a></li>
+<li><a href="../SP_Economie_Sante/fc7.html">Santé et développement : système et égalité</a></li>
+<li><a href="../SP_Economie_Sante/fc8.html">Santé et environnement</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Géographie de la santé</span><ul>
+<li><a href="../SP_Geographie_Sante/fc1.html">Histoire et concepts de la géographie de la santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc2.html">Liens villes et santé : enjeux des usages de la carte en santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc3.html">Inégalités spatiales de l’offre de soins en France</a></li>
+<li><a href="../SP_Geographie_Sante/fc4.html">Enjeux internationaux des inégalités d’offre de soins</a></li>
+<li><a href="../SP_Geographie_Sante/fc5.html">Enjeux internationaux : le point de vue des patient.es</a></li>
+<li><a href="../SP_Geographie_Sante/fc6.html">L’accès aux soins des personnes vulnérables</a></li>
+<li><a href="../SP_Geographie_Sante/fc7.html">Alimentation et santé en ville</a></li>
+<li><a href="../SP_Geographie_Sante/fc8.html">Pouvoirs des villes et urbanisme favorable à la santé : espaces verts</a></li>
+<li><a href="../SP_Geographie_Sante/fc9.html">Urbanisme favorable à la santé : personnes âgées</a></li>
+<li><a href="../SP_Geographie_Sante/fc10.html">Urbanisme favorable à la santé : enfants</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Gestion de projet de recherche clinique</span><ul>
+<li><a href="../SP_Gestion_Projet_RC/fc1.html">Généralités sur les essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc2.html">Acteurs de la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc3.html">Vigilance, gestion des EIG et sécurité des essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc4.html">Structures de soutien à la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc5.html">Mise en place d’un essai clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc6.html">Le dossier patient, les CRF et les bases de données</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc7.html">Gestion de projet (monitoring)</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc8.html">Réglementation sur les échantillons biologiques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc9.html">Démarches auprès du MESRI</a></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>

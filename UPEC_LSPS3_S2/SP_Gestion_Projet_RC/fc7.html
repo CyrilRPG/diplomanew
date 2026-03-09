@@ -1,0 +1,499 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Diploma Santé - Plateforme de Flashcards</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="../../assets/css/main.css" />
+<link rel="icon" type="image/jpeg" href="../../images/diploma.jpeg" />
+<script src="../../security.js" defer></script>
+<script src="../../assets/js/favorites.js"></script>
+</head>
+<body class="is-preload">
+
+<div id="wrapper">
+
+<div id="main">
+<div class="inner">
+
+<header id="header">
+<a href="../index.html" class="logo"><strong>Diploma Santé</strong> - UPEC LSPS3 S2</a>
+<ul class="icons">
+<li><a href="https://diploma-sante.fr/" class="icon fas fa-globe"><span class="label"></span></a></li>
+<li><a href="https://www.instagram.com/diplomasante/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+<li><a href="#" id="dark-mode-toggle" class="icon fas fa-moon"></a></li>
+</ul>
+</header>
+
+<section>
+<header class="main"><div class="header-left"><h1>Santé publique - Gestion de projet de recherche clinique</h1><h2>Monitoring et gestion de projet</h2></div><span class="image main"><img src="../../images/banner.png" alt="" /></span></header>
+
+<style>
+  #header { padding: 1rem 0; margin-bottom: 0.5rem; }
+  header.main { margin-top: 1.5rem !important; margin-bottom: 0.8rem !important; padding-bottom: 0.5rem !important; display: flex; align-items: center; gap: 2rem; }
+  header.main .header-left h1, header.main .header-left h2 { flex: 1; margin: 0 !important; }
+  header.main h1 { font-size: 2em !important; line-height: 1.3 !important; }
+  header.main h2 { font-size: 1.3em !important; color: #7f888f !important; }
+  header.main .header-left { flex: 1; display: flex; flex-direction: column; }
+  .image.main { flex: 1; max-height: none !important; overflow: visible !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; }
+  .image.main img { width: 100% !important; height: auto !important; max-height: 120px !important; object-fit: contain !important; object-position: center; }
+  section { padding-top: 0 !important; }
+  .progress-container { width: 100%; max-width: 1000px; height: 20px; background-color: #eee; border-radius: 10px; overflow: hidden; margin: 0 auto 1rem; border: 1px solid #ddd; }
+  .progress-bar { height: 100%; background-color: #00aeef; width: 0%; transition: width 0.3s; }
+  .flashcards-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: calc(100vh - 250px); padding: 1rem 0; }
+  .flashcard { width: 100%; max-width: 1000px; height: calc(100vh - 340px); min-height: 450px; perspective: 1500px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; border-radius: 20px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); background-color: white; transition: transform 0.6s; overflow: visible; transform-style: preserve-3d; }
+  .flashcard.show-answer .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; padding: 3rem; font-size: 2rem; text-align: center; }
+  .flashcard-front { background-color: white; color: #333; box-shadow: inset 0 0 40px rgba(0, 174, 239, 0.15); }
+  .flashcard-back { background-color: #73C3EC; color: white; overflow: visible; transform: rotateY(180deg); box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); font-size: 2.2rem; text-shadow: 0 0 4px rgba(255, 255, 255, 0.3); }
+  .flashcard-button { margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+  .check-icon, .cross-icon, .favorite-icon { display: none; position: absolute; cursor: pointer; z-index: 1000; transition: all 0.3s; opacity: 0.8; pointer-events: auto; }
+  .check-icon { top: 30px; left: 30px; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; color: #888; font-size: 20px; }
+  .check-icon i { pointer-events: none; transform: scaleX(-1); }
+  .cross-icon { top: 30px; right: 30px; stroke: #888; align-items: center; justify-content: center; width: 45px; height: 45px; overflow: visible; z-index: 1001; background: rgba(255, 255, 255, 0.95); border-radius: 50%; padding: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3); cursor: pointer; transition: all 0.3s; }
+  body.dark-mode .check-icon, body.dark-mode .cross-icon { background: rgba(50, 50, 50, 0.95); color: #fff; stroke: #fff; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); }
+  body.dark-mode .check-icon:hover { background: rgba(40, 150, 40, 0.95); color: #fff; }
+  body.dark-mode .cross-icon:hover { background: rgba(150, 40, 40, 0.95); stroke: #fff; }
+  .favorite-icon { bottom: 15px; left: 50%; transform: translateX(-50%); fill: #888; width: 30px; height: 30px; }
+  .favorite-icon.active { fill: #ffd700; }
+  .flashcard.show-answer .check-icon, .flashcard.show-answer .cross-icon, .flashcard.show-answer .favorite-icon { display: flex !important; }
+  .check-icon:hover { stroke: #27ae60; color: #27ae60; opacity: 1; }
+  .cross-icon:hover { stroke: #e74c3c; opacity: 1; }
+  .slide-left { animation: slideLeft 0.4s forwards; }
+  .slide-right { animation: slideRight 0.4s forwards; }
+  @keyframes slideLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+  @keyframes slideRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  body.dark-mode .flashcard-front { background-color: #2d3436; color: #e2e8f0; }
+  body.dark-mode .flashcard-inner { background-color: #2d3436; }
+  body.dark-mode .progress-container { background-color: #34495e; border-color: #4a5568; }
+</style>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="flashcards-container" id="flashcards"></div>
+
+<script>
+const flashcardsData = [
+{ question: 'Qu’est-ce que le monitoring dans la gestion de projet ?', answer: 'Le monitoring est le suivi systématique de l’avancement d’un projet pour s’assurer qu’il respecte les objectifs, délais, coûts et qualité.', },
+{ question: 'Quel est l’objectif principal du monitoring de projet ?', answer: 'Détecter les écarts par rapport au plan initial et permettre des actions correctives.', },
+{ question: 'Cite un outil couramment utilisé pour le suivi de projet.', answer: 'Le diagramme de Gantt.', },
+{ question: 'Qu’est-ce qu’un indicateur clé de performance (KPI) ?', answer: 'Un KPI est une mesure quantifiable utilisée pour évaluer le succès d’un projet.', },
+{ question: 'Donne un exemple de KPI dans un projet de santé.', answer: 'Le taux d’achèvement des tâches ou le respect du budget.', },
+{ question: 'Quelle est la différence entre monitoring et évaluation ?', answer: 'Le monitoring est continu et en temps réel, l’évaluation est ponctuelle et souvent à la fin du projet.', },
+{ question: 'Qu’est-ce qu’une réunion de suivi ?', answer: 'Une réunion régulière pour faire le point sur l’avancement du projet et ajuster si besoin.', },
+{ question: 'A quoi sert la matrice RACI ?', answer: 'À clarifier les rôles et responsabilités de chaque membre de l’équipe projet.', },
+{ question: 'Que signifie l’acronyme SMART pour les objectifs ?', answer: 'Spécifique, Mesurable, Atteignable, Réaliste, Temporellement défini.', },
+{ question: 'Pourquoi utiliser un diagramme de Gantt ?', answer: 'Pour visualiser les tâches, leurs durées et leurs dépendances dans le temps.', },
+{ question: 'Qu’est-ce qu’un jalon dans un projet ?', answer: 'Un point clé ou une étape importante marquant l’avancement du projet.', },
+{ question: 'Qu’est-ce qu’un livrable ?', answer: 'Un résultat concret produit à la fin d’une phase ou d’une tâche du projet.', },
+{ question: 'Quelle est la première étape de la gestion de projet ?', answer: 'La définition du périmètre et des objectifs du projet.', },
+{ question: 'Qu’est-ce qu’une analyse des risques ?', answer: 'L’identification, l’évaluation et la priorisation des risques pouvant impacter le projet.', },
+{ question: 'Comment gère-t-on un risque identifié ?', answer: 'En élaborant un plan d’action pour l’atténuer ou le contrôler.', },
+{ question: 'Qu’est-ce qu’un budget prévisionnel ?', answer: 'Une estimation des coûts nécessaires à la réalisation du projet.', },
+{ question: 'Pourquoi suivre le budget d’un projet ?', answer: 'Pour éviter les dépassements et garantir la viabilité financière du projet.', },
+{ question: 'Quelle est la fréquence recommandée pour le monitoring ?', answer: 'Elle dépend du projet, mais souvent hebdomadaire ou mensuelle.', },
+{ question: 'Qu’est-ce qu’un tableau de bord de projet ?', answer: 'Un outil visuel synthétisant les principaux indicateurs et l’état d’avancement du projet.', },
+{ question: 'Donne un exemple de logiciel de gestion de projet.', answer: 'Trello, MS Project, Asana, ou Jira.', },
+{ question: 'Qu’est-ce qu’une réunion de lancement ?', answer: 'Une réunion initiale pour présenter le projet, ses objectifs et organiser l’équipe.', },
+{ question: 'Qu’est-ce qu’une contre-indication au monitoring automatique ?', answer: 'Des contextes où l’automatisation ne capte pas des aspects qualitatifs importants.', },
+{ question: 'Qu’est-ce qu’un plan de communication de projet ?', answer: 'Un document définissant comment, quand et à qui communiquer les informations du projet.', },
+{ question: 'Pourquoi documenter les changements dans un projet ?', answer: 'Pour garder une trace des décisions et faciliter le suivi des impacts.', },
+{ question: 'Qu’est-ce qu’une réunion de clôture de projet ?', answer: 'Une réunion pour faire le bilan, tirer les enseignements et officialiser la fin du projet.', },
+{ question: 'Qu’est-ce qu’un diagramme de Pert ?', answer: 'Un outil de planification qui identifie les tâches, leurs durées et dépendances.', },
+{ question: 'Qu’est-ce que la méthode Agile ?', answer: 'Une approche de gestion de projet basée sur l’adaptabilité, l’itération et la collaboration.', },
+{ question: 'Qu’est-ce qu’un backlog dans la gestion de projet Agile ?', answer: 'Une liste priorisée des tâches ou fonctionnalités à réaliser.', },
+{ question: 'Qu’est-ce qu’un sprint en méthode Agile ?', answer: 'Une période de temps fixe durant laquelle une équipe réalise un ensemble de tâches.', },
+{ question: 'Qu’est-ce qu’une réunion de revue de sprint ?', answer: 'Une réunion pour présenter les résultats du sprint et recueillir les retours.', },
+{ question: 'Qu’est-ce qu’un chef de projet ?', answer: 'La personne responsable de la planification, de l’exécution et du suivi du projet.', },
+{ question: 'Quel est le rôle du sponsor de projet ?', answer: 'Soutenir le projet, valider les grandes décisions et fournir les ressources nécessaires.', },
+{ question: 'Qu’est-ce qu’une charte de projet ?', answer: 'Un document formalisant les objectifs, le périmètre et les parties prenantes du projet.', },
+{ question: 'Qu’est-ce qu’une analyse SWOT ?', answer: 'Une analyse des forces, faiblesses, opportunités et menaces d’un projet.', },
+{ question: 'Pourquoi faire un retour d’expérience (REX) ?', answer: 'Pour identifier les bonnes pratiques et éviter de reproduire les erreurs.', },
+{ question: 'Qu’est-ce qu’un diagramme de Pareto ?', answer: 'Un graphique montrant les causes les plus fréquentes d’un problème.', },
+{ question: 'Qu’est-ce qu’un plan d’action ?', answer: 'Une liste d’actions concrètes à mettre en œuvre pour atteindre les objectifs du projet.', },
+{ question: 'Comment hiérarchiser les tâches d’un projet ?', answer: 'En fonction de leur urgence, importance et dépendances.', },
+{ question: 'Qu’est-ce qu’un reporting de projet ?', answer: 'La transmission régulière d’informations sur l’état d’avancement du projet.', },
+{ question: 'Qu’est-ce qu’un diagramme de flux ?', answer: 'Un schéma représentant les étapes et les flux d’informations ou de tâches.', },
+{ question: 'Qu’est-ce qu’une tâche critique ?', answer: 'Une tâche dont le retard retarde tout le projet.', },
+{ question: 'Qu’est-ce que le chemin critique ?', answer: 'La suite de tâches qui détermine la durée minimale du projet.', },
+{ question: 'Qu’est-ce qu’une réserve de gestion ?', answer: 'Une marge de temps ou de budget prévue pour faire face aux imprévus.', },
+{ question: 'Qu’est-ce qu’une analyse de la valeur acquise (EVM) ?', answer: 'Une méthode pour comparer l’avancement réel aux prévisions de coûts et de délais.', },
+{ question: 'A quoi sert le diagramme Ishikawa ?', answer: 'À identifier les causes possibles d’un problème (diagramme en arêtes de poisson).', },
+{ question: 'Qu’est-ce qu’une dépendance entre tâches ?', answer: 'Quand l’exécution d’une tâche dépend de l’achèvement d’une autre.', },
+{ question: 'Qu’est-ce qu’une réunion de coordination ?', answer: 'Une réunion pour synchroniser les actions entre différents acteurs du projet.', },
+{ question: 'Qu’est-ce qu’un plan de gestion des risques ?', answer: 'Un document listant les risques, leur gravité et les actions prévues.', },
+{ question: 'Qu’est-ce qu’un changement de périmètre (scope creep) ?', answer: 'L’ajout non planifié de tâches ou d’objectifs qui peut désorganiser le projet.', },
+{ question: 'Qu’est-ce qu’une analyse d’impact ?', answer: 'L’évaluation des conséquences d’un changement sur le projet.', },
+{ question: 'Qu’est-ce qu’un comité de pilotage ?', answer: 'Un groupe chargé de superviser et valider les grandes orientations du projet.', },
+{ question: 'Qu’est-ce qu’un tableau Kanban ?', answer: 'Un outil visuel pour suivre l’avancement des tâches sous forme de colonnes.', },
+{ question: 'Qu’est-ce qu’une phase de projet ?', answer: 'Une étape distincte du projet, avec ses propres objectifs et livrables.', },
+{ question: 'Qu’est-ce qu’une fiche de suivi ?', answer: 'Un document pour suivre l’état d’avancement d’une tâche ou d’un livrable.', },
+{ question: 'Qu’est-ce qu’une réunion d’arbitrage ?', answer: 'Une réunion pour trancher sur des choix stratégiques ou des conflits dans le projet.', },
+{ question: 'Qu’est-ce qu’une matrice des parties prenantes ?', answer: 'Un outil pour identifier et analyser l’influence des acteurs du projet.', },
+{ question: 'Qu’est-ce qu’un plan de formation dans un projet ?', answer: 'Un programme pour développer les compétences nécessaires à la réalisation du projet.', },
+{ question: 'Qu’est-ce qu’une évaluation intermédiaire ?', answer: 'Une analyse ponctuelle de l’avancement du projet à mi-parcours.', },
+{ question: 'Qu’est-ce qu’un audit de projet ?', answer: 'Un examen indépendant pour vérifier la conformité du projet aux normes et objectifs.', },
+{ question: 'Qu’est-ce qu’une planification descendante ?', answer: 'Une planification partant des objectifs globaux pour détailler les tâches.', },
+{ question: 'Qu’est-ce qu’une planification ascendante ?', answer: 'Une planification partant des tâches à réaliser pour remonter vers les objectifs globaux.', },
+{ question: 'Qu’est-ce qu’un indicateur de retard ?', answer: 'Un indicateur signalant qu’une tâche ou le projet prend du retard.', },
+{ question: 'Qu’est-ce qu’un plan de contingence ?', answer: 'Un plan alternatif à mettre en œuvre en cas de problème majeur.', },
+{ question: 'Qu’est-ce qu’une revue de projet ?', answer: 'Une évaluation périodique pour vérifier l’atteinte des objectifs et ajuster si besoin.', },
+{ question: 'Qu’est-ce qu’un diagramme de charge ?', answer: 'Un graphique représentant la répartition de la charge de travail sur le temps.', },
+{ question: 'Qu’est-ce qu’une tâche non critique ?', answer: 'Une tâche dont le retard n’impacte pas la date de fin du projet.', },
+{ question: 'Qu’est-ce qu’une analyse coûts-bénéfices ?', answer: 'Une comparaison des coûts et des avantages attendus du projet.', },
+{ question: 'Qu’est-ce qu’un livrable intermédiaire ?', answer: 'Un résultat produit à une étape clé avant la fin du projet.', },
+{ question: 'Qu’est-ce qu’un plan de qualité de projet ?', answer: 'Un document définissant les critères et procédures pour garantir la qualité des livrables.', },
+{ question: 'Qu’est-ce qu’une feuille de route (roadmap) ?', answer: 'Un planning global des étapes et jalons du projet.', },
+{ question: 'Qu’est-ce qu’une analyse des parties prenantes ?', answer: 'L’identification des acteurs concernés et de leur influence sur le projet.', },
+{ question: 'Qu’est-ce qu’un reporting financier de projet ?', answer: 'Le suivi et la communication des dépenses et du respect du budget.', },
+{ question: 'Qu’est-ce qu’un plan de gestion des ressources humaines ?', answer: 'Un plan pour organiser et optimiser l’affectation des membres de l’équipe.', },
+{ question: 'Qu’est-ce qu’un plan d’assurance qualité ?', answer: 'Un plan pour garantir que les processus et livrables respectent les standards de qualité.', },
+{ question: 'Qu’est-ce qu’un point bloquant ?', answer: 'Un obstacle qui empêche la progression du projet.', },
+{ question: 'Qu’est-ce qu’un plan de mitigation des risques ?', answer: 'Un ensemble d’actions pour réduire la probabilité ou l’impact des risques.', },
+{ question: 'Qu’est-ce qu’une analyse de faisabilité ?', answer: 'L’étude de la viabilité technique, économique et organisationnelle du projet.', },
+{ question: 'Qu’est-ce qu’une gestion de portefeuille de projets ?', answer: 'La gestion coordonnée de plusieurs projets pour optimiser les ressources et les résultats.', },
+{ question: 'Qu’est-ce qu’un plan de transition ?', answer: 'Un plan pour passer d’un état initial à un état final à la fin du projet.', },
+{ question: 'Qu’est-ce qu’un tableau des risques ?', answer: 'Un document listant les risques, leur probabilité, gravité et actions associées.', },
+{ question: 'Qu’est-ce qu’un plan de communication de crise ?', answer: 'Un plan pour gérer la communication en cas d’événement imprévu ou critique.', },
+{ question: 'Qu’est-ce qu’une estimation de charge ?', answer: 'Une évaluation du temps ou des ressources nécessaires pour réaliser une tâche.', },
+{ question: 'Qu’est-ce qu’un workflow de validation ?', answer: 'Un processus structuré pour approuver les livrables ou décisions du projet.', },
+{ question: 'Qu’est-ce qu’un tableau des livrables ?', answer: 'Un document listant tous les livrables attendus, avec leurs responsables et échéances.', },
+{ question: 'Qu’est-ce qu’une réunion de synchronisation ?', answer: 'Une réunion pour aligner les actions et informations entre les membres de l’équipe.', },
+{ question: 'Qu’est-ce qu’un rapport d’avancement ?', answer: 'Un document synthétisant l’état d’avancement, les écarts et les actions à mener.', },
+{ question: 'Qu’est-ce qu’une gestion des changements ?', answer: 'Le processus de contrôle et de validation des modifications du projet.', },
+{ question: 'Qu’est-ce qu’un plan de clôture de projet ?', answer: 'Un plan détaillant les étapes pour finaliser, évaluer et archiver le projet.', },
+{ question: 'Qu’est-ce qu’une analyse de rentabilité ?', answer: 'L’évaluation du retour sur investissement attendu du projet.', },
+{ question: 'Qu’est-ce qu’un point d’avancement ?', answer: 'Un rendez-vous régulier pour faire le point sur l’état du projet.', },
+{ question: 'Qu’est-ce qu’un plan de pilotage ?', answer: 'Un document décrivant les modalités de suivi et de prise de décision du projet.', },
+{ question: 'Qu’est-ce qu’un plan de gestion documentaire ?', answer: 'Un plan pour organiser, stocker et partager les documents du projet.', },
+{ question: 'Qu’est-ce qu’une grille d’évaluation de projet ?', answer: 'Un outil pour évaluer objectivement la performance et la qualité du projet.', },
+{ question: 'Qu’est-ce qu’un plan de gestion des parties prenantes ?', answer: 'Un plan pour gérer l’implication et la communication avec les parties prenantes.', },
+{ question: 'Qu’est-ce qu’une analyse de criticité ?', answer: 'L’évaluation de l’importance et de l’urgence des tâches ou risques.', },
+{ question: 'Qu’est-ce qu’un plan de gestion des approvisionnements ?', answer: 'Un plan pour organiser l’achat et la livraison des ressources nécessaires au projet.', },
+{ question: 'Qu’est-ce qu’une planification en cascade (waterfall) ?', answer: 'Une méthode où chaque phase du projet doit être terminée avant de passer à la suivante.', },
+{ question: 'Qu’est-ce qu’un plan d’amélioration continue ?', answer: 'Un plan pour identifier et mettre en œuvre des améliorations tout au long du projet.', },
+{ question: 'Qu’est-ce qu’un plan de gestion des conflits ?', answer: 'Un plan pour anticiper et résoudre les désaccords au sein de l’équipe projet.', },
+{ question: 'Qu’est-ce qu’une analyse d’écart ?', answer: 'La comparaison entre les résultats obtenus et les objectifs fixés.', }
+];
+
+const container = document.getElementById("flashcards");
+const progressBar = document.getElementById("progressBar");
+const originalData = [...flashcardsData];
+let flashcards = [...originalData];
+const pageId = location.pathname.split("/").pop().replace(".html","");
+const progressKey = "progress_" + pageId;
+let currentIndex = parseInt(localStorage.getItem(progressKey)) || 0;
+if (currentIndex >= originalData.length) { currentIndex = 0; localStorage.setItem(progressKey, currentIndex); }
+
+function updateProgress() {
+  const total = originalData.length;
+  const progress = Math.min(currentIndex / total, 1);
+  progressBar.style.width = `${progress * 100}%`;
+}
+
+function createContent(content) {
+  if (typeof content === "string") {
+    const div = document.createElement("div");
+    div.textContent = content;
+    return div;
+  }
+  if (typeof content === "object" && content.type === "image") {
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+    if (content.caption) {
+      const caption = document.createElement("div");
+      caption.textContent = content.caption;
+      caption.style.marginBottom = "6px";
+      caption.style.fontStyle = "italic";
+      caption.style.fontSize = "0.9em";
+      wrapper.appendChild(caption);
+    }
+    const img = document.createElement("img");
+    img.src = content.src;
+    img.alt = content.alt || "";
+    img.style.maxWidth = "100%";
+    img.style.height="auto"; img.style.maxHeight="150px"; img.style.objectFit="contain";
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+  return document.createElement("div");
+}
+
+function showCard(index) {
+  container.innerHTML = "";
+  if (flashcards[index]) {
+    const { question, answer } = flashcards[index];
+    const card = document.createElement("div");
+    card.classList.add("flashcard", "show");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const front = document.createElement("div");
+    front.classList.add("flashcard-front");
+    front.appendChild(createContent(question));
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.appendChild(createContent(answer));
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const toggleBtn = document.createElement("button");
+    toggleBtn.classList.add("button", "large");
+    toggleBtn.textContent = "Voir la réponse";
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(toggleBtn);
+    btnContainer.appendChild(resetBtn);
+    const checkIcon = document.createElement("span");
+    checkIcon.classList.add("check-icon");
+    checkIcon.innerHTML = '<i class="fas fa-check"></i>';
+    checkIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-right");
+      setTimeout(() => {
+        currentIndex++;
+        localStorage.setItem(progressKey, currentIndex);
+        updateProgress();
+        showCard(currentIndex);
+      }, 400);
+    });
+    const crossIcon = document.createElement("span");
+    crossIcon.classList.add("cross-icon");
+    crossIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>`;
+    crossIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      card.classList.add("slide-left");
+      setTimeout(() => {
+        const removed = flashcards.splice(currentIndex, 1)[0];
+        flashcards.splice(currentIndex + 5, 0, removed);
+        showCard(currentIndex);
+      }, 400);
+    });
+    const favIcon = document.createElement("span");
+    favIcon.classList.add("favorite-icon");
+    favIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    function updateFav() {
+      if (isFavorite({question, answer})) favIcon.classList.add("active");
+      else favIcon.classList.remove("active");
+    }
+    favIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite({question, answer});
+      updateFav();
+    });
+    updateFav();
+    card.addEventListener("click", () => {
+      const isAnswerVisible = card.classList.toggle("show-answer");
+      toggleBtn.textContent = isAnswerVisible ? "Cacher la réponse" : "Voir la réponse";
+    });
+    inner.appendChild(front);
+    inner.appendChild(back);
+    inner.appendChild(checkIcon);
+    inner.appendChild(crossIcon);
+    inner.appendChild(favIcon);
+    card.appendChild(inner);
+    card.appendChild(btnContainer);
+    container.appendChild(card);
+  } else {
+    container.innerHTML = "";
+    const endCard = document.createElement("div");
+    endCard.classList.add("flashcard", "show", "show-answer");
+    const inner = document.createElement("div");
+    inner.classList.add("flashcard-inner");
+    const back = document.createElement("div");
+    back.classList.add("flashcard-back");
+    back.innerHTML = "<p>Plus de flashcard disponible.</p>";
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("flashcard-button");
+    const resetBtn = document.createElement("button");
+    resetBtn.classList.add("button", "large");
+    resetBtn.textContent = "Réinitialiser";
+    resetBtn.id = "reset";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      localStorage.removeItem(progressKey);
+      localStorage.removeItem("completed_" + pageId);
+      flashcards = [...originalData];
+      currentIndex = 0;
+      updateProgress();
+      showCard(currentIndex);
+    });
+    btnContainer.appendChild(resetBtn);
+    inner.appendChild(back);
+    endCard.appendChild(inner);
+    endCard.appendChild(btnContainer);
+    container.appendChild(endCard);
+    localStorage.setItem("completed_" + pageId, "true");
+    updateProgress();
+  }
+}
+
+showCard(currentIndex);
+updateProgress();
+</script>
+
+</section>
+
+</div>
+</div>
+
+<div id="sidebar">
+<div class="inner">
+
+<section id="search" class="alt">
+<form method="post" action="#">
+<input type="text" name="query" id="query" placeholder="Rechercher">
+</form>
+</section>
+
+<nav id="menu">
+<header class="major"><h2>Menu</h2></header>
+<ul>
+<li><a href="../index.html">Accueil</a></li>
+<li><a href="../favorites.html">Favoris</a></li>
+<li><span class="opener">Bases moléculaires en oncologie</span><ul>
+<li><a href="../Bases_moleculaire_Oncologie/fc1.html">Cours 1</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc2.html">Cours 2</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc3.html">Cours 3</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc4.html">Cours 4</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc5.html">Cours 5</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc6.html">Cours 6</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc7.html">Cours 7</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc8.html">Cours 8</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc9.html">Cours 9</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc10.html">Cours 10</a></li>
+<li><a href="../Bases_moleculaire_Oncologie/fc11.html">Cours 11</a></li>
+</ul></li>
+<li><span class="opener">Human nutrition</span><ul>
+<li><a href="../Human_Nutrition/fc1.html">Métabolisme bioénergétique (révision)</a></li>
+<li><a href="../Human_Nutrition/fc2.html">Anthropométrie, bilan énergétique, valeurs de référence en diététique</a></li>
+<li><a href="../Human_Nutrition/fc3.html">Macronutriments : protéines, glucides et acides gras</a></li>
+<li><a href="../Human_Nutrition/fc4.html">Les micronutriments : minéraux</a></li>
+<li><a href="../Human_Nutrition/fc5.html">Les vitamines liposolubles</a></li>
+<li><a href="../Human_Nutrition/fc5_2.html">Les vitamines hydrosolubles</a></li>
+<li><a href="../Human_Nutrition/fc6.html">Maladies cardiovasculaires</a></li>
+<li><a href="../Human_Nutrition/fc7.html">Alimentation et cancer</a></li>
+<li><a href="../Human_Nutrition/fc8.html">Consommation d'alcool et effets sur la santé</a></li>
+<li><a href="../Human_Nutrition/fc9.html">Interaction régime-maladie : obésité, syndrome métabolique et diabète</a></li>
+<li><a href="../Human_Nutrition/fc10.html">Interventions diététiques et pharmacologiques</a></li>
+</ul></li>
+<li><span class="opener">One Health</span><ul>
+<li><a href="../One_Health/fc1.html">Introduction au concept One Health</a></li>
+<li><a href="../One_Health/fc2.html">Zoonoses et modes de transmission</a></li>
+<li><a href="../One_Health/fc3.html">Émergence et diffusion de la résistance aux antibiotiques</a></li>
+<li><a href="../One_Health/fc4.html">Maladies émergentes transmises de l'animal à l'homme</a></li>
+<li><a href="../One_Health/fc5.html">Mobiliser les professionnels et la population autour des approches One Health</a></li>
+<li><a href="../One_Health/fc6.html">Polluants de l'environnement professionnel</a></li>
+<li><a href="../One_Health/fc7.html">Évaluation, prévention et gestion des risques en santé environnementale</a></li>
+<li><a href="../One_Health/fc8.html">Principales théories, concepts et modèles en sciences sociales (One Health)</a></li>
+<li><a href="../One_Health/fc9.html">Surveillance et investigation en santé publique et santé animale</a></li>
+<li><a href="../One_Health/fc10.html">Biodiversité des plantes et liens avec la santé humaine et animale</a></li>
+<li><a href="../One_Health/fc11.html">Écologie de la faune sauvage</a></li>
+<li><a href="../One_Health/fc12_1.html">Environnement, biodiversité, écologie, évolution des risques (partie 1)</a></li>
+<li><a href="../One_Health/fc12_2.html">Environnement, biodiversité, écologie, évolution des risques (partie 2)</a></li>
+</ul></li>
+<li><span class="opener">Réglementation et éthique de la recherche - droit de la santé</span><ul>
+<li><a href="../Reglementation_Ethique_Recherche/fc1.html">Droit de la santé</a></li>
+<li><a href="../Reglementation_Ethique_Recherche/fc2.html">Réglementation et recherche de la santé</a></li>
+</ul></li>
+<li><span class="opener">Technique de vie et société</span><ul>
+<li><a href="../Technique_Vie_Societe/fc1.html">Vie, technique et société - Introduction</a></li>
+<li><a href="../Technique_Vie_Societe/fc2.html">L'éthique à l'heure de la civilisation technologique</a></li>
+<li><a href="../Technique_Vie_Societe/fc3.html">Le statut des objets techniques et des technologies dans le champ de la santé</a></li>
+<li><a href="../Technique_Vie_Societe/fc4.html">Les droits et devoirs des patients et des praticiens</a></li>
+<li><a href="../Technique_Vie_Societe/fc5.html">Le droit à l'information médicale</a></li>
+<li><a href="../Technique_Vie_Societe/fc6.html">Enjeux et statuts des objets biologiques</a></li>
+<li><a href="../Technique_Vie_Societe/fc7.html">La pensée des bio-objets chez Céline Lafontaine</a></li>
+<li><a href="../Technique_Vie_Societe/fc8.html">La technicisation médicale, une déshumanisation : précisions conceptuelles</a></li>
+<li><a href="../Technique_Vie_Societe/fc9.html">La médecine humaniste face à la biomédecine</a></li>
+<li><a href="../Technique_Vie_Societe/fc10.html">Les médecines alternatives : de la critique humaniste à l'antiscience</a></li>
+<li><a href="../Technique_Vie_Societe/fc11.html">Biomédecine et approche holistique : le modèle biopsychosocial</a></li>
+</ul></li>
+<li><span class="opener">Biotechnologie</span><ul>
+<li><a href="../Biotechnologie/fc1.html">Introduction à la biotechnologie</a></li>
+<li><a href="../Biotechnologie/fc2.html">Reprogrammation cellulaire</a></li>
+<li><a href="../Biotechnologie/fc3.html">Drug Repositioning</a></li>
+<li><a href="../Biotechnologie/fc4.html">Immunothérapie</a></li>
+<li><a href="../Biotechnologie/fc5.html">Principes généraux de la thérapie génique</a></li>
+<li><a href="../Biotechnologie/fc6.html">Les vésicules extracellulaires</a></li>
+<li><a href="../Biotechnologie/fc7.html">Bioproduction de cellules souches</a></li>
+<li><a href="../Biotechnologie/fc8.html">Stratégies vaccinales</a></li>
+<li><a href="../Biotechnologie/fc9.html">Édition du génome</a></li>
+<li><a href="../Biotechnologie/fc10.html">Biomécanique des biomatériaux</a></li>
+<li><a href="../Biotechnologie/fc11.html">Thérapie cellulaire et moelle osseuse</a></li>
+<li><a href="../Biotechnologie/fc12.html">Peptides thérapeutiques antimicrobiens</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Promotion et prévention</span><ul>
+<li><a href="../SP_Promotion_Prevention/fc1.html">Généralités en santé publique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc2.html">Méthodologie de projet en prévention et promotion de la santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc3.html">Déterminants de santé</a></li>
+<li><a href="../SP_Promotion_Prevention/fc4.html">Méthodes de prévention et de dépistage</a></li>
+<li><a href="../SP_Promotion_Prevention/fc5.html">Vaccins et promotion de la prévention</a></li>
+<li><a href="../SP_Promotion_Prevention/fc6.html">Maladies sexuellement transmissibles</a></li>
+<li><a href="../SP_Promotion_Prevention/fc7.html">Initiation aux soins d’urgence</a></li>
+<li><a href="../SP_Promotion_Prevention/fc8.html">Sédentarité et activité physique</a></li>
+<li><a href="../SP_Promotion_Prevention/fc9.html">Le risque cardio-vasculaire</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Économie de la santé</span><ul>
+<li><a href="../SP_Economie_Sante/fc1.html">Analyse économique de la perte d’autonomie (Dépendance)</a></li>
+<li><a href="../SP_Economie_Sante/fc2.html">Analyse de la perte d’autonomie : Handicap</a></li>
+<li><a href="../SP_Economie_Sante/fc3.html">Les modes de rémunération des médecins libéraux</a></li>
+<li><a href="../SP_Economie_Sante/fc4.html">Les modes de rémunération des établissements de santé</a></li>
+<li><a href="../SP_Economie_Sante/fc5.html">Nutrition, santé et croissance économique</a></li>
+<li><a href="../SP_Economie_Sante/fc6.html">Santé et développement : santé et pauvreté</a></li>
+<li><a href="../SP_Economie_Sante/fc7.html">Santé et développement : système et égalité</a></li>
+<li><a href="../SP_Economie_Sante/fc8.html">Santé et environnement</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Géographie de la santé</span><ul>
+<li><a href="../SP_Geographie_Sante/fc1.html">Histoire et concepts de la géographie de la santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc2.html">Liens villes et santé : enjeux des usages de la carte en santé</a></li>
+<li><a href="../SP_Geographie_Sante/fc3.html">Inégalités spatiales de l’offre de soins en France</a></li>
+<li><a href="../SP_Geographie_Sante/fc4.html">Enjeux internationaux des inégalités d’offre de soins</a></li>
+<li><a href="../SP_Geographie_Sante/fc5.html">Enjeux internationaux : le point de vue des patient.es</a></li>
+<li><a href="../SP_Geographie_Sante/fc6.html">L’accès aux soins des personnes vulnérables</a></li>
+<li><a href="../SP_Geographie_Sante/fc7.html">Alimentation et santé en ville</a></li>
+<li><a href="../SP_Geographie_Sante/fc8.html">Pouvoirs des villes et urbanisme favorable à la santé : espaces verts</a></li>
+<li><a href="../SP_Geographie_Sante/fc9.html">Urbanisme favorable à la santé : personnes âgées</a></li>
+<li><a href="../SP_Geographie_Sante/fc10.html">Urbanisme favorable à la santé : enfants</a></li>
+</ul></li>
+<li><span class="opener">Santé publique - Gestion de projet de recherche clinique</span><ul>
+<li><a href="../SP_Gestion_Projet_RC/fc1.html">Généralités sur les essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc2.html">Acteurs de la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc3.html">Vigilance, gestion des EIG et sécurité des essais cliniques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc4.html">Structures de soutien à la recherche clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc5.html">Mise en place d’un essai clinique</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc6.html">Le dossier patient, les CRF et les bases de données</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc7.html">Gestion de projet (monitoring)</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc8.html">Réglementation sur les échantillons biologiques</a></li>
+<li><a href="../SP_Gestion_Projet_RC/fc9.html">Démarches auprès du MESRI</a></li>
+</ul></li>
+</ul></nav>
+
+<footer id="footer">
+<p class="copyright">&copy; Diploma Santé. Tous droits réservés.</p>
+</footer>
+
+</div>
+</div>
+
+</div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/darkmode.js"></script>
+<script src="../../assets/js/favorites.js"></script>
+
+</body>
+</html>
